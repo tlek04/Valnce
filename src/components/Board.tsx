@@ -29,7 +29,6 @@ interface BoardProps {
   onAdd: () => void;
   onEdit: (player: Player) => void;
   onNotice?: (message: string) => void;
-  onMatchSync?: (options?: { force?: boolean; soft?: boolean }) => void;
 }
 
 function isColumnId(id: string): id is ColumnId {
@@ -42,7 +41,7 @@ const detectCollision: CollisionDetection = (args) => {
   return rectIntersection(args);
 };
 
-export default function Board({ onAdd, onEdit, onNotice, onMatchSync }: BoardProps) {
+export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
   const waitlist = useAppStore((state) => state.waitlist);
   const team1 = useAppStore((state) => state.team1);
   const team2 = useAppStore((state) => state.team2);
@@ -198,7 +197,6 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync }: BoardPro
               onClick={() => {
                 const result = recordTeamResult('TEAM_1');
                 onNotice?.(result.message);
-                onMatchSync?.({ force: true, soft: true });
               }}
               style={{ backgroundColor: 'rgba(56, 189, 248, 0.68)' }}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
@@ -212,7 +210,6 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync }: BoardPro
               onClick={() => {
                 const result = recordTeamResult('TEAM_2');
                 onNotice?.(result.message);
-                onMatchSync?.({ force: true, soft: true });
               }}
               style={{ backgroundColor: 'rgba(255, 70, 85, 0.6)' }}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"

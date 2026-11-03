@@ -62,14 +62,7 @@ export default function App() {
           </p>
         </div>
       )}
-      <Board
-        onAdd={openCreate}
-        onEdit={openEdit}
-        onNotice={showNotice}
-        onMatchSync={(options) => {
-          void runMatchSync(options);
-        }}
-      />
+      <Board onAdd={openCreate} onEdit={openEdit} onNotice={showNotice} />
       {formOpen && (
         <PlayerFormModal
           key={editingPlayer?.id ?? `new-${formKey}`}

@@ -8,7 +8,6 @@ export function matchHistoryCutoff(now = Date.now()) {
   return new Date(seasonYear, 7, 1, 0, 0, 0, 0).getTime();
 }
 
-export const MATCH_SYNC_INTERVAL_MS = 12 * 60 * 60 * 1000; // 12시간
 export const MAX_MATCH_SEEDS = 2;
 
 /** 커스텀 전적 API 조회 고정 시드 (명단 닉 또는 발로란트 닉) */
