@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { GripVertical, Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
+import { Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
 import { Player } from '../types';
-import { TIER_STYLES, formatRating, getRestrictionLabel, sameRating } from '../constants/valorant';
+import { TIER_STYLES, formatRating, getRestrictionLabel } from '../constants/valorant';
 import { useAppStore } from '../store/useAppStore';
-import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
+import { formatRecord, formatStreak } from '../utils/matchStats';
 import { playerScrimTier } from '../utils/rating';
 
 interface PlayerCardProps {
   player: Player;
   onEdit: (player: Player) => void;
   onDelete: (id: string) => void;
-  draggable?: boolean;
   overlay?: boolean;
 }
 
@@ -18,7 +17,6 @@ export default function PlayerCard({
   player,
   onEdit,
   onDelete,
-  draggable = false,
   overlay = false,
 }: PlayerCardProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -32,10 +30,8 @@ export default function PlayerCard({
   const allies = names(player.allyIds ?? []);
   const restrictionLabels = (player.restrictions ?? []).map(getRestrictionLabel);
   const scrimTier = playerScrimTier(player);
-  const showPeak = !sameRating(player.maxTier, player.currentTier);
   const lockLabel =
     player.lockedTeam === 'TEAM_1' ? '1팀 고정' : player.lockedTeam === 'TEAM_2' ? '2팀 고정' : null;
-  const riotId = formatRiotId(player.riotName, player.riotTag);
   const streakLabel = formatStreak(player.streak);
   const hasRecord = player.wins > 0 || player.losses > 0 || player.streak !== 0;
 
@@ -46,17 +42,10 @@ export default function PlayerCard({
       }`}
     >
       <div className="flex items-start gap-2">
-        {draggable && (
-          <span aria-hidden className="mt-0.5 shrink-0 rounded p-1 text-val-muted">
-            <GripVertical size={16} />
-          </span>
-        )}
-
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <h3 className="break-words font-semibold text-val-cream">{player.name}</h3>
-              {riotId && <p className="mt-0.5 truncate text-xs text-val-muted">{riotId}</p>}
             </div>
             <span
               className={`shrink-0 rounded-md border px-2 py-0.5 text-xs font-semibold ${
@@ -67,12 +56,10 @@ export default function PlayerCard({
             </span>
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            {scrimTier && (
+            {scrimTier ? (
               <span className="text-xs text-val-muted">현재 {formatRating(player.currentTier)}</span>
-            )}
-            {showPeak && (
-              <span className="text-xs text-val-muted">최고 {formatRating(player.maxTier)}</span>
-            )}
+            ) : null}
+            <span className="text-xs text-val-muted">최고 {formatRating(player.maxTier)}</span>
             {hasRecord && (
               <span className="text-xs text-val-muted">
                 {formatRecord(player)}

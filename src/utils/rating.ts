@@ -40,6 +40,15 @@ export function playerBaseTier(player: Player): RankRating {
   return playerScrimTier(player) ?? player.currentTier;
 }
 
+/** 티어 높은 순(위→아래). 동점이면 이름. */
+export function sortPlayersByTier(players: Player[]): Player[] {
+  return [...players].sort((a, b) => {
+    const scoreDiff = rankScore(playerBaseTier(b)) - rankScore(playerBaseTier(a));
+    if (scoreDiff !== 0) return scoreDiff;
+    return a.name.localeCompare(b.name, 'ko');
+  });
+}
+
 function peakBonusFactor(player: Player): number {
   if (playerScrimTier(player)) return 0;
   const gap = rankScore(player.maxTier) - rankScore(player.currentTier);

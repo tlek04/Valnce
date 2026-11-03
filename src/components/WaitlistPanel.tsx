@@ -47,7 +47,7 @@ export default function WaitlistPanel({
             className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-val-red px-3 py-2 text-sm font-semibold text-white hover:bg-val-red/90"
           >
             <UserPlus size={16} />
-            추가
+            새로 추가
           </button>
           <button
             type="button"
@@ -71,12 +71,12 @@ export default function WaitlistPanel({
           <p className="text-sm font-medium text-val-cream">대기열이 비어 있습니다</p>
           <p className="mt-1 text-xs text-val-muted">
             {savedCount > 0
-              ? '새로 등록하거나 기존 플레이어를 대기열에 넣으세요.'
-              : '플레이어를 등록하거나 팀에서 여기로 드래그하세요.'}
+              ? '새로 추가하거나 기존 플레이어를 대기열에 넣으세요.'
+              : '새로 추가하거나 팀에서 여기로 드래그하세요.'}
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <button type="button" onClick={onAdd} className="text-sm font-semibold text-val-red hover:underline">
-              플레이어 등록
+              새로 추가
             </button>
             {savedCount > 0 && (
               <button
@@ -84,7 +84,7 @@ export default function WaitlistPanel({
                 onClick={() => setLibraryOpen(true)}
                 className="text-sm font-semibold text-[#38BDF8] hover:underline"
               >
-                기존 플레이어 추가
+                기존 플레이어
               </button>
             )}
           </div>

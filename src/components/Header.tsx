@@ -1,6 +1,7 @@
 import { Camera, HelpCircle, RefreshCw, RotateCcw, Scale } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { useAppStore } from '../store/useAppStore';
+import { saveResultImage } from '../utils/saveResultImage';
 
 interface HeaderProps {
   onNotice: (message: string) => void;
@@ -30,13 +31,10 @@ export default function Header({
         backgroundColor: '#0F1923',
         pixelRatio: 2,
       });
-      const link = document.createElement('a');
-      link.download = `valnce-${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = dataUrl;
-      link.click();
-      onNotice('팀 구성 이미지를 저장했습니다.');
+      const { fileName } = await saveResultImage(dataUrl);
+      window.alert(`${fileName.replace(/\.png$/i, '')}\n다운로드 폴더에 저장되었습니다.`);
     } catch {
-      onNotice('이미지 저장에 실패했습니다.');
+      window.alert('이미지 저장에 실패했습니다.');
     }
   };
 
@@ -85,7 +83,7 @@ export default function Header({
             aria-label="팀 초기화"
             onClick={() => {
               resetTeams();
-              onNotice('오늘 명단을 비웠습니다. 저장된 플레이어는 그대로입니다.');
+              onNotice('팀 인원을 대기열로 옮겼습니다.');
             }}
             disabled={matchCount === 0}
             style={{ backgroundColor: 'rgba(139, 151, 143, 0.45)' }}

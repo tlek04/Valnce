@@ -1,18 +1,16 @@
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { Minus, Plus, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Player, RankRating, WeaponRestriction } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import {
   RANK_OPTIONS,
   RESTRICTION_OPTIONS,
-  formatRating,
   getRestrictionLabel,
   parseRatingKey,
   ratingKey,
   restrictionKey,
   sameRating,
 } from '../constants/valorant';
-import { formatStreak } from '../utils/matchStats';
 import { cloneRating, isRatingAtLeast } from '../utils/rating';
 import SearchSelect from './SearchSelect';
 import ChipList from './ChipList';
@@ -33,46 +31,11 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
   return '대기열에 추가';
 }
 
-function StatStepper({
-  label,
-  value,
-  onAdjust,
-}: {
-  label: string;
-  value: number;
-  onAdjust: (delta: number) => void;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-6 text-sm text-val-muted">{label}</span>
-      <button
-        type="button"
-        aria-label={`${label} 감소`}
-        disabled={value <= 0}
-        onClick={() => onAdjust(-1)}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-val-line bg-val-bg text-val-cream hover:border-val-red/50 disabled:cursor-not-allowed disabled:opacity-30"
-      >
-        <Minus size={14} />
-      </button>
-      <span className="min-w-[2rem] text-center text-sm font-semibold tabular-nums text-val-cream">{value}</span>
-      <button
-        type="button"
-        aria-label={`${label} 증가`}
-        onClick={() => onAdjust(1)}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-val-line bg-val-bg text-val-cream hover:border-val-red/50"
-      >
-        <Plus size={14} />
-      </button>
-    </div>
-  );
-}
-
 export default function PlayerFormModal({ open, player, onClose, onNotice }: PlayerFormModalProps) {
   const players = useAppStore((state) => state.players);
   const boardPlayers = useAppStore((state) => [...state.waitlist, ...state.team1, ...state.team2]);
   const addPlayer = useAppStore((state) => state.addPlayer);
   const updatePlayer = useAppStore((state) => state.updatePlayer);
-  const adjustPlayerRecord = useAppStore((state) => state.adjustPlayerRecord);
   const formRef = useRef<HTMLFormElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const [name, setName] = useState(player?.name ?? '');
@@ -86,9 +49,6 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
   const [lockedTeam, setLockedTeam] = useState<Player['lockedTeam']>(player?.lockedTeam ?? null);
   const [rivalIds, setRivalIds] = useState<string[]>(player?.rivalIds ?? []);
   const [allyIds, setAllyIds] = useState<string[]>(player?.allyIds ?? []);
-  const [wins, setWins] = useState(player?.wins ?? 0);
-  const [losses, setLosses] = useState(player?.losses ?? 0);
-  const [streak, setStreak] = useState(player?.streak ?? 0);
 
   useEffect(() => {
     if (!isRatingAtLeast(maxTier, currentTier)) setMaxTier(cloneRating(currentTier));
@@ -109,9 +69,6 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
     setLockedTeam(player?.lockedTeam ?? null);
     setRivalIds(player?.rivalIds ?? []);
     setAllyIds(player?.allyIds ?? []);
-    setWins(source?.wins ?? 0);
-    setLosses(source?.losses ?? 0);
-    setStreak(source?.streak ?? 0);
   }, [open, player]);
 
   useEffect(() => {
@@ -169,32 +126,6 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
     }
   };
 
-  const syncRecordFromStore = (id: string) => {
-    const next =
-      useAppStore.getState().players.find((item) => item.id === id) ??
-      [...useAppStore.getState().waitlist, ...useAppStore.getState().team1, ...useAppStore.getState().team2].find(
-        (item) => item.id === id
-      );
-    if (!next) return;
-    setWins(next.wins);
-    setLosses(next.losses);
-    setStreak(next.streak);
-  };
-
-  const handleRecordAdjust = (field: 'wins' | 'losses', delta: number) => {
-    if (!player) {
-      if (field === 'wins') {
-        setWins((value) => Math.max(0, value + delta));
-      } else {
-        setLosses((value) => Math.max(0, value + delta));
-      }
-      setStreak(0);
-      return;
-    }
-    adjustPlayerRecord(player.id, field, delta);
-    syncRecordFromStore(player.id);
-  };
-
   const handleDialogKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
     if (event.key === 'Escape') {
       onClose();
@@ -223,6 +154,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
     if (!trimmedName) return;
     const trimmedRiotName = riotName.trim();
     const trimmedRiotTag = riotTag.trim();
+    const saved = player ? useAppStore.getState().players.find((item) => item.id === player.id) : null;
     const payload: Player = {
       id: player?.id ?? crypto.randomUUID(),
       name: trimmedName,
@@ -237,9 +169,9 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
       allyIds,
       riotName: trimmedRiotName || undefined,
       riotTag: trimmedRiotTag || undefined,
-      wins,
-      losses,
-      streak,
+      wins: player?.wins ?? saved?.wins ?? 0,
+      losses: player?.losses ?? saved?.losses ?? 0,
+      streak: player?.streak ?? saved?.streak ?? 0,
     };
     const message = player ? updatePlayer(player.id, payload) : addPlayer(payload);
     if (message) onNotice?.(message);
@@ -263,11 +195,11 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
         aria-labelledby="player-form-title"
         onSubmit={handleSubmit}
         onKeyDown={handleDialogKeyDown}
-        className="relative z-10 max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
+        className="relative z-10 w-full max-w-lg overflow-hidden rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
       >
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="mb-3 flex items-center justify-between gap-3">
           <h2 id="player-form-title" className="font-display text-xl font-bold text-val-cream">
-            {player ? '플레이어 수정' : '플레이어 등록'}
+            {player ? '플레이어 수정' : '플레이어 추가'}
           </h2>
           <button
             type="button"
@@ -293,14 +225,14 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
             />
             {isDuplicate && (
-              <p className="mt-1 text-xs text-val-warn">같은 닉네임이 이미 등록되어 있습니다.</p>
+              <p className="mt-1 text-xs text-val-warn">같은 닉네임이 이미 있습니다.</p>
             )}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-[1fr_6.5rem]">
+          <div className="grid grid-cols-[1fr_6.5rem] gap-3">
             <div>
               <label htmlFor="player-riot-name" className="mb-1 block text-xs text-val-muted">
-                발로란트 닉
+                발로란트 닉네임
               </label>
               <input
                 id="player-riot-name"
@@ -314,30 +246,22 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               <label htmlFor="player-riot-tag" className="mb-1 block text-xs text-val-muted">
                 태그
               </label>
-              <div className="flex items-center gap-1">
-                <span className="text-val-muted">#</span>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-val-muted">
+                  #
+                </span>
                 <input
                   id="player-riot-tag"
                   value={riotTag}
                   onChange={(event) => setRiotTag(event.target.value)}
                   placeholder="KR1"
-                  className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
+                  className="w-full rounded-lg border border-val-line bg-val-bg py-2 pl-7 pr-3 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 rounded-lg border border-val-line bg-val-bg px-3 py-2.5">
-            <StatStepper label="승" value={wins} onAdjust={(delta) => handleRecordAdjust('wins', delta)} />
-            <StatStepper label="패" value={losses} onAdjust={(delta) => handleRecordAdjust('losses', delta)} />
-            {formatStreak(streak) ? (
-              <span className={`text-xs ${streak > 0 ? 'text-val-teal' : 'text-val-red'}`}>
-                {formatStreak(streak)}
-              </span>
-            ) : null}
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label htmlFor="player-current-tier" className="mb-1 block text-xs text-val-muted">
                 현재 티어
@@ -364,19 +288,19 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
                 onSelect={(value) => setMaxTier(parseRatingKey(value))}
               />
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="player-internal-tier" className="mb-1 block text-xs text-val-muted">
-              내전 티어{internalTier ? ` · ${formatRating(internalTier)}` : ' · 현재 티어 사용'}
-            </label>
-            <SearchSelect
-              id="player-internal-tier"
-              options={RANK_OPTIONS}
-              value={internalTier ? ratingKey(internalTier) : null}
-              placeholder="없으면 현재 티어"
-              onSelect={(value) => setInternalTier(parseRatingKey(value))}
-            />
+            <div>
+              <label htmlFor="player-internal-tier" className="mb-1 block text-xs text-val-muted">
+                내전 티어
+              </label>
+              <SearchSelect
+                id="player-internal-tier"
+                options={RANK_OPTIONS}
+                value={internalTier ? ratingKey(internalTier) : null}
+                placeholder="강제 조정"
+                onSelect={(value) => setInternalTier(parseRatingKey(value))}
+                onClear={() => setInternalTier(null)}
+              />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -386,20 +310,21 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               onClick={() => setCanOrder((value) => !value)}
               className={toggleBtn(canOrder)}
             >
-              오더 {canOrder ? 'ON' : 'OFF'}
+              {canOrder ? '오더 가능' : '오더 불가능'}
             </button>
             {(
               [
-                { value: null, label: '고정 없음' },
-                { value: 'TEAM_1', label: '1팀 고정' },
-                { value: 'TEAM_2', label: '2팀 고정' },
-              ] as const
+                { value: 'TEAM_1' as const, label: '1팀 고정' },
+                { value: 'TEAM_2' as const, label: '2팀 고정' },
+              ]
             ).map((option) => (
               <button
                 key={option.label}
                 type="button"
                 aria-pressed={lockedTeam === option.value}
-                onClick={() => setLockedTeam(option.value)}
+                onClick={() =>
+                  setLockedTeam((current) => (current === option.value ? null : option.value))
+                }
                 className={toggleBtn(lockedTeam === option.value)}
               >
                 {option.label}
@@ -424,46 +349,48 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             />
           </div>
 
-          <div>
-            <label htmlFor="player-rivals" className="mb-1 block text-xs text-val-muted">
-              라이벌
-            </label>
-            <SearchSelect
-              id="player-rivals"
-              options={otherPlayers
-                .filter((item) => !rivalIds.includes(item.id))
-                .map((item) => ({ value: item.id, label: item.name, searchText: item.name }))}
-              placeholder="닉네임 검색 후 추가"
-              clearOnSelect
-              onSelect={(id) => addLink('rival', id)}
-            />
-            <ChipList
-              tone="rose"
-              items={rivalIds
-                .map((id) => ({ id, label: otherPlayers.find((item) => item.id === id)?.name ?? '알 수 없음' }))}
-              onRemove={(id) => setRivalIds((current) => current.filter((item) => item !== id))}
-            />
-          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label htmlFor="player-rivals" className="mb-1 block text-xs text-val-muted">
+                라이벌
+              </label>
+              <SearchSelect
+                id="player-rivals"
+                options={otherPlayers
+                  .filter((item) => !rivalIds.includes(item.id))
+                  .map((item) => ({ value: item.id, label: item.name, searchText: item.name }))}
+                placeholder="닉네임 검색 후 추가"
+                clearOnSelect
+                onSelect={(id) => addLink('rival', id)}
+              />
+              <ChipList
+                tone="rose"
+                items={rivalIds
+                  .map((id) => ({ id, label: otherPlayers.find((item) => item.id === id)?.name ?? '알 수 없음' }))}
+                onRemove={(id) => setRivalIds((current) => current.filter((item) => item !== id))}
+              />
+            </div>
 
-          <div>
-            <label htmlFor="player-allies" className="mb-1 block text-xs text-val-muted">
-              같은 팀
-            </label>
-            <SearchSelect
-              id="player-allies"
-              options={otherPlayers
-                .filter((item) => !allyIds.includes(item.id))
-                .map((item) => ({ value: item.id, label: item.name, searchText: item.name }))}
-              placeholder="닉네임 검색 후 추가"
-              clearOnSelect
-              onSelect={(id) => addLink('ally', id)}
-            />
-            <ChipList
-              tone="sky"
-              items={allyIds
-                .map((id) => ({ id, label: otherPlayers.find((item) => item.id === id)?.name ?? '알 수 없음' }))}
-              onRemove={(id) => setAllyIds((current) => current.filter((item) => item !== id))}
-            />
+            <div>
+              <label htmlFor="player-allies" className="mb-1 block text-xs text-val-muted">
+                같은 팀
+              </label>
+              <SearchSelect
+                id="player-allies"
+                options={otherPlayers
+                  .filter((item) => !allyIds.includes(item.id))
+                  .map((item) => ({ value: item.id, label: item.name, searchText: item.name }))}
+                placeholder="닉네임 검색 후 추가"
+                clearOnSelect
+                onSelect={(id) => addLink('ally', id)}
+              />
+              <ChipList
+                tone="sky"
+                items={allyIds
+                  .map((id) => ({ id, label: otherPlayers.find((item) => item.id === id)?.name ?? '알 수 없음' }))}
+                onRemove={(id) => setAllyIds((current) => current.filter((item) => item !== id))}
+              />
+            </div>
           </div>
         </div>
 

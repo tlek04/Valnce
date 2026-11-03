@@ -1,5 +1,5 @@
 import { KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 export interface SearchOption {
   value: string;
@@ -13,6 +13,7 @@ interface SearchSelectProps {
   options: SearchOption[];
   value?: string | null;
   onSelect: (value: string) => void;
+  onClear?: () => void;
   placeholder?: string;
   clearOnSelect?: boolean;
 }
@@ -22,6 +23,7 @@ export default function SearchSelect({
   options,
   value,
   onSelect,
+  onClear,
   placeholder = '검색',
   clearOnSelect = false,
 }: SearchSelectProps) {
@@ -120,6 +122,21 @@ export default function SearchSelect({
           placeholder={placeholder}
           className="w-full bg-transparent px-3 py-2.5 text-val-cream outline-none placeholder:text-val-muted/60"
         />
+        {onClear && value ? (
+          <button
+            type="button"
+            aria-label="선택 해제"
+            className="mr-1 rounded p-1 text-val-muted hover:bg-white/5 hover:text-val-cream"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => {
+              onClear();
+              setQuery('');
+              setOpen(false);
+            }}
+          >
+            <X size={14} />
+          </button>
+        ) : null}
         <ChevronDown size={16} className="mr-3 shrink-0 text-val-muted" />
       </div>
       {open && (

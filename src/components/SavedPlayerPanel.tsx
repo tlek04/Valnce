@@ -106,7 +106,7 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
               기존 플레이어
             </h2>
             <p className="mt-1 text-xs text-val-muted">
-              저장 {players.length}명 · 닉·태그·티어·전적을 보관합니다
+              {players.length}명 · 닉·태그·티어·전적을 보관합니다
             </p>
           </div>
           <button
@@ -120,7 +120,7 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
         </div>
 
         <label htmlFor="saved-player-search" className="sr-only">
-          저장된 플레이어 검색
+          기존 플레이어 검색
         </label>
         <div className="mb-3 flex items-center rounded-lg border border-val-line bg-val-bg px-2">
           <Search size={14} className="shrink-0 text-val-muted" />
@@ -137,10 +137,10 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
         {available.length === 0 ? (
           <p className="px-1 py-8 text-center text-sm text-val-muted">
             {players.length === 0
-              ? '저장된 플레이어가 없습니다. 추가로 새로 등록하세요.'
+              ? '기존 플레이어가 없습니다. 새로 추가하세요.'
               : query.trim()
                 ? '검색 결과가 없습니다.'
-                : '대기열이나 팀에 없는 저장된 플레이어가 없습니다.'}
+                : '대기열·팀에 없는 기존 플레이어가 없습니다.'}
           </p>
         ) : (
           <ul className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto pr-1">
@@ -153,7 +153,7 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
                   if (result.message) onNotice?.(result.message);
                 }}
                 onDelete={() => {
-                  if (window.confirm(`${player.name}을(를) 저장 목록에서 삭제할까요?`)) {
+                  if (window.confirm(`${player.name}을(를) 기존 플레이어에서 삭제할까요?`)) {
                     removePlayer(player.id);
                   }
                 }}
@@ -186,7 +186,7 @@ function SavedPlayerRow({
       className={`flex cursor-grab items-center gap-2 rounded-lg border border-val-line bg-val-bg px-2 py-1.5 touch-none active:cursor-grabbing ${
         isDragging ? 'opacity-40' : ''
       }`}
-      aria-label={`${player.name} 드래그하여 대기열에 넣기`}
+      aria-label={`${player.name} 드래그하여 대기열에 추가`}
       {...listeners}
     >
       <span aria-hidden className="shrink-0 rounded p-1 text-val-muted">
@@ -221,7 +221,7 @@ function SavedPlayerRow({
       </button>
       <button
         type="button"
-        aria-label={`${player.name} 저장 삭제`}
+        aria-label={`${player.name} 기존에서 삭제`}
         onPointerDown={(event) => event.stopPropagation()}
         onClick={onDelete}
         className="shrink-0 rounded p-1 text-val-muted hover:bg-val-red/10 hover:text-val-red"

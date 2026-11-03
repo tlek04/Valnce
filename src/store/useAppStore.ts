@@ -5,6 +5,7 @@ import { autoBalanceTeams } from '../utils/balance';
 import { adjustMatchStat, applyMatchResult, recomputeStatsFromMatches } from '../utils/matchStats';
 import { applyMove, applyRelationPlacement, repairLocks } from '../utils/placement';
 import { restorePersistedState, stripPlayerLinks, syncRelations, toSavedPlayer, toSessionPlayer } from '../utils/player';
+import { sortPlayersByTier } from '../utils/rating';
 import { mergeSavedPlayers } from '../utils/rosterShare';
 import { hasRiotIdentity } from '../utils/valorantMatch';
 
@@ -134,7 +135,7 @@ export const useAppStore = create<AppStore>()(
         const result = applyMove(seeded, id, to, index);
         if (!result) return { ok: false };
         if (!result.ok) return { ok: false, message: result.message };
-        set({ waitlist: result.state.waitlist, team1: result.state.team1, team2: result.state.team2 });
+        set(result.state);
         return { ok: true, message: result.message };
       },
 
@@ -142,7 +143,7 @@ export const useAppStore = create<AppStore>()(
         const result = applyMove(get(), id, to, index);
         if (!result) return { ok: false };
         if (!result.ok) return { ok: false, message: result.message };
-        set({ waitlist: result.state.waitlist, team1: result.state.team1, team2: result.state.team2 });
+        set(result.state);
         return { ok: true, message: result.message };
       },
 
@@ -152,8 +153,8 @@ export const useAppStore = create<AppStore>()(
         if (result.ok) {
           const repaired = repairLocks(result);
           set({
-            team1: repaired.team1,
-            team2: repaired.team2,
+            team1: sortPlayersByTier(repaired.team1),
+            team2: sortPlayersByTier(repaired.team2),
             waitlist: repaired.waitlist,
             balanceNote: result.reason ?? null,
             balanceDetails: result.details ?? [],
@@ -169,10 +170,10 @@ export const useAppStore = create<AppStore>()(
       },
 
       resetTeams: () =>
-        set(() => ({
+        set((state) => ({
+          waitlist: [...state.waitlist, ...state.team1, ...state.team2],
           team1: [],
           team2: [],
-          waitlist: [],
           balanceNote: null,
           balanceDetails: [],
           sessionSavedAt: Date.now(),

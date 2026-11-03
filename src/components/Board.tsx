@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   CollisionDetection,
   DndContext,
@@ -18,7 +18,6 @@ import { Trophy } from 'lucide-react';
 import { ColumnId, Player } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { allyGroupOf, orderGroup } from '../utils/relations';
-import { advantageSummary, balanceLabel } from '../utils/rating';
 import PlayerCard from './PlayerCard';
 import TeamPanel from './TeamPanel';
 import WaitlistPanel from './WaitlistPanel';
@@ -46,17 +45,10 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
   const team1 = useAppStore((state) => state.team1);
   const team2 = useAppStore((state) => state.team2);
   const players = useAppStore((state) => state.players);
-  const balanceNote = useAppStore((state) => state.balanceNote);
-  const balanceDetails = useAppStore((state) => state.balanceDetails);
   const movePlayer = useAppStore((state) => state.movePlayer);
   const enlistPlayer = useAppStore((state) => state.enlistPlayer);
   const recordTeamResult = useAppStore((state) => state.recordTeamResult);
   const [activePlayer, setActivePlayer] = useState<Player | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
-  useEffect(() => {
-    if (balanceDetails.length === 0) setDetailsOpen(false);
-  }, [balanceDetails]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -119,8 +111,6 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
     .filter((player) => player.id !== activePlayer?.id)
     .map((player) => player.name)
     .join(', ');
-  const canShowAdvantage = team1.length > 0 && team2.length > 0;
-  const advantage = canShowAdvantage ? advantageSummary(team1, team2) : null;
 
   return (
     <DndContext
@@ -139,58 +129,7 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
           activeId={activePlayer?.id}
         />
         <div id="match-board" className="space-y-3">
-          {(advantage || balanceNote) && (
-            <div className="space-y-1.5 rounded-xl border border-val-line bg-val-panel/60 px-4 py-2 text-sm">
-              {advantage && (
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-val-muted">티어 차이</span>
-                  <span
-                    className={`font-display text-lg font-bold ${
-                      advantage.side === 'team1'
-                        ? 'text-[#38BDF8]'
-                        : advantage.side === 'team2'
-                          ? 'text-val-red'
-                          : 'text-val-cream'
-                    }`}
-                  >
-                    {advantage.text}
-                    {advantage.amount > 0 ? (
-                      <span className="ml-2 text-sm font-medium text-val-muted">
-                        {balanceLabel(advantage.amount)}
-                      </span>
-                    ) : null}
-                  </span>
-                </div>
-              )}
-              {balanceNote && (
-                <div className="space-y-1.5">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-xs leading-relaxed text-val-muted">나눈 기준: {balanceNote}</p>
-                    {balanceDetails.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setDetailsOpen((open) => !open)}
-                        className="shrink-0 text-xs font-semibold text-val-teal hover:underline"
-                      >
-                        {detailsOpen ? '접기' : '자세히'}
-                      </button>
-                    )}
-                  </div>
-                  {detailsOpen && balanceDetails.length > 0 && (
-                    <ul className="space-y-1 rounded-lg border border-val-line bg-val-bg/70 px-3 py-2 text-xs leading-relaxed text-val-cream/90">
-                      {balanceDetails.map((line) => (
-                        <li key={line}>· {line}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <span className="mr-auto text-xs text-val-muted">
-              경기 결과 · 최종 전적은 전적 동기화 기준으로 맞춰집니다
-            </span>
             <button
               type="button"
               disabled={team1.length === 0 || team2.length === 0}

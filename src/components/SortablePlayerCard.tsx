@@ -32,7 +32,7 @@ export default function SortablePlayerCard({
       aria-label={`${player.name} 드래그하여 이동`}
       {...listeners}
     >
-      <PlayerCard player={player} onEdit={onEdit} onDelete={onDelete} draggable />
+      <PlayerCard player={player} onEdit={onEdit} onDelete={onDelete} />
     </div>
   );
 }
