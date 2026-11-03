@@ -7,7 +7,7 @@
 1. Build command: `npm run build`
 2. Deploy command: `npx wrangler deploy`
 3. Root directory: 비움
-4. Bindings → KV: Variable `ROSTER` → `valnce_roster`
+4. KV `ROSTER` 는 `wrangler.toml`의 `[[kv_namespaces]]` 에 고정 (대시보드만 넣으면 배포 때 사라짐)
 5. **Secrets** → `HENRIK_API_KEY` = [HenrikDev](https://docs.henrikdev.xyz) API 키
 6. Redeploy
 

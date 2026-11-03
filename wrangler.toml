@@ -10,12 +10,7 @@ binding = "ASSETS"
 not_found_handling = "single-page-application"
 run_worker_first = true
 
-# 대시보드 Bindings:
-#   Variable name: ROSTER
-#   KV namespace: valnce_roster
-# Secrets:
-#   HENRIK_API_KEY = HenrikDev API 키
-# 로컬 배포 시 id가 필요하면 아래를 채운다.
-# [[kv_namespaces]]
-# binding = "ROSTER"
-# id = "YOUR_KV_NAMESPACE_ID"
+# Secrets (대시보드): HENRIK_API_KEY
+[[kv_namespaces]]
+binding = "ROSTER"
+id = "c94cfa210bfb4b78af3268219335e564"
