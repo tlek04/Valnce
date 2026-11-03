@@ -12,6 +12,7 @@ import {
   restrictionKey,
   sameRating,
 } from '../constants/valorant';
+import { formatRecord, formatStreak } from '../utils/matchStats';
 import { cloneRating, isRatingAtLeast } from '../utils/rating';
 import SearchSelect from './SearchSelect';
 import ChipList from './ChipList';
@@ -37,20 +38,47 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
   const boardPlayers = useAppStore((state) => [...state.waitlist, ...state.team1, ...state.team2]);
   const addPlayer = useAppStore((state) => state.addPlayer);
   const updatePlayer = useAppStore((state) => state.updatePlayer);
+  const recordPlayerResult = useAppStore((state) => state.recordPlayerResult);
   const formRef = useRef<HTMLFormElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const [name, setName] = useState(player?.name ?? '');
+  const [riotName, setRiotName] = useState(player?.riotName ?? '');
+  const [riotTag, setRiotTag] = useState(player?.riotTag ?? '');
   const [currentTier, setCurrentTier] = useState<RankRating>(player?.currentTier ?? DEFAULT_RATING);
   const [maxTier, setMaxTier] = useState<RankRating>(player?.maxTier ?? player?.currentTier ?? DEFAULT_RATING);
   const [internalTier, setInternalTier] = useState<RankRating | null>(player?.internalTier ?? null);
   const [restrictions, setRestrictions] = useState<WeaponRestriction[]>(player?.restrictions ?? []);
+  const [canOrder, setCanOrder] = useState(player?.canOrder ?? false);
   const [lockedTeam, setLockedTeam] = useState<Player['lockedTeam']>(player?.lockedTeam ?? null);
   const [rivalIds, setRivalIds] = useState<string[]>(player?.rivalIds ?? []);
   const [allyIds, setAllyIds] = useState<string[]>(player?.allyIds ?? []);
+  const [wins, setWins] = useState(player?.wins ?? 0);
+  const [losses, setLosses] = useState(player?.losses ?? 0);
+  const [streak, setStreak] = useState(player?.streak ?? 0);
 
   useEffect(() => {
     if (!isRatingAtLeast(maxTier, currentTier)) setMaxTier(cloneRating(currentTier));
   }, [currentTier, maxTier]);
+
+  useEffect(() => {
+    if (!open) return;
+    const saved = player ? useAppStore.getState().players.find((item) => item.id === player.id) : null;
+    const source = player ?? saved;
+    setName(source?.name ?? '');
+    setRiotName(source?.riotName ?? '');
+    setRiotTag(source?.riotTag ?? '');
+    setCurrentTier(source?.currentTier ?? DEFAULT_RATING);
+    setMaxTier(player?.maxTier ?? source?.currentTier ?? DEFAULT_RATING);
+    setInternalTier(player?.internalTier ?? null);
+    setRestrictions(player?.restrictions ?? []);
+    setCanOrder(player?.canOrder ?? false);
+    setLockedTeam(player?.lockedTeam ?? null);
+    setRivalIds(player?.rivalIds ?? []);
+    setAllyIds(player?.allyIds ?? []);
+    setWins(source?.wins ?? 0);
+    setLosses(source?.losses ?? 0);
+    setStreak(source?.streak ?? 0);
+  }, [open, player]);
 
   useEffect(() => {
     if (!open) return;
@@ -133,6 +161,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (!trimmedName) return;
+    const trimmedRiotName = riotName.trim();
+    const trimmedRiotTag = riotTag.trim();
     const payload: Player = {
       id: player?.id ?? crypto.randomUUID(),
       name: trimmedName,
@@ -140,14 +170,44 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
       maxTier: cloneRating(isRatingAtLeast(maxTier, currentTier) ? maxTier : currentTier),
       internalTier:
         internalTier && !sameRating(internalTier, currentTier) ? cloneRating(internalTier) : undefined,
+      canOrder,
       restrictions,
       lockedTeam,
       rivalIds,
       allyIds,
+      riotName: trimmedRiotName || undefined,
+      riotTag: trimmedRiotTag || undefined,
+      wins,
+      losses,
+      streak,
     };
     const message = player ? updatePlayer(player.id, payload) : addPlayer(payload);
     if (message) onNotice?.(message);
     onClose();
+  };
+
+  const handleQuickResult = (result: 'win' | 'loss') => {
+    if (!player) {
+      if (result === 'win') {
+        setWins((value) => value + 1);
+        setStreak((value) => (value > 0 ? value + 1 : 1));
+      } else {
+        setLosses((value) => value + 1);
+        setStreak((value) => (value < 0 ? value - 1 : -1));
+      }
+      return;
+    }
+    recordPlayerResult(player.id, result);
+    const next =
+      useAppStore.getState().players.find((item) => item.id === player.id) ??
+      [...useAppStore.getState().waitlist, ...useAppStore.getState().team1, ...useAppStore.getState().team2].find(
+        (item) => item.id === player.id
+      );
+    if (next) {
+      setWins(next.wins);
+      setLosses(next.losses);
+      setStreak(next.streak);
+    }
   };
 
   return (
@@ -197,6 +257,69 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             )}
           </div>
 
+          <div className="grid gap-4 sm:grid-cols-[1fr_7rem]">
+            <div>
+              <label htmlFor="player-riot-name" className="mb-1.5 block text-sm text-val-muted">
+                발로란트 닉
+              </label>
+              <input
+                id="player-riot-name"
+                value={riotName}
+                onChange={(event) => setRiotName(event.target.value)}
+                placeholder="게임 닉네임"
+                className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="player-riot-tag" className="mb-1.5 block text-sm text-val-muted">
+                태그
+              </label>
+              <div className="flex items-center gap-1">
+                <span className="text-val-muted">#</span>
+                <input
+                  id="player-riot-tag"
+                  value={riotTag}
+                  onChange={(event) => setRiotTag(event.target.value)}
+                  placeholder="KR1"
+                  className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend className="mb-1.5 text-sm text-val-muted">내전 전적</legend>
+            <div className="rounded-lg border border-val-line bg-val-bg px-3 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-val-cream">
+                  {formatRecord({ wins, losses })}
+                  {formatStreak(streak) ? (
+                    <span className={`ml-2 text-xs ${streak > 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {formatStreak(streak)}
+                    </span>
+                  ) : null}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleQuickResult('win')}
+                    className="rounded-md border border-emerald-400/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20"
+                  >
+                    승 +1
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleQuickResult('loss')}
+                    className="rounded-md border border-rose-400/40 bg-rose-500/10 px-2.5 py-1 text-xs font-medium text-rose-300 hover:bg-rose-500/20"
+                  >
+                    패 +1
+                  </button>
+                </div>
+              </div>
+              <p className="mt-2 text-xs text-val-muted">보드에서 팀 승패를 누르면 전원에게 자동 반영됩니다.</p>
+            </div>
+          </fieldset>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="player-current-tier" className="mb-1.5 block text-sm text-val-muted">
@@ -243,6 +366,26 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
                 : '자동 밸런스는 현재 티어를 기준으로 나눕니다.'}
             </p>
           </div>
+
+          <fieldset>
+            <legend className="mb-1.5 text-sm text-val-muted">오더</legend>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={canOrder}
+              onClick={() => setCanOrder((value) => !value)}
+              className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-colors ${
+                canOrder
+                  ? 'border-emerald-400/50 bg-emerald-500/10 text-val-cream'
+                  : 'border-val-line bg-val-bg text-val-muted hover:border-val-red/40'
+              }`}
+            >
+              <span>오더 가능</span>
+              <span className={`text-xs font-semibold ${canOrder ? 'text-emerald-300' : 'text-val-muted'}`}>
+                {canOrder ? '가능' : '불가'}
+              </span>
+            </button>
+          </fieldset>
 
           <div>
             <label htmlFor="player-weapon-limit" className="mb-1.5 block text-sm text-val-muted">

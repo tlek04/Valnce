@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { GripVertical, Lock, Pencil, Swords, Trash2, Users } from 'lucide-react';
+import { GripVertical, Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
 import { Player } from '../types';
 import { TIER_STYLES, formatRating, getRestrictionLabel, sameRating } from '../constants/valorant';
 import { useAppStore } from '../store/useAppStore';
+import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
 import { playerScrimTier } from '../utils/rating';
 
 interface PlayerCardProps {
@@ -34,6 +35,9 @@ export default function PlayerCard({
   const showPeak = !sameRating(player.maxTier, player.currentTier);
   const lockLabel =
     player.lockedTeam === 'TEAM_1' ? '1팀 고정' : player.lockedTeam === 'TEAM_2' ? '2팀 고정' : null;
+  const riotId = formatRiotId(player.riotName, player.riotTag);
+  const streakLabel = formatStreak(player.streak);
+  const hasRecord = player.wins > 0 || player.losses > 0 || player.streak !== 0;
 
   return (
     <article
@@ -50,7 +54,10 @@ export default function PlayerCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <h3 className="min-w-0 flex-1 break-words font-semibold text-val-cream">{player.name}</h3>
+            <div className="min-w-0 flex-1">
+              <h3 className="break-words font-semibold text-val-cream">{player.name}</h3>
+              {riotId && <p className="mt-0.5 truncate text-xs text-val-muted">{riotId}</p>}
+            </div>
             <span
               className={`shrink-0 rounded-md border px-2 py-0.5 text-xs font-semibold ${
                 TIER_STYLES[(scrimTier ?? player.currentTier).tier]
@@ -65,6 +72,22 @@ export default function PlayerCard({
             )}
             {showPeak && (
               <span className="text-xs text-val-muted">최고 {formatRating(player.maxTier)}</span>
+            )}
+            {hasRecord && (
+              <span className="text-xs text-val-muted">
+                {formatRecord(player)}
+                {streakLabel ? (
+                  <span className={`ml-1 ${player.streak > 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                    {streakLabel}
+                  </span>
+                ) : null}
+              </span>
+            )}
+            {player.canOrder && (
+              <span className="inline-flex items-center gap-1 rounded-md border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-300">
+                <Megaphone size={11} />
+                오더
+              </span>
             )}
             {lockLabel && (
               <span className="inline-flex items-center gap-1 rounded-md border border-val-red/30 bg-val-red/10 px-2 py-0.5 text-xs text-val-red">

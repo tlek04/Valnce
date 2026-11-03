@@ -1,0 +1,11 @@
+name = "valnce"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+# Pages 대시보드 Bindings:
+#   Variable name: ROSTER
+#   KV namespace: valnce_roster
+# 로컬 wrangler용으로 id가 필요하면 아래 주석을 풀고 실제 id를 넣으세요.
+# [[kv_namespaces]]
+# binding = "ROSTER"
+# id = "YOUR_KV_NAMESPACE_ID"

@@ -1,0 +1,63 @@
+import { SavedPlayer } from '../types';
+import { toSavedPlayer } from './player';
+
+export interface RemoteRoster {
+  updatedAt: number;
+  players: SavedPlayer[];
+}
+
+export type PushRosterResult =
+  | { ok: true }
+  | { ok: false; conflict?: false }
+  | { ok: false; conflict: true; roster: RemoteRoster };
+
+function apiUrl() {
+  const fromEnv = import.meta.env.VITE_ROSTER_API as string | undefined;
+  return fromEnv?.trim() || '/api/roster';
+}
+
+export function isRosterSyncConfigured() {
+  // 같은 오리진 Functions 또는 명시적 API URL
+  return Boolean(import.meta.env.VITE_ROSTER_API) || import.meta.env.PROD;
+}
+
+export async function fetchRemoteRoster(): Promise<RemoteRoster | null> {
+  try {
+    const response = await fetch(apiUrl(), { method: 'GET', cache: 'no-store' });
+    if (!response.ok) return null;
+    const data = (await response.json()) as { updatedAt?: number; players?: unknown[] };
+    return {
+      updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
+      players: Array.isArray(data.players) ? data.players.map((item) => toSavedPlayer(item)) : [],
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number): Promise<PushRosterResult> {
+  try {
+    const response = await fetch(apiUrl(), {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        updatedAt,
+        players: players.map((player) => toSavedPlayer(player)),
+      }),
+    });
+    if (response.status === 409) {
+      const data = (await response.json()) as { updatedAt?: number; players?: unknown[] };
+      return {
+        ok: false,
+        conflict: true,
+        roster: {
+          updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
+          players: Array.isArray(data.players) ? data.players.map((item) => toSavedPlayer(item)) : [],
+        },
+      };
+    }
+    return response.ok ? { ok: true } : { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}

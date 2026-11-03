@@ -1,6 +1,6 @@
 import { Player } from '../types';
 import { useAppStore } from '../store/useAppStore';
-import { formatMmr, teamAverageLabel, teamScore } from '../utils/rating';
+import { teamAverageLabel } from '../utils/rating';
 import DroppableColumn from './DroppableColumn';
 import SortablePlayerCard from './SortablePlayerCard';
 
@@ -29,10 +29,7 @@ export default function TeamPanel({ side, onEdit, groupedIds, activeId }: TeamPa
       <div className="mb-4 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <h2 className={`font-display text-xl font-bold tracking-wide ${accent}`}>{title}</h2>
-          <p className="text-xs text-val-muted">
-            평균 {average}
-            {team.length > 0 ? ` · 합계 ${formatMmr(teamScore(team))}` : ''}
-          </p>
+          <p className="text-xs text-val-muted">평균 {average}</p>
         </div>
         <span className="shrink-0 text-xs text-val-muted">{team.length} / 5</span>
       </div>

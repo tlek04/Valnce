@@ -1,5 +1,6 @@
 import { AppState, Player, RankRating, SavedPlayer, WeaponRestriction } from '../types';
 import { sameRating } from '../constants/valorant';
+import { normalizeMatchStats } from './matchStats';
 import { repairLocks } from './placement';
 import { cloneRating, ratingFromUnknown } from './rating';
 
@@ -42,16 +43,26 @@ export function normalizePlayer(raw: unknown): Player {
   const internalTier =
     parsedInternal && !sameRating(parsedInternal, currentTier) ? parsedInternal : undefined;
 
+  const stats = normalizeMatchStats(data);
+  const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
+  const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
+
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
     name: typeof data.name === 'string' ? data.name : '플레이어',
     currentTier,
     maxTier,
     ...(internalTier ? { internalTier } : {}),
+    canOrder: Boolean(data.canOrder),
     restrictions: asRestrictions(data),
     lockedTeam: data.lockedTeam === 'TEAM_1' || data.lockedTeam === 'TEAM_2' ? data.lockedTeam : null,
     rivalIds: asStringArray(Array.isArray(data.rivalIds) && data.rivalIds.length > 0 ? data.rivalIds : data.rivalId),
     allyIds: asStringArray(data.allyIds),
+    ...(riotName ? { riotName } : {}),
+    ...(riotTag ? { riotTag } : {}),
+    wins: stats.wins,
+    losses: stats.losses,
+    streak: stats.streak,
   };
 }
 
@@ -133,16 +144,28 @@ export function hydrateState(raw: Partial<AppState> | undefined): AppState {
   return {
     players: [...byId.values()].map(toSavedPlayer),
     ...repaired,
+    balanceNote: null,
+    balanceDetails: [],
+    sessionSavedAt: null,
+    rosterUpdatedAt: 0,
   };
 }
 
 export function toSavedPlayer(raw: unknown): SavedPlayer {
   const data = (raw ?? {}) as Record<string, unknown>;
   const name = typeof data.name === 'string' ? data.name.trim() : '';
+  const stats = normalizeMatchStats(data);
+  const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
+  const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
     name: name || '플레이어',
     currentTier: ratingFromUnknown(data.currentTier, FALLBACK),
+    ...(riotName ? { riotName } : {}),
+    ...(riotTag ? { riotTag } : {}),
+    wins: stats.wins,
+    losses: stats.losses,
+    streak: stats.streak,
   };
 }
 
@@ -153,12 +176,21 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     name: saved.name,
     currentTier,
     maxTier: cloneRating(currentTier),
+    canOrder: false,
     restrictions: [],
     lockedTeam: null,
     rivalIds: [],
     allyIds: [],
+    ...(saved.riotName ? { riotName: saved.riotName } : {}),
+    ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
+    wins: saved.wins ?? 0,
+    losses: saved.losses ?? 0,
+    streak: saved.streak ?? 0,
   };
 }
+
+/** 새로고침·창 종료 후 보드를 유지하는 시간. */
+export const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
 
 export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
   const seen = new Set<string>();
@@ -174,5 +206,47 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     waitlist: [],
     team1: [],
     team2: [],
+    balanceNote: null,
+    balanceDetails: [],
+    sessionSavedAt: null,
+    rosterUpdatedAt: 0,
+  };
+}
+
+function takeBoardColumn(list: unknown[] | undefined, used: Set<string>): Player[] {
+  const next: Player[] = [];
+  for (const item of list ?? []) {
+    const player = normalizePlayer(item);
+    if (used.has(player.id)) continue;
+    used.add(player.id);
+    next.push(player);
+  }
+  return next;
+}
+
+/** 기존 명단은 항상 복구하고, 보드는 2시간 안에 저장된 경우만 살린다. */
+export function restorePersistedState(raw: Partial<AppState> | undefined): AppState {
+  const library = hydrateLibrary(raw);
+  const savedAt = typeof raw?.sessionSavedAt === 'number' ? raw.sessionSavedAt : 0;
+  if (!raw || !savedAt || Date.now() - savedAt > SESSION_TTL_MS) {
+    return library;
+  }
+
+  const used = new Set<string>();
+  const team1 = takeBoardColumn(raw.team1 as unknown[] | undefined, used);
+  const team2 = takeBoardColumn(raw.team2 as unknown[] | undefined, used);
+  const waitlist = takeBoardColumn(raw.waitlist as unknown[] | undefined, used);
+  const repaired = repairLocks({ waitlist, team1, team2 });
+  const balanceDetails = Array.isArray(raw.balanceDetails)
+    ? raw.balanceDetails.filter((item): item is string => typeof item === 'string')
+    : [];
+
+  return {
+    players: library.players,
+    ...repaired,
+    balanceNote: typeof raw.balanceNote === 'string' ? raw.balanceNote : null,
+    balanceDetails,
+    sessionSavedAt: savedAt,
+    rosterUpdatedAt: typeof raw.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
   };
 }

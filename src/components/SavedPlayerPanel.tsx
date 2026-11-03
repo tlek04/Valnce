@@ -4,6 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Search, Trash2, UserPlus, X } from 'lucide-react';
 import { SavedPlayer } from '../types';
 import { TIER_STYLES, formatRating } from '../constants/valorant';
+import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
 import { useAppStore } from '../store/useAppStore';
 
 export const SAVED_DRAG_PREFIX = 'saved:';
@@ -52,7 +53,11 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
     const needle = query.trim().toLowerCase();
     return players
       .filter((player) => !busyIds.has(player.id))
-      .filter((player) => !needle || player.name.toLowerCase().includes(needle));
+      .filter((player) => {
+        if (!needle) return true;
+        const riot = formatRiotId(player.riotName, player.riotTag).toLowerCase();
+        return player.name.toLowerCase().includes(needle) || riot.includes(needle);
+      });
   }, [players, busyIds, query]);
 
   const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -100,7 +105,9 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
             <h2 id="saved-player-title" className="mt-1 font-display text-2xl font-bold text-val-cream">
               기존 플레이어
             </h2>
-            <p className="mt-1 text-xs text-val-muted">저장 {players.length}명 · 닉네임과 티어만 보관합니다</p>
+            <p className="mt-1 text-xs text-val-muted">
+              저장 {players.length}명 · 닉·태그·티어·전적을 보관합니다
+            </p>
           </div>
           <button
             type="button"
@@ -185,7 +192,19 @@ function SavedPlayerRow({
       <span aria-hidden className="shrink-0 rounded p-1 text-val-muted">
         <GripVertical size={14} />
       </span>
-      <span className="min-w-0 flex-1 truncate text-sm font-medium text-val-cream">{player.name}</span>
+      <div className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-val-cream">{player.name}</span>
+        <span className="mt-0.5 block truncate text-[10px] text-val-muted">
+          {formatRiotId(player.riotName, player.riotTag) || '태그 없음'}
+          {(player.wins > 0 || player.losses > 0) && (
+            <>
+              {' · '}
+              {formatRecord(player)}
+              {formatStreak(player.streak) ? ` · ${formatStreak(player.streak)}` : ''}
+            </>
+          )}
+        </span>
+      </div>
       <span
         className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${TIER_STYLES[player.currentTier.tier]}`}
       >

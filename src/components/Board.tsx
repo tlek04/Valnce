@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   CollisionDetection,
   DndContext,
@@ -45,9 +45,17 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
   const team1 = useAppStore((state) => state.team1);
   const team2 = useAppStore((state) => state.team2);
   const players = useAppStore((state) => state.players);
+  const balanceNote = useAppStore((state) => state.balanceNote);
+  const balanceDetails = useAppStore((state) => state.balanceDetails);
   const movePlayer = useAppStore((state) => state.movePlayer);
   const enlistPlayer = useAppStore((state) => state.enlistPlayer);
+  const recordTeamResult = useAppStore((state) => state.recordTeamResult);
   const [activePlayer, setActivePlayer] = useState<Player | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  useEffect(() => {
+    if (balanceDetails.length === 0) setDetailsOpen(false);
+  }, [balanceDetails]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -110,8 +118,8 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
     .filter((player) => player.id !== activePlayer?.id)
     .map((player) => player.name)
     .join(', ');
-  const fullMatch = team1.length === 5 && team2.length === 5;
-  const advantage = fullMatch ? advantageSummary(team1, team2) : null;
+  const canShowAdvantage = team1.length > 0 && team2.length > 0;
+  const advantage = canShowAdvantage ? advantageSummary(team1, team2) : null;
 
   return (
     <DndContext
@@ -130,25 +138,79 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
           activeId={activePlayer?.id}
         />
         <div id="match-board" className="space-y-3">
-          {fullMatch && advantage && (
-            <div className="flex items-center justify-between rounded-xl border border-val-line bg-val-panel/60 px-4 py-2 text-sm">
-              <span className="text-val-muted">내전 MMR</span>
-              <span
-                className={`font-display text-lg font-bold ${
-                  advantage.side === 'team1'
-                    ? 'text-sky-300'
-                    : advantage.side === 'team2'
-                      ? 'text-rose-300'
-                      : 'text-val-cream'
-                }`}
-              >
-                {advantage.text}
-                {advantage.amount > 0 ? (
-                  <span className="ml-2 text-sm font-medium text-val-muted">{balanceLabel(advantage.amount)}</span>
-                ) : null}
-              </span>
+          {(advantage || balanceNote) && (
+            <div className="space-y-1.5 rounded-xl border border-val-line bg-val-panel/60 px-4 py-2 text-sm">
+              {advantage && (
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-val-muted">티어 차이</span>
+                  <span
+                    className={`font-display text-lg font-bold ${
+                      advantage.side === 'team1'
+                        ? 'text-sky-300'
+                        : advantage.side === 'team2'
+                          ? 'text-rose-300'
+                          : 'text-val-cream'
+                    }`}
+                  >
+                    {advantage.text}
+                    {advantage.amount > 0 ? (
+                      <span className="ml-2 text-sm font-medium text-val-muted">
+                        {balanceLabel(advantage.amount)}
+                      </span>
+                    ) : null}
+                  </span>
+                </div>
+              )}
+              {balanceNote && (
+                <div className="space-y-1.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs leading-relaxed text-val-muted">나눈 기준: {balanceNote}</p>
+                    {balanceDetails.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setDetailsOpen((open) => !open)}
+                        className="shrink-0 text-xs font-semibold text-sky-300 hover:underline"
+                      >
+                        {detailsOpen ? '접기' : '자세히'}
+                      </button>
+                    )}
+                  </div>
+                  {detailsOpen && balanceDetails.length > 0 && (
+                    <ul className="space-y-1 rounded-lg border border-val-line bg-val-bg/70 px-3 py-2 text-xs leading-relaxed text-val-cream/90">
+                      {balanceDetails.map((line) => (
+                        <li key={line}>· {line}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
             </div>
           )}
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <span className="mr-auto text-xs text-val-muted">경기 결과 (양쪽 팀 전원 전적 반영)</span>
+            <button
+              type="button"
+              disabled={team1.length === 0 || team2.length === 0}
+              onClick={() => {
+                const result = recordTeamResult('TEAM_1');
+                onNotice?.(result.message);
+              }}
+              className="rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-300 hover:bg-sky-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              1팀 승
+            </button>
+            <button
+              type="button"
+              disabled={team1.length === 0 || team2.length === 0}
+              onClick={() => {
+                const result = recordTeamResult('TEAM_2');
+                onNotice?.(result.message);
+              }}
+              className="rounded-lg border border-rose-400/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              2팀 승
+            </button>
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             <TeamPanel
               side="TEAM_1"

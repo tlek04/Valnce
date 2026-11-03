@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Player } from './types';
 import Board from './components/Board';
 import Header from './components/Header';
 import PlayerFormModal from './components/PlayerFormModal';
+import { useRosterSync } from './hooks/useRosterSync';
 
 export default function App() {
   const [formOpen, setFormOpen] = useState(false);
@@ -10,9 +11,11 @@ export default function App() {
   const [formKey, setFormKey] = useState(0);
   const [notice, setNotice] = useState<{ text: string; id: number } | null>(null);
 
-  const showNotice = (text: string) => {
+  const showNotice = useCallback((text: string) => {
     setNotice({ text, id: Date.now() });
-  };
+  }, []);
+
+  const syncStatus = useRosterSync(showNotice);
 
   const openCreate = () => {
     setEditingPlayer(null);
@@ -37,8 +40,8 @@ export default function App() {
   }, [notice]);
 
   return (
-    <div className="min-h-screen text-val-cream">
-      <Header onNotice={showNotice} />
+    <div className="min-h-screen bg-val-bg text-val-cream">
+      <Header onNotice={showNotice} syncStatus={syncStatus} />
       {notice && (
         <div className="mx-auto max-w-[1600px] px-4 pt-3">
           <p
