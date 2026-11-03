@@ -5,12 +5,15 @@ export default {
     extend: {
       colors: {
         val: {
-          bg: '#0b0f14',
-          panel: '#121821',
-          line: '#243044',
-          red: '#ff4655',
-          cream: '#ece8e1',
-          muted: '#8b95a5',
+          bg: '#0F1923',
+          panel: '#1C252E',
+          line: '#2B353F',
+          red: '#FF4655',
+          sky: '#38BDF8',
+          teal: '#0FDFC3',
+          cream: '#ECE8E1',
+          muted: '#8B978F',
+          warn: '#E8C547',
         },
       },
       fontFamily: {

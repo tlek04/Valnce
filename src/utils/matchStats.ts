@@ -31,6 +31,19 @@ export function applyMatchResult(stats: MatchStats, result: 'win' | 'loss'): Mat
   };
 }
 
+/** 승·패를 각각 ±1. 0 미만으로 내려가지 않으며, 수동 조정 시 연승/연패는 초기화. */
+export function adjustMatchStat(
+  stats: MatchStats,
+  field: 'wins' | 'losses',
+  delta: number
+): MatchStats {
+  if (delta === 0) return stats;
+  const wins = field === 'wins' ? Math.max(0, stats.wins + delta) : stats.wins;
+  const losses = field === 'losses' ? Math.max(0, stats.losses + delta) : stats.losses;
+  if (wins === stats.wins && losses === stats.losses) return stats;
+  return { wins, losses, streak: 0 };
+}
+
 export function formatRecord(stats: Pick<MatchStats, 'wins' | 'losses'>): string {
   return `${stats.wins}승 ${stats.losses}패`;
 }

@@ -14,6 +14,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { Trophy } from 'lucide-react';
 import { ColumnId, Player } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { allyGroupOf, orderGroup } from '../utils/relations';
@@ -29,7 +30,6 @@ interface BoardProps {
   onEdit: (player: Player) => void;
   onNotice?: (message: string) => void;
   onMatchSync?: (options?: { force?: boolean; soft?: boolean }) => void;
-  matchSyncing?: boolean;
 }
 
 function isColumnId(id: string): id is ColumnId {
@@ -42,7 +42,7 @@ const detectCollision: CollisionDetection = (args) => {
   return rectIntersection(args);
 };
 
-export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSyncing = false }: BoardProps) {
+export default function Board({ onAdd, onEdit, onNotice, onMatchSync }: BoardProps) {
   const waitlist = useAppStore((state) => state.waitlist);
   const team1 = useAppStore((state) => state.team1);
   const team2 = useAppStore((state) => state.team2);
@@ -148,9 +148,9 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSynci
                   <span
                     className={`font-display text-lg font-bold ${
                       advantage.side === 'team1'
-                        ? 'text-sky-300'
+                        ? 'text-[#38BDF8]'
                         : advantage.side === 'team2'
-                          ? 'text-rose-300'
+                          ? 'text-val-red'
                           : 'text-val-cream'
                     }`}
                   >
@@ -171,7 +171,7 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSynci
                       <button
                         type="button"
                         onClick={() => setDetailsOpen((open) => !open)}
-                        className="shrink-0 text-xs font-semibold text-sky-300 hover:underline"
+                        className="shrink-0 text-xs font-semibold text-val-teal hover:underline"
                       >
                         {detailsOpen ? '접기' : '자세히'}
                       </button>
@@ -190,16 +190,8 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSynci
           )}
           <div className="flex flex-wrap items-center justify-end gap-2">
             <span className="mr-auto text-xs text-val-muted">
-              경기 결과 · 최종 전적은 커스텀 매치 동기화 기준으로 맞춰집니다
+              경기 결과 · 최종 전적은 전적 동기화 기준으로 맞춰집니다
             </span>
-            <button
-              type="button"
-              disabled={matchSyncing}
-              onClick={() => onMatchSync?.({ force: true })}
-              className="rounded-lg border border-val-line bg-val-bg px-3 py-1.5 text-xs font-semibold text-val-cream hover:border-val-red/40 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {matchSyncing ? '동기화 중' : '커스텀 동기화'}
-            </button>
             <button
               type="button"
               disabled={team1.length === 0 || team2.length === 0}
@@ -208,8 +200,10 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSynci
                 onNotice?.(result.message);
                 onMatchSync?.({ force: true, soft: true });
               }}
-              className="rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-300 hover:bg-sky-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+              style={{ backgroundColor: 'rgba(56, 189, 248, 0.68)' }}
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
             >
+              <Trophy size={15} />
               1팀 승
             </button>
             <button
@@ -220,8 +214,10 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSynci
                 onNotice?.(result.message);
                 onMatchSync?.({ force: true, soft: true });
               }}
-              className="rounded-lg border border-rose-400/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+              style={{ backgroundColor: 'rgba(255, 70, 85, 0.6)' }}
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
             >
+              <Trophy size={15} />
               2팀 승
             </button>
           </div>
@@ -246,7 +242,7 @@ export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSynci
           <div className="z-[60] w-[min(100%,20rem)]">
             <PlayerCard player={activePlayer} onEdit={() => undefined} onDelete={() => undefined} overlay />
             {allyNames ? (
-              <p className="mt-1 rounded-md bg-sky-500 px-2 py-1 text-center text-xs font-semibold text-white">
+              <p className="mt-1 rounded-md bg-[#38BDF8] px-2 py-1 text-center text-xs font-semibold text-[#0F1923]">
                 {allyNames} 함께 이동
               </p>
             ) : null}

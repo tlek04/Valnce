@@ -7,9 +7,9 @@ interface ChipListProps {
 }
 
 const TONE = {
-  orange: 'border-orange-400/30 bg-orange-400/10 text-orange-200',
-  rose: 'border-rose-400/30 bg-rose-400/10 text-rose-200',
-  sky: 'border-sky-400/30 bg-sky-400/10 text-sky-200',
+  orange: 'border-val-warn/30 bg-val-warn/10 text-val-warn',
+  rose: 'border-val-red/30 bg-val-red/10 text-val-red',
+  sky: 'border-[#38BDF8]/30 bg-[#38BDF8]/10 text-[#38BDF8]',
 };
 
 export default function ChipList({ items, onRemove, tone = 'orange' }: ChipListProps) {

@@ -77,14 +77,14 @@ export default function PlayerCard({
               <span className="text-xs text-val-muted">
                 {formatRecord(player)}
                 {streakLabel ? (
-                  <span className={`ml-1 ${player.streak > 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  <span className={`ml-1 ${player.streak > 0 ? 'text-val-teal' : 'text-val-red'}`}>
                     {streakLabel}
                   </span>
                 ) : null}
               </span>
             )}
             {player.canOrder && (
-              <span className="inline-flex items-center gap-1 rounded-md border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-300">
+              <span className="inline-flex items-center gap-1 rounded-md border border-val-teal/30 bg-val-teal/10 px-2 py-0.5 text-xs text-val-teal">
                 <Megaphone size={11} />
                 오더
               </span>
@@ -99,18 +99,18 @@ export default function PlayerCard({
           {(restrictionLabels.length > 0 || rivals || allies) && (
             <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
               {restrictionLabels.map((label, index) => (
-                <span key={`${label}-${index}`} className="text-orange-300/90">
+                <span key={`${label}-${index}`} className="text-val-warn/90">
                   {label}
                 </span>
               ))}
               {rivals && (
-                <span className="inline-flex items-center gap-1 text-rose-300">
+                <span className="inline-flex items-center gap-1 text-val-red">
                   <Swords size={11} />
                   {rivals}
                 </span>
               )}
               {allies && (
-                <span className="inline-flex items-center gap-1 text-sky-300">
+                <span className="inline-flex items-center gap-1 text-[#38BDF8]">
                   <Users size={11} />
                   {allies}
                 </span>

@@ -4,29 +4,29 @@
 
 :root {
   color-scheme: dark;
-  background-color: #0b0f14;
+  background-color: #0f1923;
 }
 
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background-color: #0b0f14;
+  background-color: #0f1923;
 }
 
 body {
   min-height: 100vh;
   background-image:
-    radial-gradient(circle at top left, rgba(255, 70, 85, 0.12), transparent 32%),
-    radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 28%);
-  background-color: #0b0f14;
+    radial-gradient(circle at top left, rgba(255, 70, 85, 0.14), transparent 34%),
+    radial-gradient(circle at top right, rgba(15, 223, 195, 0.08), transparent 30%);
+  background-color: #0f1923;
   background-repeat: no-repeat;
   font-family: 'Noto Sans KR', system-ui, sans-serif;
 }
 
 #root {
   min-height: 100vh;
-  background-color: #0b0f14;
+  background-color: #0f1923;
 }
 
 ::-webkit-scrollbar {
@@ -34,6 +34,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a3548;
+  background: #2b353f;
   border-radius: 999px;
 }

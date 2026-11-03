@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserPlus, Users } from 'lucide-react';
+import { Contact, UserPlus, Users } from 'lucide-react';
 import { Player } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import DroppableColumn from './DroppableColumn';
@@ -53,12 +53,12 @@ export default function WaitlistPanel({
             type="button"
             onClick={() => setLibraryOpen((open) => !open)}
             aria-pressed={libraryOpen}
-            className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-semibold ${
-              libraryOpen
-                ? 'border-val-red/60 bg-val-red/15 text-val-cream'
-                : 'border-val-line text-val-cream hover:bg-white/5'
-            }`}
+            style={{
+              backgroundColor: libraryOpen ? 'rgba(56, 189, 248, 0.8)' : 'rgba(56, 189, 248, 0.68)',
+            }}
+            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110"
           >
+            <Contact size={16} />
             기존 플레이어
           </button>
         </div>
@@ -82,7 +82,7 @@ export default function WaitlistPanel({
               <button
                 type="button"
                 onClick={() => setLibraryOpen(true)}
-                className="text-sm font-semibold text-sky-300 hover:underline"
+                className="text-sm font-semibold text-[#38BDF8] hover:underline"
               >
                 기존 플레이어 추가
               </button>

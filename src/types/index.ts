@@ -62,7 +62,7 @@ export interface SavedPlayer {
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
-  /** 커스텀 전적 조회의 단골 시드 (최대 2명) */
+  /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
   wins: number;
   losses: number;
@@ -83,6 +83,7 @@ export interface Player {
   allyIds: string[];
   riotName?: string;
   riotTag?: string;
+  /** @deprecated 시드는 고정 닉 기준 */
   matchSeed?: boolean;
   wins: number;
   losses: number;
@@ -135,6 +136,8 @@ export interface AppActions {
   /** 보드에 있는 1·2팀 전원에게 승패를 반영하고 명단에도 저장한다. */
   recordTeamResult: (winner: 'TEAM_1' | 'TEAM_2') => { ok: boolean; message: string };
   recordPlayerResult: (id: string, result: 'win' | 'loss') => void;
+  /** 개별 승·패를 ± 조정한다. */
+  adjustPlayerRecord: (id: string, field: 'wins' | 'losses', delta: number) => void;
   /** qualifying 커스텀 매치로 태그 있는 플레이어 전적을 재계산한다. */
   reconcileMatchStats: (matches: QualifyingMatch[]) => void;
 }

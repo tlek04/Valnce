@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { AppState, AppStore, ColumnId, Player, QualifyingMatch } from '../types';
 import { autoBalanceTeams } from '../utils/balance';
-import { applyMatchResult, recomputeStatsFromMatches } from '../utils/matchStats';
+import { adjustMatchStat, applyMatchResult, recomputeStatsFromMatches } from '../utils/matchStats';
 import { applyMove, applyRelationPlacement, repairLocks } from '../utils/placement';
 import { restorePersistedState, stripPlayerLinks, syncRelations, toSavedPlayer, toSessionPlayer } from '../utils/player';
 import { mergeSavedPlayers } from '../utils/rosterShare';
@@ -243,6 +243,30 @@ export const useAppStore = create<AppStore>()(
           const current = onBoard ?? (saved ? toSessionPlayer(saved) : null);
           if (!current) return state;
           const updated = withResult(current, result);
+          return {
+            players: upsertSaved(state.players, updated),
+            team1: state.team1.map((item) => (item.id === id ? updated : item)),
+            team2: state.team2.map((item) => (item.id === id ? updated : item)),
+            waitlist: state.waitlist.map((item) => (item.id === id ? updated : item)),
+            rosterUpdatedAt: Date.now(),
+          };
+        }),
+
+      adjustPlayerRecord: (id, field, delta) =>
+        set((state) => {
+          const onBoard = findPlayer(state, id);
+          const saved = state.players.find((item) => item.id === id);
+          const current = onBoard ?? (saved ? toSessionPlayer(saved) : null);
+          if (!current) return state;
+          const nextStats = adjustMatchStat(current, field, delta);
+          if (
+            nextStats.wins === current.wins &&
+            nextStats.losses === current.losses &&
+            nextStats.streak === current.streak
+          ) {
+            return state;
+          }
+          const updated = { ...current, ...nextStats };
           return {
             players: upsertSaved(state.players, updated),
             team1: state.team1.map((item) => (item.id === id ? updated : item)),

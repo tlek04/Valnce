@@ -28,7 +28,7 @@ export default function SortablePlayerCard({
         transition,
         opacity: isDragging ? 0.35 : 1,
       }}
-      className={`cursor-grab touch-none active:cursor-grabbing ${grouped ? 'rounded-xl ring-2 ring-sky-400/70' : ''}`}
+      className={`cursor-grab touch-none active:cursor-grabbing ${grouped ? 'rounded-xl ring-2 ring-[#38BDF8]/70' : ''}`}
       aria-label={`${player.name} 드래그하여 이동`}
       {...listeners}
     >

@@ -43,7 +43,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-val-bg text-val-cream">
-      <Header onNotice={showNotice} syncStatus={syncStatus} />
+      <Header
+        onNotice={showNotice}
+        syncStatus={syncStatus}
+        onMatchSync={(options) => {
+          void runMatchSync(options);
+        }}
+        matchSyncing={matchSyncing}
+      />
       {notice && (
         <div className="mx-auto max-w-[1600px] px-4 pt-3">
           <p
@@ -62,7 +69,6 @@ export default function App() {
         onMatchSync={(options) => {
           void runMatchSync(options);
         }}
-        matchSyncing={matchSyncing}
       />
       {formOpen && (
         <PlayerFormModal

@@ -11,12 +11,32 @@ export function matchHistoryCutoff(now = Date.now()) {
 export const MATCH_SYNC_INTERVAL_MS = 12 * 60 * 60 * 1000; // 12시간
 export const MAX_MATCH_SEEDS = 2;
 
+/** 커스텀 전적 API 조회 고정 시드 (명단 닉 또는 발로란트 닉) */
+export const FIXED_MATCH_SEED_NAMES = ['포뇨', '게임은이게맞어'] as const;
+
 export function hasRiotIdentity(player: { riotName?: string; riotTag?: string }) {
   return Boolean(riotIdentityKey(player.riotName, player.riotTag));
 }
 
+function matchesFixedSeedName(player: SavedPlayer, seedName: string) {
+  const target = seedName.trim().toLowerCase();
+  if (!target) return false;
+  return (
+    player.name.trim().toLowerCase() === target ||
+    (player.riotName?.trim().toLowerCase() ?? '') === target
+  );
+}
+
 export function listMatchSeeds(players: SavedPlayer[]) {
-  return players.filter((player) => player.matchSeed && hasRiotIdentity(player)).slice(0, MAX_MATCH_SEEDS);
+  const seeds: SavedPlayer[] = [];
+  for (const seedName of FIXED_MATCH_SEED_NAMES) {
+    const player = players.find(
+      (item) => matchesFixedSeedName(item, seedName) && hasRiotIdentity(item)
+    );
+    if (player && !seeds.some((item) => item.id === player.id)) seeds.push(player);
+    if (seeds.length >= MAX_MATCH_SEEDS) break;
+  }
+  return seeds;
 }
 
 export function listTaggedRoster(players: SavedPlayer[]) {

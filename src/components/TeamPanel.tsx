@@ -15,7 +15,7 @@ export default function TeamPanel({ side, onEdit, groupedIds, activeId }: TeamPa
   const team = useAppStore((state) => (side === 'TEAM_1' ? state.team1 : state.team2));
   const dismissPlayer = useAppStore((state) => state.dismissPlayer);
   const title = side === 'TEAM_1' ? '1팀' : '2팀';
-  const accent = side === 'TEAM_1' ? 'text-sky-300' : 'text-rose-300';
+  const accent = side === 'TEAM_1' ? 'text-[#38BDF8]' : 'text-val-red';
   const columnId = side === 'TEAM_1' ? 'team1' : 'team2';
   const emptyCount = Math.max(0, 5 - team.length);
   const average = teamAverageLabel(team);

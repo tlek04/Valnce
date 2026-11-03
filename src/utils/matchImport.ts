@@ -27,7 +27,11 @@ export async function importQualifyingMatches(): Promise<MatchImportResponse> {
   const roster = listTaggedRoster(players);
 
   if (seeds.length === 0) {
-    return { ok: false, matches: [], error: '시드(단골) 플레이어를 닉#태그와 함께 지정하세요. (최대 2명)' };
+    return {
+      ok: false,
+      matches: [],
+      error: '고정 시드(포뇨, 게임은이게맞어)에 닉#태그를 등록하세요.',
+    };
   }
   if (roster.length === 0) {
     return { ok: false, matches: [], error: '승패를 맞출 명단에 닉#태그를 등록하세요.' };
