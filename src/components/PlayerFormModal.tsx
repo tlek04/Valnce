@@ -313,8 +313,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               </span>
             </button>
             <p className="mt-1.5 text-xs text-val-muted">
-              자주 오는 사람 최대 {MAX_MATCH_SEEDS}명. 닉#태그가 있어야 하며, 등록 태그 3명 이상인 커스텀만
-              전적에 반영됩니다.
+              자주 오는 사람 최대 {MAX_MATCH_SEEDS}명만 API로 전적을 가져옵니다. 나머지 인원도 닉#태그가
+              있으면 그 매치 참가자로 매칭되어 승패가 반영됩니다.
             </p>
           </fieldset>
 

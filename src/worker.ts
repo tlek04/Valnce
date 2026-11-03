@@ -28,10 +28,10 @@ interface QualifyingMatch {
 }
 
 const KEY = 'shared-roster';
-const PAGE_SIZE = 10;
-const MAX_PAGES_PER_SEED = 20;
+/** 시드당 Henrik 호출 1회에 가져올 커스텀 판 수 */
+const PAGE_SIZE = 15;
 
-/** 가장 최근 8월 1일 0시(UTC 날짜 기준 로컬과 동일하게 month=7)부터 */
+/** 가장 최근 8월 1일 0시부터 */
 function matchHistoryCutoff(now = Date.now()) {
   const date = new Date(now);
   const seasonYear = date.getMonth() >= 7 ? date.getFullYear() : date.getFullYear() - 1;
@@ -109,38 +109,27 @@ async function fetchSeedMatches(
   apiKey: string,
   cutoff: number
 ): Promise<unknown[]> {
+  const url =
+    `https://api.henrikdev.xyz/valorant/v4/matches/kr/pc/` +
+    `${encodeURIComponent(seed.riotName)}/${encodeURIComponent(seed.riotTag)}` +
+    `?size=${PAGE_SIZE}&start=0&queue=custom`;
+
+  const response = await fetch(url, {
+    headers: { Authorization: apiKey },
+  });
+  if (!response.ok) {
+    if (response.status === 404) return [];
+    throw new Error(`HenrikDev ${response.status}`);
+  }
+
+  const payload = (await response.json()) as { data?: unknown[] };
+  const batch = Array.isArray(payload.data) ? payload.data : [];
   const collected: unknown[] = [];
-  for (let page = 0; page < MAX_PAGES_PER_SEED; page += 1) {
-    const start = page * PAGE_SIZE;
-    const url =
-      `https://api.henrikdev.xyz/valorant/v4/matches/kr/pc/` +
-      `${encodeURIComponent(seed.riotName)}/${encodeURIComponent(seed.riotTag)}` +
-      `?size=${PAGE_SIZE}&start=${start}&queue=custom`;
-
-    const response = await fetch(url, {
-      headers: { Authorization: apiKey },
-    });
-    if (!response.ok) {
-      if (response.status === 404) break;
-      throw new Error(`HenrikDev ${response.status}`);
-    }
-
-    const payload = (await response.json()) as { data?: unknown[] };
-    const batch = Array.isArray(payload.data) ? payload.data : [];
-    if (batch.length === 0) break;
-
-    let reachedCutoff = false;
-    for (const match of batch) {
-      const meta = (match as { metadata?: { started_at?: string } }).metadata;
-      const startedAt = meta?.started_at ? Date.parse(meta.started_at) : NaN;
-      if (!Number.isFinite(startedAt)) continue;
-      if (startedAt < cutoff) {
-        reachedCutoff = true;
-        continue;
-      }
-      collected.push(match);
-    }
-    if (reachedCutoff || batch.length < PAGE_SIZE) break;
+  for (const match of batch) {
+    const meta = (match as { metadata?: { started_at?: string } }).metadata;
+    const startedAt = meta?.started_at ? Date.parse(meta.started_at) : NaN;
+    if (!Number.isFinite(startedAt) || startedAt < cutoff) continue;
+    collected.push(match);
   }
   return collected;
 }
@@ -183,7 +172,8 @@ function toQualifyingMatches(rawMatches: unknown[], roster: RosterIdentity[]): Q
     }
 
     const uniqueIds = new Set(results.map((item) => item.playerId));
-    if (uniqueIds.size < 3) continue;
+    // 시드만 혼자인 판(사설) 제외: 명단 태그와 매칭된 인원 2명 이상
+    if (uniqueIds.size < 2) continue;
 
     byMatchId.set(meta.match_id, {
       matchId: meta.match_id,
@@ -219,8 +209,8 @@ async function handleMatchImport(request: Request, env: Env): Promise<Response> 
   if (seeds.length === 0) {
     return json({ ok: false, error: '시드가 필요합니다.', matches: [] }, { status: 400 });
   }
-  if (roster.length < 3) {
-    return json({ ok: false, error: '등록 태그가 3명 이상 필요합니다.', matches: [] }, { status: 400 });
+  if (roster.length === 0) {
+    return json({ ok: false, error: '닉#태그가 등록된 명단이 필요합니다.', matches: [] }, { status: 400 });
   }
 
   const cutoff = matchHistoryCutoff();
@@ -230,8 +220,9 @@ async function handleMatchImport(request: Request, env: Env): Promise<Response> 
       const matches = await fetchSeedMatches(seed, env.HENRIK_API_KEY, cutoff);
       raw.push(...matches);
     }
+    // matchId 기준으로 합치며 중복 제거
     const matches = toQualifyingMatches(raw, roster);
-    return json({ ok: true, matches });
+    return json({ ok: true, matches, seedCalls: seeds.length });
   } catch (error) {
     const message = error instanceof Error ? error.message : '전적 조회 실패';
     return json({ ok: false, error: message, matches: [] }, { status: 502 });

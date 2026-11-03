@@ -6,6 +6,11 @@ import { MATCH_SYNC_INTERVAL_MS } from '../utils/valorantMatch';
 export function useMatchAutoSync(onNotice?: (message: string) => void) {
   const [syncing, setSyncing] = useState(false);
   const inFlight = useRef(false);
+  const autoStarted = useRef(false);
+
+  const markAttempt = () => {
+    useAppStore.setState({ lastMatchSyncAt: Date.now() });
+  };
 
   const runMatchSync = useCallback(
     async (options?: { force?: boolean; soft?: boolean }) => {
@@ -26,6 +31,9 @@ export function useMatchAutoSync(onNotice?: (message: string) => void) {
       setSyncing(true);
       try {
         const imported = await importQualifyingMatches();
+        // 성공·실패 모두 시도 시각을 남겨 짧은 재폭주 방지 (수동 force는 항상 가능)
+        markAttempt();
+
         if (!imported.ok) {
           if (!options?.soft) onNotice?.(imported.error || '커스텀 전적 동기화에 실패했습니다.');
           else onNotice?.(`${imported.error || '매치 미확인'} · 수동 반영은 임시일 수 있습니다.`);
@@ -43,8 +51,8 @@ export function useMatchAutoSync(onNotice?: (message: string) => void) {
         } else {
           onNotice?.(
             count > 0
-              ? `커스텀 전적 동기화: ${count}판 반영`
-              : '조건에 맞는 새 커스텀(등록 태그 3명+, 8월~최신)이 없습니다.'
+              ? `커스텀 전적 동기화: ${count}판 반영 (시드 합산·중복 제거)`
+              : '조건에 맞는 커스텀이 없습니다. (시드 최근 판 · 명단 태그 2명+ · 8월~최신)'
           );
         }
         return { ok: true as const, skipped: false as const, matchCount: count };
@@ -60,17 +68,22 @@ export function useMatchAutoSync(onNotice?: (message: string) => void) {
     if (!isMatchSyncConfigured()) return;
 
     const maybeAuto = () => {
+      if (autoStarted.current) return;
+      autoStarted.current = true;
       void runMatchSync({ force: false });
     };
 
+    if (useAppStore.persist.hasHydrated()) {
+      maybeAuto();
+    }
     const unsub = useAppStore.persist.onFinishHydration(() => {
       maybeAuto();
     });
-    if (useAppStore.persist.hasHydrated()) maybeAuto();
 
     const onVisible = () => {
       if (document.visibilityState !== 'visible') return;
-      maybeAuto();
+      // 쿨다운은 runMatchSync 내부에서 처리
+      void runMatchSync({ force: false });
     };
     document.addEventListener('visibilitychange', onVisible);
 

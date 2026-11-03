@@ -29,8 +29,8 @@ export async function importQualifyingMatches(): Promise<MatchImportResponse> {
   if (seeds.length === 0) {
     return { ok: false, matches: [], error: '시드(단골) 플레이어를 닉#태그와 함께 지정하세요. (최대 2명)' };
   }
-  if (roster.length < 3) {
-    return { ok: false, matches: [], error: '등록 닉#태그가 3명 이상이어야 내전 커스텀을 판별할 수 있습니다.' };
+  if (roster.length === 0) {
+    return { ok: false, matches: [], error: '승패를 맞출 명단에 닉#태그를 등록하세요.' };
   }
 
   try {
