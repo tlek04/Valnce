@@ -39,11 +39,20 @@ export async function importQualifyingMatches(): Promise<MatchImportResponse> {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ seeds, roster }),
     });
-    const data = (await response.json()) as {
-      ok?: boolean;
-      matches?: QualifyingMatch[];
-      error?: string;
-    };
+    const text = await response.text();
+    let data: { ok?: boolean; matches?: QualifyingMatch[]; error?: string } = {};
+    try {
+      data = text ? (JSON.parse(text) as typeof data) : {};
+    } catch {
+      return {
+        ok: false,
+        matches: [],
+        error:
+          response.status === 405 || text.includes('<!doctype html')
+            ? '전적 API가 아직 배포되지 않았습니다. 잠시 후 다시 시도하세요.'
+            : `전적 응답을 읽지 못했습니다. (${response.status})`,
+      };
+    }
     if (!response.ok) {
       return { ok: false, matches: [], error: data.error || `전적 조회 실패 (${response.status})` };
     }

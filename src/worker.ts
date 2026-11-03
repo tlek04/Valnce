@@ -241,10 +241,11 @@ async function handleMatchImport(request: Request, env: Env): Promise<Response> 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname === '/api/roster' || url.pathname === '/api/roster/') {
+    const path = url.pathname.replace(/\/+$/, '') || '/';
+    if (path === '/api/roster') {
       return handleRoster(request, env);
     }
-    if (url.pathname === '/api/matches/import' || url.pathname === '/api/matches/import/') {
+    if (path === '/api/matches/import') {
       return handleMatchImport(request, env);
     }
     return env.ASSETS.fetch(request);
