@@ -14,6 +14,7 @@ import {
 } from '../constants/valorant';
 import { formatRecord, formatStreak } from '../utils/matchStats';
 import { cloneRating, isRatingAtLeast } from '../utils/rating';
+import { MAX_MATCH_SEEDS } from '../utils/valorantMatch';
 import SearchSelect from './SearchSelect';
 import ChipList from './ChipList';
 
@@ -55,6 +56,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
   const [wins, setWins] = useState(player?.wins ?? 0);
   const [losses, setLosses] = useState(player?.losses ?? 0);
   const [streak, setStreak] = useState(player?.streak ?? 0);
+  const [matchSeed, setMatchSeed] = useState(player?.matchSeed ?? false);
 
   useEffect(() => {
     if (!isRatingAtLeast(maxTier, currentTier)) setMaxTier(cloneRating(currentTier));
@@ -78,6 +80,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
     setWins(source?.wins ?? 0);
     setLosses(source?.losses ?? 0);
     setStreak(source?.streak ?? 0);
+    setMatchSeed(Boolean(source && 'matchSeed' in source ? source.matchSeed : player?.matchSeed));
   }, [open, player]);
 
   useEffect(() => {
@@ -101,6 +104,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
   );
 
   const otherPlayers = boardPlayers.filter((item) => item.id !== player?.id);
+  const otherSeedCount = players.filter((item) => item.id !== player?.id && item.matchSeed).length;
+  const canEnableSeed = matchSeed || otherSeedCount < MAX_MATCH_SEEDS;
   const selectedKeys = new Set(restrictions.map(restrictionKey));
   const weaponOptions = RESTRICTION_OPTIONS.filter((option) => !selectedKeys.has(option.value)).map(
     (option) => ({
@@ -177,6 +182,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
       allyIds,
       riotName: trimmedRiotName || undefined,
       riotTag: trimmedRiotTag || undefined,
+      matchSeed: Boolean(matchSeed && trimmedRiotName && trimmedRiotTag),
       wins,
       losses,
       streak,
@@ -286,6 +292,31 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               </div>
             </div>
           </div>
+
+          <fieldset>
+            <legend className="mb-1.5 text-sm text-val-muted">전적 시드 (단골)</legend>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={matchSeed}
+              disabled={!canEnableSeed || !riotName.trim() || !riotTag.trim()}
+              onClick={() => setMatchSeed((value) => !value)}
+              className={`flex w-full items-center justify-between rounded-lg border px-3 py-2.5 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                matchSeed
+                  ? 'border-sky-400/50 bg-sky-500/10 text-val-cream'
+                  : 'border-val-line bg-val-bg text-val-muted hover:border-val-red/40'
+              }`}
+            >
+              <span>커스텀 전적 조회 시드</span>
+              <span className={`text-xs font-semibold ${matchSeed ? 'text-sky-300' : 'text-val-muted'}`}>
+                {matchSeed ? '시드' : '일반'}
+              </span>
+            </button>
+            <p className="mt-1.5 text-xs text-val-muted">
+              자주 오는 사람 최대 {MAX_MATCH_SEEDS}명. 닉#태그가 있어야 하며, 등록 태그 3명 이상인 커스텀만
+              전적에 반영됩니다.
+            </p>
+          </fieldset>
 
           <fieldset>
             <legend className="mb-1.5 text-sm text-val-muted">내전 전적</legend>

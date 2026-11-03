@@ -13,6 +13,8 @@ run_worker_first = true
 # 대시보드 Bindings:
 #   Variable name: ROSTER
 #   KV namespace: valnce_roster
+# Secrets:
+#   HENRIK_API_KEY = HenrikDev API 키
 # 로컬 배포 시 id가 필요하면 아래를 채운다.
 # [[kv_namespaces]]
 # binding = "ROSTER"

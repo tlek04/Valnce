@@ -60,6 +60,7 @@ export function normalizePlayer(raw: unknown): Player {
     allyIds: asStringArray(data.allyIds),
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
+    matchSeed: Boolean(data.matchSeed),
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
@@ -148,6 +149,7 @@ export function hydrateState(raw: Partial<AppState> | undefined): AppState {
     balanceDetails: [],
     sessionSavedAt: null,
     rosterUpdatedAt: 0,
+    lastMatchSyncAt: null,
   };
 }
 
@@ -163,6 +165,7 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     currentTier: ratingFromUnknown(data.currentTier, FALLBACK),
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
+    ...(data.matchSeed ? { matchSeed: true } : {}),
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
@@ -183,6 +186,7 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     allyIds: [],
     ...(saved.riotName ? { riotName: saved.riotName } : {}),
     ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
+    ...(saved.matchSeed ? { matchSeed: true } : {}),
     wins: saved.wins ?? 0,
     losses: saved.losses ?? 0,
     streak: saved.streak ?? 0,
@@ -210,6 +214,7 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     balanceDetails: [],
     sessionSavedAt: null,
     rosterUpdatedAt: 0,
+    lastMatchSyncAt: typeof raw?.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
   };
 }
 
@@ -248,5 +253,6 @@ export function restorePersistedState(raw: Partial<AppState> | undefined): AppSt
     balanceDetails,
     sessionSavedAt: savedAt,
     rosterUpdatedAt: typeof raw.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
+    lastMatchSyncAt: typeof raw.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
   };
 }

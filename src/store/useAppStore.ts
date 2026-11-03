@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AppState, AppStore, ColumnId, Player } from '../types';
+import { AppState, AppStore, ColumnId, Player, QualifyingMatch } from '../types';
 import { autoBalanceTeams } from '../utils/balance';
-import { applyMatchResult } from '../utils/matchStats';
+import { applyMatchResult, recomputeStatsFromMatches } from '../utils/matchStats';
 import { applyMove, applyRelationPlacement, repairLocks } from '../utils/placement';
 import { restorePersistedState, stripPlayerLinks, syncRelations, toSavedPlayer, toSessionPlayer } from '../utils/player';
 import { mergeSavedPlayers } from '../utils/rosterShare';
+import { hasRiotIdentity } from '../utils/valorantMatch';
 
 function withResult(player: Player, result: 'win' | 'loss'): Player {
   return { ...player, ...applyMatchResult(player, result) };
@@ -57,6 +58,7 @@ export const useAppStore = create<AppStore>()(
       balanceDetails: [],
       sessionSavedAt: null,
       rosterUpdatedAt: 0,
+      lastMatchSyncAt: null,
 
       addPlayer: (player: Player) => {
         let message: string | undefined;
@@ -249,6 +251,31 @@ export const useAppStore = create<AppStore>()(
             rosterUpdatedAt: Date.now(),
           };
         }),
+
+      reconcileMatchStats: (matches: QualifyingMatch[]) =>
+        set((state) => {
+          const taggedIds = state.players.filter(hasRiotIdentity).map((player) => player.id);
+          const recomputed = recomputeStatsFromMatches(taggedIds, matches);
+          const patchStats = <T extends { id: string; wins: number; losses: number; streak: number }>(
+            player: T
+          ): T => {
+            const next = recomputed.get(player.id);
+            if (!next) return player;
+            return { ...player, wins: next.wins, losses: next.losses, streak: next.streak };
+          };
+
+          return {
+            players: state.players.map((player) => {
+              const next = recomputed.get(player.id);
+              return next ? { ...player, ...next } : player;
+            }),
+            team1: state.team1.map(patchStats),
+            team2: state.team2.map(patchStats),
+            waitlist: state.waitlist.map(patchStats),
+            lastMatchSyncAt: Date.now(),
+            rosterUpdatedAt: Date.now(),
+          };
+        }),
     }),
     {
       name: 'valorant-balancer-storage',
@@ -262,6 +289,7 @@ export const useAppStore = create<AppStore>()(
         balanceDetails: state.balanceDetails,
         sessionSavedAt: Date.now(),
         rosterUpdatedAt: state.rosterUpdatedAt,
+        lastMatchSyncAt: state.lastMatchSyncAt,
       }),
       migrate: (persisted) => restorePersistedState(persisted as Partial<AppState>),
       merge: (persisted, current) => ({

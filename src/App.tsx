@@ -3,6 +3,7 @@ import { Player } from './types';
 import Board from './components/Board';
 import Header from './components/Header';
 import PlayerFormModal from './components/PlayerFormModal';
+import { useMatchAutoSync } from './hooks/useMatchAutoSync';
 import { useRosterSync } from './hooks/useRosterSync';
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
   }, []);
 
   const syncStatus = useRosterSync(showNotice);
+  const { runMatchSync, syncing: matchSyncing } = useMatchAutoSync(showNotice);
 
   const openCreate = () => {
     setEditingPlayer(null);
@@ -53,7 +55,15 @@ export default function App() {
           </p>
         </div>
       )}
-      <Board onAdd={openCreate} onEdit={openEdit} onNotice={showNotice} />
+      <Board
+        onAdd={openCreate}
+        onEdit={openEdit}
+        onNotice={showNotice}
+        onMatchSync={(options) => {
+          void runMatchSync(options);
+        }}
+        matchSyncing={matchSyncing}
+      />
       {formOpen && (
         <PlayerFormModal
           key={editingPlayer?.id ?? `new-${formKey}`}

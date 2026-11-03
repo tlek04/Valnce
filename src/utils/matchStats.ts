@@ -57,3 +57,31 @@ export function parseRiotId(value: string): { riotName: string; riotTag: string 
     riotTag: trimmed.slice(hash + 1).trim(),
   };
 }
+
+export function riotIdentityKey(riotName?: string, riotTag?: string): string {
+  const name = riotName?.trim().toLowerCase() ?? '';
+  const tag = riotTag?.trim().toLowerCase() ?? '';
+  if (!name || !tag) return '';
+  return `${name}#${tag}`;
+}
+
+/** 시간순 매치로 플레이어별 승패·연승패를 다시 계산한다. */
+export function recomputeStatsFromMatches(
+  taggedPlayerIds: string[],
+  matches: { playedAt: number; results: { playerId: string; result: 'win' | 'loss' }[] }[]
+): Map<string, MatchStats> {
+  const stats = new Map<string, MatchStats>();
+  for (const id of taggedPlayerIds) {
+    stats.set(id, emptyMatchStats());
+  }
+
+  const ordered = [...matches].sort((a, b) => a.playedAt - b.playedAt);
+  for (const match of ordered) {
+    for (const entry of match.results) {
+      const current = stats.get(entry.playerId);
+      if (!current) continue;
+      stats.set(entry.playerId, applyMatchResult(current, entry.result));
+    }
+  }
+  return stats;
+}

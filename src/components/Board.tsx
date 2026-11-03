@@ -28,6 +28,8 @@ interface BoardProps {
   onAdd: () => void;
   onEdit: (player: Player) => void;
   onNotice?: (message: string) => void;
+  onMatchSync?: (options?: { force?: boolean; soft?: boolean }) => void;
+  matchSyncing?: boolean;
 }
 
 function isColumnId(id: string): id is ColumnId {
@@ -40,7 +42,7 @@ const detectCollision: CollisionDetection = (args) => {
   return rectIntersection(args);
 };
 
-export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
+export default function Board({ onAdd, onEdit, onNotice, onMatchSync, matchSyncing = false }: BoardProps) {
   const waitlist = useAppStore((state) => state.waitlist);
   const team1 = useAppStore((state) => state.team1);
   const team2 = useAppStore((state) => state.team2);
@@ -187,13 +189,24 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
             </div>
           )}
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <span className="mr-auto text-xs text-val-muted">경기 결과 (양쪽 팀 전원 전적 반영)</span>
+            <span className="mr-auto text-xs text-val-muted">
+              경기 결과 · 최종 전적은 커스텀 매치 동기화 기준으로 맞춰집니다
+            </span>
+            <button
+              type="button"
+              disabled={matchSyncing}
+              onClick={() => onMatchSync?.({ force: true })}
+              className="rounded-lg border border-val-line bg-val-bg px-3 py-1.5 text-xs font-semibold text-val-cream hover:border-val-red/40 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {matchSyncing ? '동기화 중' : '커스텀 동기화'}
+            </button>
             <button
               type="button"
               disabled={team1.length === 0 || team2.length === 0}
               onClick={() => {
                 const result = recordTeamResult('TEAM_1');
                 onNotice?.(result.message);
+                onMatchSync?.({ force: true, soft: true });
               }}
               className="rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 py-1.5 text-xs font-semibold text-sky-300 hover:bg-sky-500/20 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -205,6 +218,7 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
               onClick={() => {
                 const result = recordTeamResult('TEAM_2');
                 onNotice?.(result.message);
+                onMatchSync?.({ force: true, soft: true });
               }}
               className="rounded-lg border border-rose-400/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 disabled:cursor-not-allowed disabled:opacity-40"
             >

@@ -62,6 +62,8 @@ export interface SavedPlayer {
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
+  /** 커스텀 전적 조회의 단골 시드 (최대 2명) */
+  matchSeed?: boolean;
   wins: number;
   losses: number;
   /** 양수 연승, 음수 연패, 0 없음 */
@@ -81,9 +83,18 @@ export interface Player {
   allyIds: string[];
   riotName?: string;
   riotTag?: string;
+  matchSeed?: boolean;
   wins: number;
   losses: number;
   streak: number;
+}
+
+/** API로 확인된 내전 커스텀 한 판 */
+export interface QualifyingMatch {
+  matchId: string;
+  playedAt: number;
+  mapName: string;
+  results: { playerId: string; result: 'win' | 'loss' }[];
 }
 
 export interface AppState {
@@ -97,6 +108,8 @@ export interface AppState {
   sessionSavedAt: number | null;
   /** 기존 플레이어 명단이 마지막으로 바뀐 시각. 서버 동기화 비교용. */
   rosterUpdatedAt: number;
+  /** 커스텀 매치 전적을 마지막으로 재계산한 시각 */
+  lastMatchSyncAt: number | null;
 }
 
 export type ColumnId = 'waitlist' | 'team1' | 'team2';
@@ -122,6 +135,8 @@ export interface AppActions {
   /** 보드에 있는 1·2팀 전원에게 승패를 반영하고 명단에도 저장한다. */
   recordTeamResult: (winner: 'TEAM_1' | 'TEAM_2') => { ok: boolean; message: string };
   recordPlayerResult: (id: string, result: 'win' | 'loss') => void;
+  /** qualifying 커스텀 매치로 태그 있는 플레이어 전적을 재계산한다. */
+  reconcileMatchStats: (matches: QualifyingMatch[]) => void;
 }
 
 export type AppStore = AppState & AppActions;
