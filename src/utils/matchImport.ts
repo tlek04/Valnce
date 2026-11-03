@@ -21,8 +21,8 @@ export function isMatchSyncConfigured() {
 export async function importQualifyingMatches(): Promise<MatchImportResponse> {
   const players = useAppStore.getState().players;
   const seeds = listMatchSeeds(players).map((player) => ({
-    riotName: player.riotName!.trim(),
-    riotTag: player.riotTag!.trim(),
+    riotName: player.riotName!.trim().replace(/^#+/, ''),
+    riotTag: player.riotTag!.trim().replace(/^#+/, ''),
   }));
   const roster = listTaggedRoster(players);
 

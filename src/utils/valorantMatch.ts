@@ -18,11 +18,11 @@ export function hasRiotIdentity(player: { riotName?: string; riotTag?: string })
 }
 
 function matchesFixedSeedName(player: SavedPlayer, seedName: string) {
-  const target = seedName.trim().toLowerCase();
+  const target = seedName.trim().normalize('NFC').toLowerCase();
   if (!target) return false;
   return (
-    player.name.trim().toLowerCase() === target ||
-    (player.riotName?.trim().toLowerCase() ?? '') === target
+    player.name.trim().normalize('NFC').toLowerCase() === target ||
+    (player.riotName?.trim().normalize('NFC').toLowerCase() ?? '') === target
   );
 }
 
@@ -41,8 +41,9 @@ export function listMatchSeeds(players: SavedPlayer[]) {
 export function listTaggedRoster(players: SavedPlayer[]) {
   return players.filter(hasRiotIdentity).map((player) => ({
     id: player.id,
-    riotName: player.riotName!.trim(),
-    riotTag: player.riotTag!.trim(),
+    name: player.name.trim(),
+    riotName: player.riotName!.trim().replace(/^#+/, ''),
+    riotTag: player.riotTag!.trim().replace(/^#+/, ''),
   }));
 }
 

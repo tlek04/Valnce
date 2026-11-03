@@ -11,6 +11,7 @@ interface RosterPayload {
 
 interface RosterIdentity {
   id: string;
+  name?: string;
   riotName: string;
   riotTag: string;
 }
@@ -49,14 +50,39 @@ function json(data: unknown, init: ResponseInit = {}) {
   });
 }
 
+function normalizeRiotPart(value: string) {
+  return value.trim().normalize('NFC').replace(/^#+/, '').toLowerCase();
+}
+
 function riotKey(name: string, tag: string) {
-  return `${name.trim().toLowerCase()}#${tag.trim().toLowerCase()}`;
+  const n = normalizeRiotPart(name);
+  const t = normalizeRiotPart(tag);
+  if (!n || !t) return '';
+  return `${n}#${t}`;
 }
 
 function isCustomQueue(queue: { id?: string; name?: string } | null | undefined) {
   const id = queue?.id?.toLowerCase() ?? '';
   const name = queue?.name?.toLowerCase() ?? '';
   return id === 'custom' || name.includes('custom') || name.includes('커스텀');
+}
+
+function teamDidWin(
+  teamWon: Map<string, boolean>,
+  teamId: string,
+  teams: { team_id?: string; won?: boolean; rounds?: { won?: number; lost?: number } }[]
+): boolean | null {
+  if (teamWon.has(teamId)) return teamWon.get(teamId)!;
+  const team = teams.find((item) => item.team_id === teamId);
+  if (!team) return null;
+  if (typeof team.won === 'boolean') return team.won;
+  const wonRounds = team.rounds?.won;
+  const lostRounds = team.rounds?.lost;
+  if (typeof wonRounds === 'number' && typeof lostRounds === 'number') {
+    if (wonRounds === lostRounds) return null;
+    return wonRounds > lostRounds;
+  }
+  return null;
 }
 
 async function handleRoster(request: Request, env: Env): Promise<Response> {
@@ -135,7 +161,38 @@ async function fetchSeedMatches(
 }
 
 function toQualifyingMatches(rawMatches: unknown[], roster: RosterIdentity[]): QualifyingMatch[] {
-  const idByRiot = new Map(roster.map((player) => [riotKey(player.riotName, player.riotTag), player.id]));
+  const idByRiot = new Map<string, string>();
+  const idsByRiotName = new Map<string, string[]>();
+  const idByDisplayName = new Map<string, string>();
+
+  for (const player of roster) {
+    const key = riotKey(player.riotName, player.riotTag);
+    if (key && !idByRiot.has(key)) idByRiot.set(key, player.id);
+
+    const riotName = normalizeRiotPart(player.riotName);
+    if (riotName) {
+      const list = idsByRiotName.get(riotName) ?? [];
+      if (!list.includes(player.id)) list.push(player.id);
+      idsByRiotName.set(riotName, list);
+    }
+
+    const display = (player.name ?? '').trim().normalize('NFC').toLowerCase();
+    if (display && !idByDisplayName.has(display)) idByDisplayName.set(display, player.id);
+  }
+
+  const resolvePlayerId = (name?: string, tag?: string) => {
+    if (!name) return undefined;
+    if (tag) {
+      const key = riotKey(name, tag);
+      if (key && idByRiot.has(key)) return idByRiot.get(key);
+    }
+    const riotName = normalizeRiotPart(name);
+    const byName = idsByRiotName.get(riotName);
+    if (byName?.length === 1) return byName[0];
+    const display = name.trim().normalize('NFC').toLowerCase();
+    return idByDisplayName.get(display);
+  };
+
   const byMatchId = new Map<string, QualifyingMatch>();
 
   for (const raw of rawMatches) {
@@ -147,8 +204,8 @@ function toQualifyingMatches(rawMatches: unknown[], roster: RosterIdentity[]): Q
         map?: { name?: string };
         queue?: { id?: string; name?: string };
       };
-      players?: { name?: string; tag?: string; team_id?: string }[];
-      teams?: { team_id?: string; won?: boolean }[];
+      players?: { name?: string; tag?: string; team_id?: string; team?: string }[];
+      teams?: { team_id?: string; won?: boolean; rounds?: { won?: number; lost?: number } }[];
     };
 
     const meta = match.metadata;
@@ -156,17 +213,25 @@ function toQualifyingMatches(rawMatches: unknown[], roster: RosterIdentity[]): Q
     const playedAt = meta.started_at ? Date.parse(meta.started_at) : NaN;
     if (!Number.isFinite(playedAt)) continue;
 
+    const teams = match.teams ?? [];
     const teamWon = new Map<string, boolean>();
-    for (const team of match.teams ?? []) {
-      if (team.team_id) teamWon.set(team.team_id, Boolean(team.won));
+    for (const team of teams) {
+      if (!team.team_id) continue;
+      if (typeof team.won === 'boolean') teamWon.set(team.team_id, team.won);
+      else if (typeof team.rounds?.won === 'number' && typeof team.rounds?.lost === 'number') {
+        if (team.rounds.won !== team.rounds.lost) {
+          teamWon.set(team.team_id, team.rounds.won > team.rounds.lost);
+        }
+      }
     }
 
     const results: QualifyingMatch['results'] = [];
     for (const participant of match.players ?? []) {
-      if (!participant.name || !participant.tag || !participant.team_id) continue;
-      const playerId = idByRiot.get(riotKey(participant.name, participant.tag));
+      const teamId = participant.team_id || participant.team;
+      if (!participant.name || !teamId) continue;
+      const playerId = resolvePlayerId(participant.name, participant.tag);
       if (!playerId) continue;
-      const won = teamWon.get(participant.team_id);
+      const won = teamDidWin(teamWon, teamId, teams);
       if (won == null) continue;
       results.push({ playerId, result: won ? 'win' : 'loss' });
     }

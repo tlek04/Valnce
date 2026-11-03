@@ -71,9 +71,17 @@ export function parseRiotId(value: string): { riotName: string; riotTag: string 
   };
 }
 
+export function normalizeRiotPart(value?: string): string {
+  return (value ?? '')
+    .trim()
+    .normalize('NFC')
+    .replace(/^#+/, '')
+    .toLowerCase();
+}
+
 export function riotIdentityKey(riotName?: string, riotTag?: string): string {
-  const name = riotName?.trim().toLowerCase() ?? '';
-  const tag = riotTag?.trim().toLowerCase() ?? '';
+  const name = normalizeRiotPart(riotName);
+  const tag = normalizeRiotPart(riotTag);
   if (!name || !tag) return '';
   return `${name}#${tag}`;
 }

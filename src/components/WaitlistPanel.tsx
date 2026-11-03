@@ -33,11 +33,11 @@ export default function WaitlistPanel({
       className="flex min-h-[12rem] flex-col rounded-2xl border border-val-line bg-val-panel/60 p-4 md:min-h-[20rem] xl:min-h-[28rem]"
     >
       <div className="mb-4 flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Users size={18} className="shrink-0 text-val-red" />
-          <div className="min-w-0">
-            <h2 className="font-display text-xl font-bold tracking-wide">대기열</h2>
-            <p className="text-xs text-val-muted">{waitlist.length}명 대기 중</p>
+          <div className="shrink-0">
+            <h2 className="whitespace-nowrap font-display text-xl font-bold">대기열</h2>
+            <p className="whitespace-nowrap text-xs text-val-muted">{waitlist.length}명 대기 중</p>
           </div>
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-1.5">

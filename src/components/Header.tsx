@@ -15,10 +15,8 @@ export default function Header({
   onMatchSync,
   matchSyncing = false,
 }: HeaderProps) {
-  const playerCount = useAppStore((state) => state.players.length);
   const matchCount = useAppStore((state) => state.waitlist.length + state.team1.length + state.team2.length);
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
-  const clearRoster = useAppStore((state) => state.clearRoster);
   const resetTeams = useAppStore((state) => state.resetTeams);
   const autoBalance = useAppStore((state) => state.autoBalance);
   const canBalance = matchCount >= 2;
@@ -82,19 +80,6 @@ export default function Header({
             <RefreshCw size={15} className={matchSyncing ? 'animate-spin' : undefined} />
             {matchSyncing ? '동기화 중' : '전적 동기화'}
           </button>
-          {playerCount > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                if (window.confirm('저장된 플레이어를 모두 삭제할까요?')) {
-                  clearRoster();
-                }
-              }}
-              className="hidden whitespace-nowrap rounded-lg border border-val-line px-3 py-2 text-sm text-val-muted hover:border-val-red/40 hover:text-val-cream sm:inline"
-            >
-              저장 삭제
-            </button>
-          )}
           <button
             type="button"
             aria-label="팀 초기화"
@@ -145,15 +130,15 @@ export default function Header({
               </button>
               <div
                 role="tooltip"
-                className="pointer-events-none absolute right-0 top-full z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-val-line bg-val-panel p-3.5 text-left opacity-0 shadow-2xl transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                className="pointer-events-none absolute right-0 top-full z-40 mt-2 w-[min(24rem,calc(100vw-2rem))] rounded-xl border border-val-line bg-val-panel p-3.5 text-left opacity-0 shadow-2xl transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
               >
                 <p className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-val-red">밸런스 규칙</p>
-                <ol className="mt-2 space-y-1.5 text-xs leading-relaxed text-val-cream/90">
-                  <li>1. 팀 고정 · 같은 팀 묶기 · 라이벌을 먼저 지킵니다.</li>
-                  <li>2. 인원을 최대한 비슷하게 나눕니다.</li>
-                  <li>3. 고티어일수록 점수 비중이 커집니다.</li>
-                  <li>4. 고티어는 양쪽에 나누고, 팀 점수 합을 맞춥니다.</li>
-                  <li>5. 최고 티어는 약한 가산만 합니다. 내전 티어가 있으면 무시합니다.</li>
+                <ol className="mt-2 space-y-1.5 text-xs leading-relaxed text-val-cream/90 break-keep">
+                  <li className="whitespace-normal">1. 팀 고정 · 같은 팀 묶기 · 라이벌을 먼저 지킵니다.</li>
+                  <li className="whitespace-normal">2. 인원을 최대한 비슷하게 나눕니다.</li>
+                  <li className="whitespace-normal">3. 고티어일수록 점수 비중이 커집니다.</li>
+                  <li className="whitespace-normal">4. 고티어는 양쪽에 나누고, 팀 점수 합을 맞춥니다.</li>
+                  <li className="whitespace-normal">5. 최고 티어는 약한 가산만 합니다. 내전 티어가 있으면 무시합니다.</li>
                 </ol>
               </div>
             </div>

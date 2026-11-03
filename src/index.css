@@ -22,6 +22,8 @@ body {
   background-color: #0f1923;
   background-repeat: no-repeat;
   font-family: 'Noto Sans KR', system-ui, sans-serif;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 #root {
