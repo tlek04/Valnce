@@ -10,14 +10,17 @@
 4. KV `ROSTER` 는 `wrangler.toml`의 `[[kv_namespaces]]` 에 고정 (대시보드만 넣으면 배포 때 사라짐)
 5. **Secrets** → `HENRIK_API_KEY` = [HenrikDev](https://docs.henrikdev.xyz) API 키
 6. **Secrets** → `STREAMER_PASSWORD` = 스트리머 매니저 입장·세션 서명 비밀번호
-7. Redeploy
+7. **Secrets** → `ADMIN_PASSWORD` = 관리자(`/admin`) 입장·세션 서명·접속 IP 조회 비밀번호 (스트리머와 별도)
+8. Redeploy
 
-## 스트리머 / 시청자
+## 스트리머 / 관리자 / 시청자
 
-- `/` 랜딩 → 스트리머(`/manage`, 비밀번호) · 시청자(`/join`, 닉+발로닉 신청)
+- `/` 랜딩 → 스트리머(`/manage`, `STREAMER_PASSWORD`) · 관리자(`/admin`, `ADMIN_PASSWORD`) · 시청자(`/join`, 닉+발로닉 신청)
+- 같은 비밀번호 게이트에서 비번에 따라 `role: streamer | admin` 이 갈림
 - 시청자 신청은 KV `join-queue`에 쌓이고, 스트리머가 승인하면 명단+대기열에 추가
-- 로그인 후 세션 토큰이 발급되며, `PUT /api/roster` 등 쓰기 API는 `Authorization: Bearer <세션 토큰>` 필요
-- 접속 IP · 세션 일괄 회수: 매니지 **접속 IP** 패널 / 자세한 설명은 [docs/AUTH.md](docs/AUTH.md)
+- 로그인 후 세션 토큰이 발급되며, `PUT /api/roster` 등 쓰기 API는 `Authorization: Bearer <세션 토큰>` 필요 (admin 토큰도 허용)
+- 접속 IP · 세션 일괄 회수 · 승패 보정 · 명단 삭제: `/admin` 관리 화면 / 자세한 설명은 [docs/AUTH.md](docs/AUTH.md)
+- `/manage`에는 위험 운영 조작을 두지 않음
 
 `wrangler.toml`의 `assets.directory = "./dist"` 가 빌드 출력 경로입니다.
 

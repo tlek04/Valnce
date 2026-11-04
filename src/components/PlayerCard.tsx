@@ -44,6 +44,7 @@ export default function PlayerCard({
   const hasRecord = player.wins > 0 || player.losses > 0 || player.streak !== 0;
   const riotId = formatRiotId(player.riotName, player.riotTag);
   const queueNo = player.queueNo;
+  const showCurrent = Boolean(scrimTier && !inWaitlist);
 
   return (
     <article
@@ -60,15 +61,67 @@ export default function PlayerCard({
         <h3 className="min-w-0 self-center truncate text-lg font-semibold leading-none text-val-cream">
           {player.name}
         </h3>
-        <span
-          className={`justify-self-end self-center rounded-md border px-2 py-0.5 text-base font-semibold leading-none ${
-            TIER_STYLES[(scrimTier ?? player.currentTier).tier]
-          }`}
-        >
-          {scrimTier ? `내전 ${formatRating(scrimTier)}` : formatRating(player.currentTier)}
-        </span>
 
-        {/* 2행: 수정 | 게임닉·승패 | 현재·최고 — 최고는 항상 이 행 */}
+        <div className="row-span-2 flex flex-col items-end justify-start gap-1.5">
+          <div className="flex items-center justify-end gap-2 text-xs leading-none text-val-muted">
+            {showCurrent ? <span>현재 {formatRating(player.currentTier)}</span> : null}
+            <span>최고 {formatRating(player.maxTier)}</span>
+            <span
+              className={`rounded-md border px-2 py-0.5 text-base font-semibold leading-none ${
+                TIER_STYLES[(scrimTier ?? player.currentTier).tier]
+              }`}
+            >
+              {scrimTier ? `내전 ${formatRating(scrimTier)}` : formatRating(player.currentTier)}
+            </span>
+          </div>
+          <div className="flex min-h-[1.25rem] items-center justify-end gap-2">
+            {hasRecord ? (
+              <p className="text-sm leading-none text-val-muted">
+                {formatRecord(player)}
+                {streakLabel ? (
+                  <span className={`ml-1 ${player.streak > 0 ? 'text-val-teal' : 'text-val-red'}`}>
+                    {streakLabel}
+                  </span>
+                ) : null}
+              </p>
+            ) : (
+              <span className="w-0" aria-hidden />
+            )}
+            {!overlay && showDelete ? (
+              confirmDelete ? (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    className="rounded-md px-2 py-1 text-sm text-val-muted hover:bg-white/5"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md bg-val-red px-2 py-1 text-sm font-medium text-white hover:bg-val-red/90"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={() => onDelete(player.id)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  aria-label={`${player.name} 삭제`}
+                  className="rounded-md p-1 text-val-muted hover:bg-val-red/10 hover:text-val-red"
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  <Trash2 size={16} />
+                </button>
+              )
+            ) : null}
+          </div>
+        </div>
+
         <div className="flex items-center justify-center">
           {!overlay ? (
             <button
@@ -82,57 +135,9 @@ export default function PlayerCard({
             </button>
           ) : null}
         </div>
-        <div className="min-w-0 self-center space-y-1">
+        <div className="min-w-0 self-center">
           {riotId ? (
             <p className="truncate text-sm leading-none text-val-muted">{riotId}</p>
-          ) : null}
-          {hasRecord ? (
-            <p className="text-sm leading-none text-val-muted">
-              {formatRecord(player)}
-              {streakLabel ? (
-                <span className={`ml-1 ${player.streak > 0 ? 'text-val-teal' : 'text-val-red'}`}>
-                  {streakLabel}
-                </span>
-              ) : null}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex items-center justify-end gap-2 justify-self-end self-center text-xs leading-none text-val-muted">
-          {scrimTier && !inWaitlist ? (
-            <span>현재 {formatRating(player.currentTier)}</span>
-          ) : null}
-          <span>최고 {formatRating(player.maxTier)}</span>
-          {!overlay && showDelete ? (
-            confirmDelete ? (
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  className="rounded-md px-2 py-1 text-sm text-val-muted hover:bg-white/5"
-                  onPointerDown={(event) => event.stopPropagation()}
-                  onClick={() => setConfirmDelete(false)}
-                >
-                  취소
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md bg-val-red px-2 py-1 text-sm font-medium text-white hover:bg-val-red/90"
-                  onPointerDown={(event) => event.stopPropagation()}
-                  onClick={() => onDelete(player.id)}
-                >
-                  삭제
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                aria-label={`${player.name} 삭제`}
-                className="rounded-md p-1 text-val-muted hover:bg-val-red/10 hover:text-val-red"
-                onPointerDown={(event) => event.stopPropagation()}
-                onClick={() => setConfirmDelete(true)}
-              >
-                <Trash2 size={16} />
-              </button>
-            )
           ) : null}
         </div>
 

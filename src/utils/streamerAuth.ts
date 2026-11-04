@@ -1,6 +1,9 @@
 import { readJsonOrEmpty } from './apiResponse';
 
 const STORAGE_KEY = 'valnce-streamer-token';
+const ROLE_KEY = 'valnce-auth-role';
+
+export type AuthRole = 'streamer' | 'admin';
 
 export interface AccessLogEntry {
   ip: string;
@@ -24,6 +27,26 @@ export function getStreamerToken(): string | null {
   }
 }
 
+export function getAuthRole(): AuthRole | null {
+  try {
+    const role = localStorage.getItem(ROLE_KEY);
+    return role === 'admin' || role === 'streamer' ? role : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setAuthSession(token: string, role: AuthRole): void {
+  localStorage.setItem(STORAGE_KEY, token);
+  localStorage.setItem(ROLE_KEY, role);
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** @deprecated use setAuthSession */
 export function setStreamerToken(token: string): void {
   localStorage.setItem(STORAGE_KEY, token);
   try {
@@ -35,6 +58,7 @@ export function setStreamerToken(token: string): void {
 
 export function clearStreamerToken(): void {
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(ROLE_KEY);
   try {
     sessionStorage.removeItem(STORAGE_KEY);
   } catch {
@@ -50,7 +74,9 @@ export function streamerAuthHeaders(extra?: HeadersInit): HeadersInit {
   };
 }
 
-export async function verifyStreamerPassword(password: string): Promise<{ ok: boolean; error?: string }> {
+export async function verifyStreamerPassword(
+  password: string
+): Promise<{ ok: boolean; role?: AuthRole; error?: string }> {
   const trimmed = password.trim();
   try {
     const response = await fetch('/api/auth/login', {
@@ -58,12 +84,17 @@ export async function verifyStreamerPassword(password: string): Promise<{ ok: bo
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ password: trimmed }),
     });
-    const data = await readJsonOrEmpty<{ ok?: boolean; token?: string; error?: string }>(response);
-    if (!response.ok || !data.ok || !data.token) {
+    const data = await readJsonOrEmpty<{
+      ok?: boolean;
+      token?: string;
+      role?: AuthRole;
+      error?: string;
+    }>(response);
+    if (!response.ok || !data.ok || !data.token || (data.role !== 'admin' && data.role !== 'streamer')) {
       return { ok: false, error: data.error || '비밀번호가 올바르지 않습니다.' };
     }
-    setStreamerToken(data.token);
-    return { ok: true };
+    setAuthSession(data.token, data.role);
+    return { ok: true, role: data.role };
   } catch {
     return { ok: false, error: '인증 서버에 연결하지 못했습니다.' };
   }
@@ -87,6 +118,29 @@ export async function fetchAccessLog(): Promise<{
       return { ok: false, error: data.error || '접속 기록을 불러오지 못했습니다.' };
     }
     return { ok: true, items: Array.isArray(data.items) ? data.items : [] };
+  } catch {
+    return { ok: false, error: '접속 기록 서버에 연결하지 못했습니다.' };
+  }
+}
+
+export async function clearAccessLog(): Promise<{
+  ok: boolean;
+  error?: string;
+  unauthorized?: boolean;
+}> {
+  try {
+    const response = await fetch('/api/auth/access-log', {
+      method: 'DELETE',
+      headers: streamerAuthHeaders(),
+    });
+    const data = await readJsonOrEmpty<{ ok?: boolean; error?: string }>(response);
+    if (response.status === 401) {
+      return { ok: false, unauthorized: true, error: data.error || '인증이 필요합니다.' };
+    }
+    if (!response.ok || !data.ok) {
+      return { ok: false, error: data.error || '접속 기록을 비우지 못했습니다.' };
+    }
+    return { ok: true };
   } catch {
     return { ok: false, error: '접속 기록 서버에 연결하지 못했습니다.' };
   }

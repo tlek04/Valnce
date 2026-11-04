@@ -92,9 +92,18 @@ export async function storeScenarios(root = 'src') {
 export async function serverScenarios(root = 'src') {
   const worker = (await loadSource(`${root}/worker.ts`)).default;
   const values = new Map();
-  const env = { STREAMER_PASSWORD: 'test-only', HENRIK_API_KEY: 'fake',
-    ROSTER: { get: async (key) => JSON.parse(values.get(key) ?? 'null'), put: async (key, value) => { values.set(key, value); } },
-    ASSETS: { fetch: async () => new Response('asset') } };
+  const env = {
+    STREAMER_PASSWORD: 'test-only',
+    ADMIN_PASSWORD: 'admin-only',
+    HENRIK_API_KEY: 'fake',
+    ROSTER: {
+      get: async (key) => JSON.parse(values.get(key) ?? 'null'),
+      put: async (key, value) => {
+        values.set(key, value);
+      },
+    },
+    ASSETS: { fetch: async () => new Response('asset') },
+  };
   const output = [];
   let authToken = '';
   async function request(path, method = 'GET', body, authenticated = true) {
@@ -128,14 +137,24 @@ export async function serverScenarios(root = 'src') {
   const second = await request('/api/join', 'POST', { name: 'other', riotName: 'other', riotTag: 'KR' }, false);
   await request(`/api/join/${second.application.id}/reject`, 'POST');
   await request('/api/matches/import', 'POST', { seeds: [], roster: [] });
+  // streamer token cannot read access-log
   await request('/api/auth/access-log');
+  const adminLogin = await request('/api/auth/login', 'POST', { password: 'admin-only' }, false);
+  const streamerToken = authToken;
+  authToken = typeof adminLogin?.token === 'string' ? adminLogin.token : '';
+  await request('/api/auth/access-log');
+  authToken = streamerToken;
   await request('/api/auth/revoke-all', 'POST', { password: 'bad' }, false);
-  const staleToken = authToken;
+  // streamer password cannot revoke
   await request('/api/auth/revoke-all', 'POST', { password: 'test-only' }, false);
+  const staleToken = authToken;
+  await request('/api/auth/revoke-all', 'POST', { password: 'admin-only' }, false);
   authToken = staleToken;
   await request('/api/roster');
-  const relogin = await request('/api/auth/login', 'POST', { password: 'test-only' }, false);
+  const relogin = await request('/api/auth/login', 'POST', { password: 'admin-only' }, false);
   authToken = typeof relogin?.token === 'string' ? relogin.token : '';
+  await request('/api/auth/access-log');
+  await request('/api/auth/access-log', 'DELETE');
   await request('/api/auth/access-log');
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => Response.json({ data: [{

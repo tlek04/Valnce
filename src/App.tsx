@@ -1,16 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
+import AdminApp from './pages/AdminApp';
 import JoinPage from './pages/JoinPage';
 import LandingPage from './pages/LandingPage';
 import ManageApp from './pages/ManageApp';
 import StreamerGate from './pages/StreamerGate';
-import { getStreamerToken } from './utils/streamerAuth';
+import { clearStreamerToken, getAuthRole, getStreamerToken } from './utils/streamerAuth';
 
-type Route = 'landing' | 'gate' | 'manage' | 'join';
+type Route = 'landing' | 'gate' | 'manage' | 'admin' | 'join';
 
 function pathToRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/manage') {
-    return getStreamerToken() ? 'manage' : 'gate';
+    if (!getStreamerToken()) return 'gate';
+    return getAuthRole() === 'admin' ? 'admin' : 'manage';
+  }
+  if (path === '/admin') {
+    if (!getStreamerToken() || getAuthRole() !== 'admin') return 'gate';
+    return 'admin';
   }
   if (path === '/join') return 'join';
   return 'landing';
@@ -18,6 +24,7 @@ function pathToRoute(pathname: string): Route {
 
 function routeToPath(route: Route): string {
   if (route === 'manage' || route === 'gate') return '/manage';
+  if (route === 'admin') return '/admin';
   if (route === 'join') return '/join';
   return '/';
 }
@@ -26,11 +33,19 @@ export default function App() {
   const [route, setRoute] = useState<Route>(() => pathToRoute(window.location.pathname));
 
   const navigate = useCallback((next: Route) => {
-    const path = routeToPath(next);
+    let target = next;
+    if (target === 'manage') {
+      if (!getStreamerToken()) target = 'gate';
+      else if (getAuthRole() === 'admin') target = 'admin';
+    }
+    if (target === 'admin' && (!getStreamerToken() || getAuthRole() !== 'admin')) {
+      target = 'gate';
+    }
+    const path = routeToPath(target);
     if (window.location.pathname !== path) {
       window.history.pushState({}, '', path);
     }
-    setRoute(next === 'manage' && !getStreamerToken() ? 'gate' : next);
+    setRoute(target);
   }, []);
 
   useEffect(() => {
@@ -47,7 +62,18 @@ export default function App() {
     return (
       <StreamerGate
         onBack={() => navigate('landing')}
-        onSuccess={() => navigate('manage')}
+        onSuccess={(role) => navigate(role === 'admin' ? 'admin' : 'manage')}
+      />
+    );
+  }
+
+  if (route === 'admin') {
+    return (
+      <AdminApp
+        onLogout={() => {
+          clearStreamerToken();
+          navigate('landing');
+        }}
       />
     );
   }
@@ -64,7 +90,13 @@ export default function App() {
 
   return (
     <LandingPage
-      onSelectStreamer={() => navigate(getStreamerToken() ? 'manage' : 'gate')}
+      onSelectStreamer={() => {
+        if (!getStreamerToken()) {
+          navigate('gate');
+          return;
+        }
+        navigate(getAuthRole() === 'admin' ? 'admin' : 'manage');
+      }}
       onSelectViewer={() => navigate('join')}
     />
   );

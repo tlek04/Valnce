@@ -4,6 +4,7 @@ dist
 *.local
 .env
 .env.*
+.dev.vars
 .vscode
 review-768.png
 .refactor-baseline/

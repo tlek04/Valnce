@@ -1,7 +1,8 @@
 import { Env } from './types';
 import { json } from './http';
 
-type AuthEnv = Pick<Env, 'STREAMER_PASSWORD' | 'ROSTER'>;
+type AuthEnv = Pick<Env, 'STREAMER_PASSWORD' | 'ADMIN_PASSWORD' | 'ROSTER'>;
+export type AuthRole = 'streamer' | 'admin';
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
@@ -106,22 +107,24 @@ async function appendAccessLog(
   await env.ROSTER.put(ACCESS_LOG_KEY, JSON.stringify(next));
 }
 
-export async function issueStreamerToken(
+export async function issueAuthToken(
   secret: string,
   epoch: number,
+  role: AuthRole,
   now = Date.now()
 ): Promise<string> {
-  const payload = JSON.stringify({ v: 1, exp: now + SESSION_TTL_MS, epoch });
+  const payload = JSON.stringify({ v: 1, exp: now + SESSION_TTL_MS, epoch, role });
   const payloadPart = bytesToBase64Url(new TextEncoder().encode(payload));
   const key = await hmacKey(secret);
   const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payloadPart));
   return `v1.${payloadPart}.${bytesToBase64Url(signature)}`;
 }
 
-export async function verifyStreamerToken(
+export async function verifyAuthToken(
   token: string,
   secret: string,
   epoch: number,
+  expectedRole: AuthRole,
   now = Date.now()
 ): Promise<boolean> {
   const parts = token.split('.');
@@ -141,14 +144,35 @@ export async function verifyStreamerToken(
       exp?: number;
       v?: number;
       epoch?: number;
+      role?: string;
     };
     if (payload.v !== 1 || typeof payload.exp !== 'number') return false;
     if (payload.exp <= now) return false;
     if (typeof payload.epoch !== 'number' || payload.epoch !== epoch) return false;
+    if (payload.role !== expectedRole) return false;
     return true;
   } catch {
     return false;
   }
+}
+
+async function resolveAuth(
+  request: Request,
+  env: AuthEnv
+): Promise<{ role: AuthRole } | null> {
+  const token = bearerToken(request);
+  if (!token) return null;
+  const epoch = await readSessionEpoch(env);
+  if (
+    env.STREAMER_PASSWORD &&
+    (await verifyAuthToken(token, env.STREAMER_PASSWORD, epoch, 'streamer'))
+  ) {
+    return { role: 'streamer' };
+  }
+  if (env.ADMIN_PASSWORD && (await verifyAuthToken(token, env.ADMIN_PASSWORD, epoch, 'admin'))) {
+    return { role: 'admin' };
+  }
+  return null;
 }
 
 async function readLoginAttempts(env: AuthEnv, ip: string) {
@@ -170,14 +194,31 @@ async function writeLoginAttempts(env: AuthEnv, ip: string, count: number, reset
   await env.ROSTER.put(`auth:login:${ip}`, JSON.stringify({ count, resetAt }));
 }
 
+/** 스트리머 또는 관리자 토큰 */
 export async function requireStreamer(request: Request, env: AuthEnv): Promise<Response | null> {
-  if (!env.STREAMER_PASSWORD) {
+  if (!env.STREAMER_PASSWORD && !env.ADMIN_PASSWORD) {
     return json({ error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
   }
-  const epoch = await readSessionEpoch(env);
-  const token = bearerToken(request);
-  if (!token || !(await verifyStreamerToken(token, env.STREAMER_PASSWORD, epoch))) {
+  const auth = await resolveAuth(request, env);
+  if (!auth) {
     return json({ error: '인증이 필요합니다.' }, { status: 401 });
+  }
+  await appendAccessLog(
+    env,
+    { ip: clientIp(request), at: Date.now(), ok: true },
+    { throttleSuccess: true }
+  );
+  return null;
+}
+
+/** 관리자 전용 */
+export async function requireAdmin(request: Request, env: AuthEnv): Promise<Response | null> {
+  if (!env.ADMIN_PASSWORD) {
+    return json({ error: 'ADMIN_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
+  }
+  const auth = await resolveAuth(request, env);
+  if (!auth || auth.role !== 'admin') {
+    return json({ error: '관리자 인증이 필요합니다.' }, { status: 401 });
   }
   await appendAccessLog(
     env,
@@ -191,7 +232,7 @@ export async function handleAuthLogin(request: Request, env: AuthEnv): Promise<R
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
-  if (!env.STREAMER_PASSWORD) {
+  if (!env.STREAMER_PASSWORD && !env.ADMIN_PASSWORD) {
     return json({ ok: false, error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
   }
 
@@ -211,25 +252,34 @@ export async function handleAuthLogin(request: Request, env: AuthEnv): Promise<R
     return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
   }
 
-  if ((body.password ?? '').trim() !== env.STREAMER_PASSWORD) {
-    await writeLoginAttempts(env, ip, attempts.count + 1, attempts.resetAt);
-    await appendAccessLog(env, { ip, at: Date.now(), ok: false });
-    return json({ ok: false, error: '비밀번호가 올바르지 않습니다.' }, { status: 401 });
+  const password = (body.password ?? '').trim();
+  const epoch = await readSessionEpoch(env);
+
+  if (env.ADMIN_PASSWORD && password === env.ADMIN_PASSWORD) {
+    await writeLoginAttempts(env, ip, 0, attempts.resetAt);
+    const token = await issueAuthToken(env.ADMIN_PASSWORD, epoch, 'admin');
+    await appendAccessLog(env, { ip, at: Date.now(), ok: true });
+    return json({ ok: true, token, role: 'admin' as AuthRole, expiresInMs: SESSION_TTL_MS });
   }
 
-  await writeLoginAttempts(env, ip, 0, attempts.resetAt);
-  const epoch = await readSessionEpoch(env);
-  const token = await issueStreamerToken(env.STREAMER_PASSWORD, epoch);
-  await appendAccessLog(env, { ip, at: Date.now(), ok: true });
-  return json({ ok: true, token, expiresInMs: SESSION_TTL_MS });
+  if (env.STREAMER_PASSWORD && password === env.STREAMER_PASSWORD) {
+    await writeLoginAttempts(env, ip, 0, attempts.resetAt);
+    const token = await issueAuthToken(env.STREAMER_PASSWORD, epoch, 'streamer');
+    await appendAccessLog(env, { ip, at: Date.now(), ok: true });
+    return json({ ok: true, token, role: 'streamer' as AuthRole, expiresInMs: SESSION_TTL_MS });
+  }
+
+  await writeLoginAttempts(env, ip, attempts.count + 1, attempts.resetAt);
+  await appendAccessLog(env, { ip, at: Date.now(), ok: false });
+  return json({ ok: false, error: '비밀번호가 올바르지 않습니다.' }, { status: 401 });
 }
 
 export async function handleAuthRevokeAll(request: Request, env: AuthEnv): Promise<Response> {
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
-  if (!env.STREAMER_PASSWORD) {
-    return json({ ok: false, error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
+  if (!env.ADMIN_PASSWORD) {
+    return json({ ok: false, error: 'ADMIN_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
   }
 
   let body: { password?: string };
@@ -239,7 +289,8 @@ export async function handleAuthRevokeAll(request: Request, env: AuthEnv): Promi
     return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
   }
 
-  if ((body.password ?? '').trim() !== env.STREAMER_PASSWORD) {
+  const password = (body.password ?? '').trim();
+  if (password !== env.ADMIN_PASSWORD) {
     await appendAccessLog(env, { ip: clientIp(request), at: Date.now(), ok: false });
     return json({ ok: false, error: '비밀번호가 올바르지 않습니다.' }, { status: 401 });
   }
@@ -251,11 +302,19 @@ export async function handleAuthRevokeAll(request: Request, env: AuthEnv): Promi
 }
 
 export async function handleAuthAccessLog(request: Request, env: AuthEnv): Promise<Response> {
+  const denied = await requireAdmin(request, env);
+  if (denied) return denied;
+
+  if (request.method === 'DELETE') {
+    if (env.ROSTER) {
+      await env.ROSTER.put(ACCESS_LOG_KEY, JSON.stringify([]));
+    }
+    return json({ ok: true });
+  }
+
   if (request.method !== 'GET') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
-  const denied = await requireStreamer(request, env);
-  if (denied) return denied;
   const items = await readAccessLog(env);
   return json({ items });
 }

@@ -5748,7 +5748,8 @@
       "status": 200,
       "data": {
         "ok": true,
-        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjowfQ.lVThFuUDfr7gFVHJAIA5oYL75Fz0HSdrAXIvQ7m0m80",
+        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjowLCJyb2xlIjoic3RyZWFtZXIifQ.EDEU-CjQrNBz547330JLBdNogT0yuMwnp-kZVpTvfJc",
+        "role": "streamer",
         "expiresInMs": 2592000000
       },
       "kv": [
@@ -6233,9 +6234,69 @@
     {
       "path": "/api/auth/access-log",
       "method": "GET",
+      "status": 401,
+      "data": {
+        "error": "관리자 인증이 필요합니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjowLCJyb2xlIjoiYWRtaW4ifQ.ApWbRIgO4Zx5s81c7bK4oibtf-PPjgyuftvJldz8kQU",
+        "role": "admin",
+        "expiresInMs": 2592000000
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/access-log",
+      "method": "GET",
       "status": 200,
       "data": {
         "items": [
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          },
           {
             "ip": "local",
             "at": 1793790000000,
@@ -6255,7 +6316,7 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
         ],
         [
           "shared-roster",
@@ -6282,7 +6343,34 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/revoke-all",
+      "method": "POST",
+      "status": 401,
+      "data": {
+        "ok": false,
+        "error": "비밀번호가 올바르지 않습니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
         ],
         [
           "shared-roster",
@@ -6309,7 +6397,7 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
         ],
         [
           "shared-roster",
@@ -6375,7 +6463,7 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
         ],
         [
           "shared-roster",
@@ -6397,7 +6485,8 @@
       "status": 200,
       "data": {
         "ok": true,
-        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjoxfQ.Sh-rQYyLjPHAlHWxj8RhXDSe9cL0jWrblmHQOR1rop4",
+        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjoxLCJyb2xlIjoiYWRtaW4ifQ.S8bQCNc9N1Q0MUbc2-eUNr7l95NWu_sH4_9-Plas2wY",
+        "role": "admin",
         "expiresInMs": 2592000000
       },
       "kv": [
@@ -6407,7 +6496,7 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
         ],
         [
           "shared-roster",
@@ -6447,6 +6536,16 @@
           {
             "ip": "local",
             "at": 1793790000000,
+            "ok": false
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
             "ok": true
           },
           {
@@ -6463,7 +6562,73 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/access-log",
+      "method": "DELETE",
+      "status": 200,
+      "data": {
+        "ok": true
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/access-log",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "items": [
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          }
+        ]
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true}]"
         ],
         [
           "shared-roster",
@@ -6511,7 +6676,7 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true}]"
         ],
         [
           "shared-roster",
@@ -6543,7 +6708,7 @@
         ],
         [
           "auth:access-log",
-          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true}]"
         ],
         [
           "shared-roster",

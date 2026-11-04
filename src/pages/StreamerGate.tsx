@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
-import { verifyStreamerPassword } from '../utils/streamerAuth';
+import { AuthRole, verifyStreamerPassword } from '../utils/streamerAuth';
 
 interface StreamerGateProps {
-  onSuccess: () => void;
+  onSuccess: (role: AuthRole) => void;
   onBack: () => void;
 }
 
@@ -17,11 +17,11 @@ export default function StreamerGate({ onSuccess, onBack }: StreamerGateProps) {
     setError(null);
     const result = await verifyStreamerPassword(password);
     setBusy(false);
-    if (!result.ok) {
+    if (!result.ok || !result.role) {
       setError(result.error || '비밀번호가 올바르지 않습니다.');
       return;
     }
-    onSuccess();
+    onSuccess(result.role);
   };
 
   return (

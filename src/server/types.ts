@@ -12,6 +12,7 @@ export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
   HENRIK_API_KEY?: string;
   STREAMER_PASSWORD?: string;
+  ADMIN_PASSWORD?: string;
 }
 
 export interface RosterPayload {
