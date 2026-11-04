@@ -64,6 +64,8 @@ export interface SavedPlayer {
   riotTag?: string;
   /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
+  /** 시청자 신청 순번 */
+  queueNo?: number;
   wins: number;
   losses: number;
   /** 양수 연승, 음수 연패, 0 없음 */
@@ -85,9 +87,21 @@ export interface Player {
   riotTag?: string;
   /** @deprecated 시드는 고정 닉 기준 */
   matchSeed?: boolean;
+  /** 시청자 신청 순번 */
+  queueNo?: number;
   wins: number;
   losses: number;
   streak: number;
+}
+
+/** 시청자 참가 신청 (승인 대기) */
+export interface JoinApplication {
+  id: string;
+  name: string;
+  riotName: string;
+  riotTag: string;
+  queueNo: number;
+  createdAt: number;
 }
 
 /** API로 확인된 내전 커스텀 한 판 */

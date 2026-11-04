@@ -8,6 +8,7 @@ interface HeaderProps {
   syncStatus?: 'idle' | 'syncing' | 'ok' | 'offline';
   onMatchSync?: (options?: { force?: boolean; soft?: boolean }) => void;
   matchSyncing?: boolean;
+  onHome?: () => void;
 }
 
 export default function Header({
@@ -15,6 +16,7 @@ export default function Header({
   syncStatus = 'idle',
   onMatchSync,
   matchSyncing = false,
+  onHome,
 }: HeaderProps) {
   const matchCount = useAppStore((state) => state.waitlist.length + state.team1.length + state.team2.length);
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
@@ -53,6 +55,15 @@ export default function Header({
           </span>
         </h1>
         <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
+          {onHome && (
+            <button
+              type="button"
+              onClick={onHome}
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-val-line px-3 py-2 text-sm font-semibold text-val-muted hover:text-val-cream"
+            >
+              나가기
+            </button>
+          )}
           {syncStatus !== 'idle' && (
             <span
               className={`hidden text-xs sm:inline ${

@@ -1,5 +1,6 @@
 import { SavedPlayer } from '../types';
 import { toSavedPlayer } from './player';
+import { streamerAuthHeaders } from './streamerAuth';
 
 export interface RemoteRoster {
   updatedAt: number;
@@ -39,7 +40,7 @@ export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number
   try {
     const response = await fetch(apiUrl(), {
       method: 'PUT',
-      headers: { 'content-type': 'application/json' },
+      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify({
         updatedAt,
         players: players.map((player) => toSavedPlayer(player)),

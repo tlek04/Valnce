@@ -2,6 +2,7 @@ interface Env {
   ROSTER: KVNamespace;
   ASSETS: Fetcher;
   HENRIK_API_KEY?: string;
+  STREAMER_PASSWORD?: string;
 }
 
 interface RosterPayload {
@@ -28,9 +29,25 @@ interface QualifyingMatch {
   results: { playerId: string; result: 'win' | 'loss' }[];
 }
 
+interface JoinApplication {
+  id: string;
+  name: string;
+  riotName: string;
+  riotTag: string;
+  queueNo: number;
+  createdAt: number;
+}
+
+interface JoinQueuePayload {
+  nextNo: number;
+  items: JoinApplication[];
+}
+
 const KEY = 'shared-roster';
+const JOIN_KEY = 'join-queue';
 /** 시드당 Henrik 호출 1회에 가져올 커스텀 판 수 */
 const PAGE_SIZE = 15;
+const DEFAULT_TIER = { tier: 'Gold', division: 2 };
 
 /** 가장 최근 8월 1일 0시부터 */
 function matchHistoryCutoff(now = Date.now()) {
@@ -61,6 +78,22 @@ function riotKey(name: string, tag: string) {
   return `${n}#${t}`;
 }
 
+function bearerToken(request: Request) {
+  const auth = request.headers.get('Authorization') ?? '';
+  if (auth.toLowerCase().startsWith('bearer ')) return auth.slice(7).trim();
+  return '';
+}
+
+function requireStreamer(request: Request, env: Env): Response | null {
+  if (!env.STREAMER_PASSWORD) {
+    return json({ error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
+  }
+  if (bearerToken(request) !== env.STREAMER_PASSWORD) {
+    return json({ error: '인증이 필요합니다.' }, { status: 401 });
+  }
+  return null;
+}
+
 function isCustomQueue(queue: { id?: string; name?: string } | null | undefined) {
   const id = queue?.id?.toLowerCase() ?? '';
   const name = queue?.name?.toLowerCase() ?? '';
@@ -85,6 +118,40 @@ function teamDidWin(
   return null;
 }
 
+async function readJoinQueue(env: Env): Promise<JoinQueuePayload> {
+  const stored = (await env.ROSTER.get(JOIN_KEY, 'json')) as JoinQueuePayload | null;
+  const items = Array.isArray(stored?.items) ? stored!.items : [];
+  const nextNo = typeof stored?.nextNo === 'number' && stored.nextNo > 0 ? stored.nextNo : 1;
+  return { nextNo, items };
+}
+
+async function writeJoinQueue(env: Env, payload: JoinQueuePayload) {
+  await env.ROSTER.put(JOIN_KEY, JSON.stringify(payload));
+}
+
+function asSavedPlayers(raw: unknown[]): Record<string, unknown>[] {
+  return raw.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object');
+}
+
+async function handleAuthLogin(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') {
+    return json({ error: 'Method not allowed' }, { status: 405 });
+  }
+  if (!env.STREAMER_PASSWORD) {
+    return json({ ok: false, error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
+  }
+  let body: { password?: string };
+  try {
+    body = (await request.json()) as { password?: string };
+  } catch {
+    return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
+  }
+  if ((body.password ?? '').trim() !== env.STREAMER_PASSWORD) {
+    return json({ ok: false, error: '비밀번호가 올바르지 않습니다.' }, { status: 401 });
+  }
+  return json({ ok: true });
+}
+
 async function handleRoster(request: Request, env: Env): Promise<Response> {
   if (!env.ROSTER) {
     return json({ error: 'ROSTER KV가 연결되지 않았습니다.' }, { status: 503 });
@@ -99,6 +166,9 @@ async function handleRoster(request: Request, env: Env): Promise<Response> {
   }
 
   if (request.method === 'PUT') {
+    const denied = requireStreamer(request, env);
+    if (denied) return denied;
+
     let body: Partial<RosterPayload>;
     try {
       body = (await request.json()) as Partial<RosterPayload>;
@@ -115,7 +185,7 @@ async function handleRoster(request: Request, env: Env): Promise<Response> {
     if (existing && typeof existing.updatedAt === 'number' && existing.updatedAt > updatedAt) {
       return json(
         { ok: false, newer: true, updatedAt: existing.updatedAt, players: existing.players },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
@@ -128,6 +198,159 @@ async function handleRoster(request: Request, env: Env): Promise<Response> {
   }
 
   return json({ error: 'Method not allowed' }, { status: 405 });
+}
+
+async function handleJoin(request: Request, env: Env, path: string): Promise<Response> {
+  if (!env.ROSTER) {
+    return json({ error: 'ROSTER KV가 연결되지 않았습니다.' }, { status: 503 });
+  }
+
+  const approveMatch = path.match(/^\/api\/join\/([^/]+)\/approve$/);
+  const rejectMatch = path.match(/^\/api\/join\/([^/]+)\/reject$/);
+
+  if (approveMatch && request.method === 'POST') {
+    const denied = requireStreamer(request, env);
+    if (denied) return denied;
+    return approveJoin(env, decodeURIComponent(approveMatch[1]));
+  }
+
+  if (rejectMatch && request.method === 'POST') {
+    const denied = requireStreamer(request, env);
+    if (denied) return denied;
+    return rejectJoin(env, decodeURIComponent(rejectMatch[1]));
+  }
+
+  if (path !== '/api/join') {
+    return json({ error: 'Not found' }, { status: 404 });
+  }
+
+  if (request.method === 'GET') {
+    const denied = requireStreamer(request, env);
+    if (denied) return denied;
+    const queue = await readJoinQueue(env);
+    return json({ items: queue.items });
+  }
+
+  if (request.method === 'POST') {
+    return enqueueJoin(request, env);
+  }
+
+  return json({ error: 'Method not allowed' }, { status: 405 });
+}
+
+async function enqueueJoin(request: Request, env: Env): Promise<Response> {
+  let body: { name?: string; riotName?: string; riotTag?: string };
+  try {
+    body = (await request.json()) as { name?: string; riotName?: string; riotTag?: string };
+  } catch {
+    return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
+  }
+
+  const name = (body.name ?? '').trim();
+  const riotName = (body.riotName ?? '').trim().replace(/^#+/, '');
+  const riotTag = (body.riotTag ?? '').trim().replace(/^#+/, '');
+  if (!name) return json({ ok: false, error: '치지직 닉네임을 입력하세요.' }, { status: 400 });
+  if (!riotName || !riotTag) {
+    return json({ ok: false, error: '발로란트 닉과 태그를 입력하세요.' }, { status: 400 });
+  }
+
+  const nameKey = name.normalize('NFC').toLowerCase();
+  const tagKey = riotKey(riotName, riotTag);
+  const queue = await readJoinQueue(env);
+  const roster = (await env.ROSTER.get(KEY, 'json')) as RosterPayload | null;
+  const rosterPlayers = asSavedPlayers(Array.isArray(roster?.players) ? roster!.players : []);
+
+  const nameTaken =
+    queue.items.some((item) => item.name.normalize('NFC').toLowerCase() === nameKey) ||
+    rosterPlayers.some(
+      (item) => typeof item.name === 'string' && item.name.normalize('NFC').toLowerCase() === nameKey
+    );
+  if (nameTaken) {
+    return json({ ok: false, error: '같은 치지직 닉네임이 이미 있습니다.' }, { status: 409 });
+  }
+
+  const riotTaken =
+    queue.items.some((item) => riotKey(item.riotName, item.riotTag) === tagKey) ||
+    rosterPlayers.some(
+      (item) =>
+        typeof item.riotName === 'string' &&
+        typeof item.riotTag === 'string' &&
+        riotKey(item.riotName, item.riotTag) === tagKey
+    );
+  if (riotTaken) {
+    return json({ ok: false, error: '같은 발로란트 닉#태그가 이미 있습니다.' }, { status: 409 });
+  }
+
+  const application: JoinApplication = {
+    id: crypto.randomUUID(),
+    name,
+    riotName,
+    riotTag,
+    queueNo: queue.nextNo,
+    createdAt: Date.now(),
+  };
+  await writeJoinQueue(env, {
+    nextNo: queue.nextNo + 1,
+    items: [...queue.items, application],
+  });
+  return json({ ok: true, application });
+}
+
+async function approveJoin(env: Env, id: string): Promise<Response> {
+  const queue = await readJoinQueue(env);
+  const index = queue.items.findIndex((item) => item.id === id);
+  if (index < 0) {
+    return json({ ok: false, error: '신청을 찾을 수 없습니다.' }, { status: 404 });
+  }
+  const application = queue.items[index];
+  const remaining = queue.items.filter((item) => item.id !== id);
+  await writeJoinQueue(env, { nextNo: queue.nextNo, items: remaining });
+
+  const existing = (await env.ROSTER.get(KEY, 'json')) as RosterPayload | null;
+  const players = asSavedPlayers(Array.isArray(existing?.players) ? existing!.players : []);
+  const playerId = crypto.randomUUID();
+  const saved = {
+    id: playerId,
+    name: application.name,
+    currentTier: DEFAULT_TIER,
+    riotName: application.riotName,
+    riotTag: application.riotTag,
+    queueNo: application.queueNo,
+    wins: 0,
+    losses: 0,
+    streak: 0,
+  };
+  const nextPlayers = [...players.filter((item) => item.id !== playerId), saved];
+  const updatedAt = Date.now();
+  await env.ROSTER.put(KEY, JSON.stringify({ updatedAt, players: nextPlayers }));
+
+  const sessionPlayer = {
+    ...saved,
+    maxTier: DEFAULT_TIER,
+    canOrder: false,
+    restrictions: [],
+    lockedTeam: null,
+    rivalIds: [],
+    allyIds: [],
+  };
+
+  return json({
+    ok: true,
+    player: sessionPlayer,
+    roster: { updatedAt, players: nextPlayers },
+  });
+}
+
+async function rejectJoin(env: Env, id: string): Promise<Response> {
+  const queue = await readJoinQueue(env);
+  if (!queue.items.some((item) => item.id === id)) {
+    return json({ ok: false, error: '신청을 찾을 수 없습니다.' }, { status: 404 });
+  }
+  await writeJoinQueue(env, {
+    nextNo: queue.nextNo,
+    items: queue.items.filter((item) => item.id !== id),
+  });
+  return json({ ok: true });
 }
 
 async function fetchSeedMatches(
@@ -237,7 +460,6 @@ function toQualifyingMatches(rawMatches: unknown[], roster: RosterIdentity[]): Q
     }
 
     const uniqueIds = new Set(results.map((item) => item.playerId));
-    // 시드만 혼자인 판(사설) 제외: 명단 태그와 매칭된 인원 2명 이상
     if (uniqueIds.size < 2) continue;
 
     byMatchId.set(meta.match_id, {
@@ -255,6 +477,9 @@ async function handleMatchImport(request: Request, env: Env): Promise<Response> 
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
+  const denied = requireStreamer(request, env);
+  if (denied) return denied;
+
   if (!env.HENRIK_API_KEY) {
     return json({ ok: false, error: 'HENRIK_API_KEY 시크릿이 없습니다.', matches: [] }, { status: 503 });
   }
@@ -285,7 +510,6 @@ async function handleMatchImport(request: Request, env: Env): Promise<Response> 
       const matches = await fetchSeedMatches(seed, env.HENRIK_API_KEY, cutoff);
       raw.push(...matches);
     }
-    // matchId 기준으로 합치며 중복 제거
     const matches = toQualifyingMatches(raw, roster);
     return json({ ok: true, matches, seedCalls: seeds.length });
   } catch (error) {
@@ -298,11 +522,17 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, '') || '/';
+    if (path === '/api/auth/login') {
+      return handleAuthLogin(request, env);
+    }
     if (path === '/api/roster') {
       return handleRoster(request, env);
     }
     if (path === '/api/matches/import') {
       return handleMatchImport(request, env);
+    }
+    if (path === '/api/join' || path.startsWith('/api/join/')) {
+      return handleJoin(request, env, path);
     }
     return env.ASSETS.fetch(request);
   },

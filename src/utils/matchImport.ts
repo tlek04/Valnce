@@ -1,5 +1,6 @@
 import { QualifyingMatch } from '../types';
 import { isRosterSyncConfigured } from './rosterSync';
+import { streamerAuthHeaders } from './streamerAuth';
 import { listMatchSeeds, listTaggedRoster } from './valorantMatch';
 import { useAppStore } from '../store/useAppStore';
 
@@ -40,7 +41,7 @@ export async function importQualifyingMatches(): Promise<MatchImportResponse> {
   try {
     const response = await fetch(apiUrl(), {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify({ seeds, roster }),
     });
     const text = await response.text();

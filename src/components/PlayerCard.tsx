@@ -45,7 +45,14 @@ export default function PlayerCard({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="break-words font-semibold text-val-cream">{player.name}</h3>
+              <h3 className="break-words font-semibold text-val-cream">
+                {player.name}
+                {player.queueNo ? (
+                  <span className="ml-1.5 align-middle text-[11px] font-medium text-val-muted">
+                    #{player.queueNo}
+                  </span>
+                ) : null}
+              </h3>
             </div>
             <span
               className={`shrink-0 rounded-md border px-2 py-0.5 text-xs font-semibold ${

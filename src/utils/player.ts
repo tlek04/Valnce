@@ -46,6 +46,7 @@ export function normalizePlayer(raw: unknown): Player {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
+  const queueNo = typeof data.queueNo === 'number' && data.queueNo > 0 ? Math.floor(data.queueNo) : undefined;
 
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
@@ -61,6 +62,7 @@ export function normalizePlayer(raw: unknown): Player {
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
     matchSeed: Boolean(data.matchSeed),
+    ...(queueNo ? { queueNo } : {}),
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
@@ -159,6 +161,7 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
+  const queueNo = typeof data.queueNo === 'number' && data.queueNo > 0 ? Math.floor(data.queueNo) : undefined;
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
     name: name || '플레이어',
@@ -166,6 +169,7 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
     ...(data.matchSeed ? { matchSeed: true } : {}),
+    ...(queueNo ? { queueNo } : {}),
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
@@ -187,6 +191,7 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     ...(saved.riotName ? { riotName: saved.riotName } : {}),
     ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
     ...(saved.matchSeed ? { matchSeed: true } : {}),
+    ...(saved.queueNo ? { queueNo: saved.queueNo } : {}),
     wins: saved.wins ?? 0,
     losses: saved.losses ?? 0,
     streak: saved.streak ?? 0,

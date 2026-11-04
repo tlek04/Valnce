@@ -1,5 +1,6 @@
 interface Env {
   ROSTER: KVNamespace;
+  STREAMER_PASSWORD?: string;
 }
 
 interface RosterPayload {
@@ -20,6 +21,22 @@ function json(data: unknown, init: ResponseInit = {}) {
   });
 }
 
+function bearerToken(request: Request) {
+  const auth = request.headers.get('Authorization') ?? '';
+  if (auth.toLowerCase().startsWith('bearer ')) return auth.slice(7).trim();
+  return '';
+}
+
+function requireStreamer(request: Request, env: Env): Response | null {
+  if (!env.STREAMER_PASSWORD) {
+    return json({ error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
+  }
+  if (bearerToken(request) !== env.STREAMER_PASSWORD) {
+    return json({ error: '인증이 필요합니다.' }, { status: 401 });
+  }
+  return null;
+}
+
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   if (!env.ROSTER) {
     return json({ error: 'ROSTER KV가 연결되지 않았습니다.' }, { status: 503 });
@@ -35,6 +52,9 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env }) => {
   if (!env.ROSTER) {
     return json({ error: 'ROSTER KV가 연결되지 않았습니다.' }, { status: 503 });
   }
+
+  const denied = requireStreamer(request, env);
+  if (denied) return denied;
 
   let body: Partial<RosterPayload>;
   try {
@@ -52,7 +72,7 @@ export const onRequestPut: PagesFunction<Env> = async ({ request, env }) => {
   if (existing && typeof existing.updatedAt === 'number' && existing.updatedAt > updatedAt) {
     return json(
       { ok: false, newer: true, updatedAt: existing.updatedAt, players: existing.players },
-      { status: 409 },
+      { status: 409 }
     );
   }
 
