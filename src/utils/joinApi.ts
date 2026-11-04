@@ -10,14 +10,19 @@ export async function submitJoinApplication(input: {
   name: string;
   riotName: string;
   riotTag: string;
-}): Promise<{ ok: boolean; application?: JoinApplication; error?: string }> {
+}): Promise<{ ok: boolean; application?: JoinApplication; autoJoined?: boolean; error?: string }> {
   try {
     const response = await fetch(joinUrl(), {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(input),
     });
-    const parsed = await readJsonText<{ ok?: boolean; application?: JoinApplication; error?: string }>(response);
+    const parsed = await readJsonText<{
+      ok?: boolean;
+      application?: JoinApplication;
+      autoJoined?: boolean;
+      error?: string;
+    }>(response);
     if (!parsed.parsed) {
       return {
         ok: false,
@@ -34,7 +39,7 @@ export async function submitJoinApplication(input: {
         error: data.error || `신청에 실패했습니다. (${response.status})`,
       };
     }
-    return { ok: true, application: data.application };
+    return { ok: true, application: data.application, autoJoined: Boolean(data.autoJoined) };
   } catch {
     return { ok: false, error: '신청 서버에 연결하지 못했습니다.' };
   }
@@ -101,5 +106,23 @@ export async function rejectJoinApplication(id: string): Promise<{ ok: boolean; 
     return { ok: true };
   } catch {
     return { ok: false, error: '거절 서버에 연결하지 못했습니다.' };
+  }
+}
+
+export async function claimAutoJoinApplication(
+  id: string
+): Promise<{ ok: boolean; player?: Player; error?: string }> {
+  try {
+    const response = await fetch(joinUrl(`/${encodeURIComponent(id)}/claim`), {
+      method: 'POST',
+      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
+    });
+    const data = await readJsonOrEmpty<{ ok?: boolean; player?: Player; error?: string }>(response);
+    if (!response.ok || !data.ok || !data.player) {
+      return { ok: false, error: data.error || '자동 합류에 실패했습니다.' };
+    }
+    return { ok: true, player: data.player };
+  } catch {
+    return { ok: false, error: '자동 합류 서버에 연결하지 못했습니다.' };
   }
 }

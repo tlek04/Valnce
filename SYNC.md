@@ -17,7 +17,7 @@
 
 - `/` 랜딩 → 스트리머(`/manage`, `STREAMER_PASSWORD`) · 관리자(`/admin`, `ADMIN_PASSWORD`) · 시청자(`/join`, 닉+발로닉 신청)
 - 같은 비밀번호 게이트에서 비번에 따라 `role: streamer | admin` 이 갈림
-- 시청자 신청은 KV `join-queue`에 쌓이고, 스트리머가 승인하면 명단+대기열에 추가
+- 시청자 신청: **신규**는 `join-queue`에 쌓여 스트리머 승인 후 명단+대기열 추가. **명단에 같은 발로닉#태그**가 있으면 승인 없이 대기열 합류(`claim`). 신청 폼은 브라우저에 닉·태그 기억
 - 로그인 후 세션 토큰이 발급되며, `PUT /api/roster` 등 쓰기 API는 `Authorization: Bearer <세션 토큰>` 필요 (admin 토큰도 허용)
 - 접속 IP · 세션 일괄 회수 · 승패 보정 · 명단 삭제: `/admin` 관리 화면 / 자세한 설명은 [docs/AUTH.md](docs/AUTH.md)
 - `/manage`에는 위험 운영 조작을 두지 않음

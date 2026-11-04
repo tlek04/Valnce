@@ -134,6 +134,10 @@ export async function serverScenarios(root = 'src') {
   await request('/api/join');
   await request(`/api/join/${joined.application.id}/approve`, 'POST');
   await request('/api/join/missing/reject', 'POST');
+  // existing roster riot → auto join (no approve)
+  const autoJoined = await request('/api/join', 'POST', { name: 'viewer', riotName: 'nick', riotTag: 'KR' }, false);
+  await request(`/api/join/${autoJoined.application?.id}/claim`, 'POST');
+  await request(`/api/join/${joined.application.id}/claim`, 'POST');
   const second = await request('/api/join', 'POST', { name: 'other', riotName: 'other', riotTag: 'KR' }, false);
   await request(`/api/join/${second.application.id}/reject`, 'POST');
   await request('/api/matches/import', 'POST', { seeds: [], roster: [] });

@@ -294,7 +294,8 @@
       "ok": true,
       "application": {
         "id": "application"
-      }
+      },
+      "autoJoined": false
     },
     "requests": [
       {

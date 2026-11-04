@@ -22,6 +22,28 @@ function asSavedPlayers(raw: unknown[]): Record<string, unknown>[] {
   return raw.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object');
 }
 
+function toSessionPlayer(saved: Record<string, unknown>, queueNo: number) {
+  return {
+    id: typeof saved.id === 'string' ? saved.id : crypto.randomUUID(),
+    name: typeof saved.name === 'string' ? saved.name : '플레이어',
+    currentTier: saved.currentTier ?? DEFAULT_TIER,
+    maxTier: saved.maxTier ?? saved.currentTier ?? DEFAULT_TIER,
+    ...(saved.internalTier ? { internalTier: saved.internalTier } : {}),
+    canOrder: Boolean(saved.canOrder),
+    restrictions: Array.isArray(saved.restrictions) ? saved.restrictions : [],
+    lockedTeam: saved.lockedTeam === 'TEAM_1' || saved.lockedTeam === 'TEAM_2' ? saved.lockedTeam : null,
+    rivalIds: Array.isArray(saved.rivalIds) ? saved.rivalIds : [],
+    allyIds: Array.isArray(saved.allyIds) ? saved.allyIds : [],
+    riotName: typeof saved.riotName === 'string' ? saved.riotName : '',
+    riotTag: typeof saved.riotTag === 'string' ? saved.riotTag : '',
+    matchSeed: Boolean(saved.matchSeed),
+    queueNo,
+    wins: typeof saved.wins === 'number' ? saved.wins : 0,
+    losses: typeof saved.losses === 'number' ? saved.losses : 0,
+    streak: typeof saved.streak === 'number' ? saved.streak : 0,
+  };
+}
+
 export async function handleJoin(request: Request, env: Env, path: string): Promise<Response> {
   if (!env.ROSTER) {
     return json({ error: 'ROSTER KV가 연결되지 않았습니다.' }, { status: 503 });
@@ -29,6 +51,7 @@ export async function handleJoin(request: Request, env: Env, path: string): Prom
 
   const approveMatch = path.match(/^\/api\/join\/([^/]+)\/approve$/);
   const rejectMatch = path.match(/^\/api\/join\/([^/]+)\/reject$/);
+  const claimMatch = path.match(/^\/api\/join\/([^/]+)\/claim$/);
 
   if (approveMatch && request.method === 'POST') {
     const denied = await requireStreamer(request, env);
@@ -40,6 +63,12 @@ export async function handleJoin(request: Request, env: Env, path: string): Prom
     const denied = await requireStreamer(request, env);
     if (denied) return denied;
     return rejectJoin(env, decodeURIComponent(rejectMatch[1]));
+  }
+
+  if (claimMatch && request.method === 'POST') {
+    const denied = await requireStreamer(request, env);
+    if (denied) return denied;
+    return claimAutoJoin(env, decodeURIComponent(claimMatch[1]));
   }
 
   if (path !== '/api/join') {
@@ -82,6 +111,40 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
   const roster = (await env.ROSTER.get(ROSTER_KEY, 'json')) as RosterPayload | null;
   const rosterPlayers = asSavedPlayers(Array.isArray(roster?.players) ? roster!.players : []);
 
+  const existingByRiot = rosterPlayers.find(
+    (item) =>
+      typeof item.riotName === 'string' &&
+      typeof item.riotTag === 'string' &&
+      riotKey(item.riotName, item.riotTag) === tagKey
+  );
+
+  if (existingByRiot && typeof existingByRiot.id === 'string') {
+    const alreadyQueued = queue.items.some(
+      (item) =>
+        item.auto &&
+        (item.playerId === existingByRiot.id || riotKey(item.riotName, item.riotTag) === tagKey)
+    );
+    if (alreadyQueued) {
+      return json({ ok: false, error: '이미 대기열 합류 요청이 있습니다.' }, { status: 409 });
+    }
+
+    const application: JoinApplication = {
+      id: crypto.randomUUID(),
+      name: typeof existingByRiot.name === 'string' ? existingByRiot.name : name,
+      riotName: typeof existingByRiot.riotName === 'string' ? existingByRiot.riotName : riotName,
+      riotTag: typeof existingByRiot.riotTag === 'string' ? existingByRiot.riotTag : riotTag,
+      queueNo: queue.nextNo,
+      createdAt: Date.now(),
+      auto: true,
+      playerId: existingByRiot.id,
+    };
+    await writeJoinQueue(env, {
+      nextNo: queue.nextNo + 1,
+      items: [...queue.items, application],
+    });
+    return json({ ok: true, application, autoJoined: true });
+  }
+
   const nameTaken =
     queue.items.some((item) => item.name.normalize('NFC').toLowerCase() === nameKey) ||
     rosterPlayers.some(
@@ -115,7 +178,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
     nextNo: queue.nextNo + 1,
     items: [...queue.items, application],
   });
-  return json({ ok: true, application });
+  return json({ ok: true, application, autoJoined: false });
 }
 
 async function approveJoin(env: Env, id: string): Promise<Response> {
@@ -125,6 +188,9 @@ async function approveJoin(env: Env, id: string): Promise<Response> {
     return json({ ok: false, error: '신청을 찾을 수 없습니다.' }, { status: 404 });
   }
   const application = queue.items[index];
+  if (application.auto) {
+    return json({ ok: false, error: '기존 시청자 합류는 승인이 필요 없습니다.' }, { status: 400 });
+  }
   const remaining = queue.items.filter((item) => item.id !== id);
   await writeJoinQueue(env, { nextNo: queue.nextNo, items: remaining });
 
@@ -163,6 +229,29 @@ async function approveJoin(env: Env, id: string): Promise<Response> {
   });
 }
 
+async function claimAutoJoin(env: Env, id: string): Promise<Response> {
+  const queue = await readJoinQueue(env);
+  const application = queue.items.find((item) => item.id === id);
+  if (!application || !application.auto || !application.playerId) {
+    return json({ ok: false, error: '자동 합류 신청을 찾을 수 없습니다.' }, { status: 404 });
+  }
+
+  const remaining = queue.items.filter((item) => item.id !== id);
+  await writeJoinQueue(env, { nextNo: queue.nextNo, items: remaining });
+
+  const existing = (await env.ROSTER.get(ROSTER_KEY, 'json')) as RosterPayload | null;
+  const players = asSavedPlayers(Array.isArray(existing?.players) ? existing!.players : []);
+  const saved = players.find((item) => item.id === application.playerId);
+  if (!saved) {
+    return json({ ok: false, error: '명단에서 플레이어를 찾을 수 없습니다.' }, { status: 404 });
+  }
+
+  return json({
+    ok: true,
+    player: toSessionPlayer(saved, application.queueNo),
+  });
+}
+
 async function rejectJoin(env: Env, id: string): Promise<Response> {
   const queue = await readJoinQueue(env);
   if (!queue.items.some((item) => item.id === id)) {
@@ -174,4 +263,3 @@ async function rejectJoin(env: Env, id: string): Promise<Response> {
   });
   return json({ ok: true });
 }
-

@@ -1,27 +1,34 @@
 import { FormEvent, useState } from 'react';
 import { submitJoinApplication } from '../utils/joinApi';
+import { loadJoinProfile, saveJoinProfile } from '../utils/joinProfile';
 
 interface JoinPageProps {
   onBack: () => void;
 }
 
 export default function JoinPage({ onBack }: JoinPageProps) {
-  const [name, setName] = useState('');
-  const [riotName, setRiotName] = useState('');
-  const [riotTag, setRiotTag] = useState('');
+  const saved = loadJoinProfile();
+  const [name, setName] = useState(saved.name);
+  const [riotName, setRiotName] = useState(saved.riotName);
+  const [riotTag, setRiotTag] = useState(saved.riotTag);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState<{ queueNo: number; name: string } | null>(null);
+  const [done, setDone] = useState<{
+    queueNo: number;
+    name: string;
+    autoJoined: boolean;
+  } | null>(null);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setBusy(true);
     setError(null);
-    const result = await submitJoinApplication({
+    const profile = {
       name: name.trim(),
       riotName: riotName.trim(),
       riotTag: riotTag.trim().replace(/^#+/, ''),
-    });
+    };
+    const result = await submitJoinApplication(profile);
     setBusy(false);
     if (!result.ok || !result.application) {
       const reason = result.error || '알 수 없는 오류입니다.';
@@ -29,21 +36,34 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       window.alert(`신청 실패\n${reason}`);
       return;
     }
-    setDone({ queueNo: result.application.queueNo, name: result.application.name });
+    saveJoinProfile(profile);
+    setDone({
+      queueNo: result.application.queueNo,
+      name: result.application.name,
+      autoJoined: Boolean(result.autoJoined),
+    });
   };
 
   if (done) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
         <div className="w-full max-w-md rounded-2xl border border-val-line bg-val-panel/80 p-6 text-center shadow-xl">
-          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">신청 완료</p>
-          <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">접수되었습니다</h1>
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">
+            {done.autoJoined ? '합류 완료' : '신청 완료'}
+          </p>
+          <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">
+            {done.autoJoined ? '대기열로 들어갑니다' : '접수되었습니다'}
+          </h1>
           <p className="mt-3 text-sm text-val-muted">
             <span className="font-semibold text-val-cream">{done.name}</span>
             {' · '}
-            신청 순번 <span className="font-semibold text-val-teal">#{done.queueNo}</span>
+            순번 <span className="font-semibold text-val-teal">#{done.queueNo}</span>
           </p>
-          <p className="mt-2 text-xs text-val-muted">스트리머 승인 후 대기열에 들어갑니다.</p>
+          <p className="mt-2 text-xs text-val-muted">
+            {done.autoJoined
+              ? '기존 시청자라 승인 없이 스트리머 대기열에 추가됩니다.'
+              : '스트리머 승인 후 대기열에 들어갑니다.'}
+          </p>
           <button
             type="button"
             onClick={onBack}

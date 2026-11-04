@@ -5945,7 +5945,8 @@
           "riotTag": "KR",
           "queueNo": 1,
           "createdAt": 1793790000000
-        }
+        },
+        "autoJoined": false
       },
       "kv": [
         [
@@ -6151,11 +6152,64 @@
         "ok": true,
         "application": {
           "id": "test-id-3",
-          "name": "other",
-          "riotName": "other",
+          "name": "viewer",
+          "riotName": "nick",
           "riotTag": "KR",
           "queueNo": 2,
-          "createdAt": 1793790000000
+          "createdAt": 1793790000000,
+          "auto": true,
+          "playerId": "test-id-2"
+        },
+        "autoJoined": true
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[{\"id\":\"test-id-3\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":2,\"createdAt\":1793790000000,\"auto\":true,\"playerId\":\"test-id-2\"}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join/test-id-3/claim",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "player": {
+          "id": "test-id-2",
+          "name": "viewer",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "riotName": "nick",
+          "riotTag": "KR",
+          "matchSeed": false,
+          "queueNo": 2,
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
         }
       },
       "kv": [
@@ -6173,12 +6227,74 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[{\"id\":\"test-id-3\",\"name\":\"other\",\"riotName\":\"other\",\"riotTag\":\"KR\",\"queueNo\":2,\"createdAt\":1793790000000}]}"
+          "{\"nextNo\":3,\"items\":[]}"
         ]
       ]
     },
     {
-      "path": "/api/join/test-id-3/reject",
+      "path": "/api/join/test-id-1/claim",
+      "method": "POST",
+      "status": 404,
+      "data": {
+        "ok": false,
+        "error": "자동 합류 신청을 찾을 수 없습니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "application": {
+          "id": "test-id-4",
+          "name": "other",
+          "riotName": "other",
+          "riotTag": "KR",
+          "queueNo": 3,
+          "createdAt": 1793790000000
+        },
+        "autoJoined": false
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":4,\"items\":[{\"id\":\"test-id-4\",\"name\":\"other\",\"riotName\":\"other\",\"riotTag\":\"KR\",\"queueNo\":3,\"createdAt\":1793790000000}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join/test-id-4/reject",
       "method": "POST",
       "status": 200,
       "data": {
@@ -6199,7 +6315,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6227,7 +6343,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6253,7 +6369,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6282,7 +6398,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6324,7 +6440,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6351,7 +6467,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6378,7 +6494,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ]
       ]
     },
@@ -6405,7 +6521,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6471,7 +6587,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6504,7 +6620,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6570,7 +6686,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6600,7 +6716,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6636,7 +6752,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6684,7 +6800,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
@@ -6716,7 +6832,7 @@
         ],
         [
           "join-queue",
-          "{\"nextNo\":3,\"items\":[]}"
+          "{\"nextNo\":4,\"items\":[]}"
         ],
         [
           "auth:session-epoch",
