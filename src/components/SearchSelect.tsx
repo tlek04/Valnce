@@ -6,6 +6,8 @@ export interface SearchOption {
   label: string;
   searchText?: string;
   group?: string;
+  /** 리스트 항목에 붙는 색 배지/텍스트 클래스 */
+  badgeClass?: string;
 }
 
 interface SearchSelectProps {
@@ -143,7 +145,7 @@ export default function SearchSelect({
         <ul
           id={listId}
           role="listbox"
-          className="absolute z-20 mt-1 max-h-72 w-full overflow-y-auto rounded-lg border border-val-line bg-val-panel py-1 shadow-xl"
+          className="absolute z-50 mt-1 max-h-72 w-full overflow-y-auto rounded-lg border border-val-line bg-val-panel py-1 shadow-xl"
         >
           {filtered.length === 0 ? (
             <li className="px-3 py-2 text-sm text-val-muted">검색 결과가 없습니다</li>
@@ -154,7 +156,11 @@ export default function SearchSelect({
               return (
                 <li key={option.value}>
                   {showGroup && (
-                    <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-val-muted">
+                    <p
+                      className={`px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider ${
+                        option.badgeClass ? option.badgeClass.split(' ').find((c) => c.startsWith('text-')) : 'text-val-muted'
+                      }`}
+                    >
                       {option.group}
                     </p>
                   )}
@@ -163,14 +169,28 @@ export default function SearchSelect({
                     id={`${listId}-${option.value}`}
                     role="option"
                     aria-selected={option.value === value || isActive}
-                    className={`block w-full px-3 py-2 text-left text-sm hover:bg-white/5 ${
-                      isActive ? 'bg-white/5 text-val-cream' : option.value === value ? 'text-val-red' : 'text-val-cream'
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-white/5 ${
+                      isActive ? 'bg-white/5' : ''
                     }`}
                     onMouseDown={(event) => event.preventDefault()}
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => choose(option)}
                   >
-                    {option.label}
+                    {option.badgeClass ? (
+                      <span
+                        className={`shrink-0 rounded border px-1.5 py-0.5 text-[11px] font-semibold ${option.badgeClass}`}
+                      >
+                        {option.label}
+                      </span>
+                    ) : (
+                      <span
+                        className={
+                          option.value === value ? 'text-val-red' : 'text-val-cream'
+                        }
+                      >
+                        {option.label}
+                      </span>
+                    )}
                   </button>
                 </li>
               );

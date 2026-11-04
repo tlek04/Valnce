@@ -1,0 +1,6563 @@
+{
+  "domain": {
+    "balance-0": {
+      "ok": false,
+      "team1": [],
+      "team2": [],
+      "waitlist": [],
+      "diff": 0,
+      "message": "자동 밸런스는 2명 이상이 필요합니다."
+    },
+    "balance-1": {
+      "ok": false,
+      "team1": [],
+      "team2": [],
+      "waitlist": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "diff": 0,
+      "message": "자동 밸런스는 2명 이상이 필요합니다."
+    },
+    "balance-2": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "diff": 0,
+      "reason": "인원 균등 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "고티어 p0은(는) 1팀, p1은(는) 2팀으로 분산",
+        "인원 1대1로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "balance-3": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p2",
+          "name": "p2",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "diff": 311,
+      "reason": "인원 차이 1명 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "고티어 p0은(는) 1팀, p1은(는) 2팀으로 분산",
+        "인원 1대2로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "balance-5": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p2",
+          "name": "p2",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p3",
+          "name": "p3",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p4",
+          "name": "p4",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "diff": 311,
+      "reason": "인원 차이 1명 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "고티어 p0은(는) 1팀, p2은(는) 2팀으로 분산",
+        "인원 2대3로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "balance-9": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p2",
+          "name": "p2",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p3",
+          "name": "p3",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p4",
+          "name": "p4",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p5",
+          "name": "p5",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p6",
+          "name": "p6",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p7",
+          "name": "p7",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p8",
+          "name": "p8",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "diff": 311,
+      "reason": "인원 차이 1명 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "고티어 p0은(는) 1팀, p4은(는) 2팀으로 분산",
+        "인원 4대5로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "balance-10": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p2",
+          "name": "p2",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p3",
+          "name": "p3",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p4",
+          "name": "p4",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p5",
+          "name": "p5",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p6",
+          "name": "p6",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p7",
+          "name": "p7",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p8",
+          "name": "p8",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p9",
+          "name": "p9",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "diff": 0,
+      "reason": "인원 균등 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "고티어 p0은(는) 1팀, p5은(는) 2팀으로 분산",
+        "인원 5대5로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "balance-11": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p2",
+          "name": "p2",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p3",
+          "name": "p3",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p4",
+          "name": "p4",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p5",
+          "name": "p5",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p6",
+          "name": "p6",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p7",
+          "name": "p7",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p8",
+          "name": "p8",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p9",
+          "name": "p9",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [
+        {
+          "id": "p10",
+          "name": "p10",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "diff": 0,
+      "reason": "인원 균등 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "p10 → 대기열 (한 판 10명 제한으로 제외)",
+        "고티어 p0은(는) 1팀, p5은(는) 2팀으로 분산",
+        "인원 5대5로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "balance-15": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "p0",
+          "name": "p0",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p1",
+          "name": "p1",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p2",
+          "name": "p2",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p3",
+          "name": "p3",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p4",
+          "name": "p4",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "p5",
+          "name": "p5",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p6",
+          "name": "p6",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p7",
+          "name": "p7",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p8",
+          "name": "p8",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p9",
+          "name": "p9",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [
+        {
+          "id": "p10",
+          "name": "p10",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p11",
+          "name": "p11",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p12",
+          "name": "p12",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p13",
+          "name": "p13",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "p14",
+          "name": "p14",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "diff": 0,
+      "reason": "인원 균등 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "p10·p11·p12·p13·p14 → 대기열 (한 판 10명 제한으로 제외)",
+        "고티어 p0은(는) 1팀, p5은(는) 2팀으로 분산",
+        "인원 5대5로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "relations": {
+      "ok": true,
+      "team1": [
+        {
+          "id": "a",
+          "name": "a",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": "TEAM_1",
+          "rivalIds": [],
+          "allyIds": [
+            "b"
+          ],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [
+            "c"
+          ],
+          "allyIds": [
+            "a"
+          ],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "team2": [
+        {
+          "id": "c",
+          "name": "c",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [
+            "b"
+          ],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "d",
+          "name": "d",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "diff": 0,
+      "reason": "팀 고정 유지 · 고정 듀오 유지 · 라이벌 분리 · 인원 균등 · 고티어 분산 · 점수 합 맞춤",
+      "details": [
+        "a → 1팀 (팀 고정)",
+        "a·b → 1팀 (고정 듀오)",
+        "b(1팀) ↔ c(2팀) (라이벌 · 다른 팀)",
+        "고티어 a은(는) 1팀, c은(는) 2팀으로 분산",
+        "인원 2대2로 구성",
+        "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+      ],
+      "message": "자동 밸런스 완료 · 균형"
+    },
+    "conflictingLocks": {
+      "ok": false,
+      "team1": [],
+      "team2": [],
+      "waitlist": [
+        {
+          "id": "a",
+          "name": "a",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": "TEAM_1",
+          "rivalIds": [],
+          "allyIds": [
+            "b"
+          ],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": "TEAM_2",
+          "rivalIds": [
+            "c"
+          ],
+          "allyIds": [
+            "a"
+          ],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "c",
+          "name": "c",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [
+            "b"
+          ],
+          "allyIds": [],
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "diff": 0,
+      "message": "고정 듀오 플레이어의 팀 고정이 서로 다릅니다."
+    },
+    "indirectConflict": {
+      "ok": false,
+      "state": {
+        "waitlist": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [
+              "c"
+            ],
+            "allyIds": [
+              "a",
+              "c"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [
+              "b"
+            ],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": []
+      },
+      "message": "고정 듀오와 라이벌이 충돌합니다."
+    },
+    "overflow": {
+      "ok": true,
+      "state": {
+        "waitlist": [],
+        "team1": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "t4",
+            "name": "t4",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team2": [
+          {
+            "id": "t0",
+            "name": "t0",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "t1",
+            "name": "t1",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "t2",
+            "name": "t2",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "t3",
+            "name": "t3",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ]
+      }
+    },
+    "reorder": {
+      "ok": true,
+      "state": {
+        "waitlist": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": []
+      }
+    },
+    "relationEdit": {
+      "ok": true,
+      "state": {
+        "waitlist": [],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [
+              "c"
+            ],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [
+              "b"
+            ],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ]
+      },
+      "message": "b도 고정 듀오로 함께 이동합니다."
+    },
+    "scores": [
+      [
+        115,
+        "아이언 1",
+        {
+          "text": "2팀이 약 3.5티어 유리",
+          "side": "team2",
+          "amount": 3.3333333333333335
+        }
+      ],
+      [
+        129,
+        "아이언 2",
+        {
+          "text": "2팀이 약 3티어 유리",
+          "side": "team2",
+          "amount": 3
+        }
+      ],
+      [
+        144,
+        "아이언 3",
+        {
+          "text": "2팀이 약 2.5티어 유리",
+          "side": "team2",
+          "amount": 2.6666666666666665
+        }
+      ],
+      [
+        319,
+        "골드 1",
+        {
+          "text": "2팀이 약 반 티어 유리",
+          "side": "team2",
+          "amount": 0.3333333333333333
+        }
+      ],
+      [
+        358,
+        "골드 2",
+        {
+          "text": "균형",
+          "side": null,
+          "amount": 0
+        }
+      ],
+      [
+        400,
+        "골드 3",
+        {
+          "text": "1팀이 약 반 티어 유리",
+          "side": "team1",
+          "amount": 0.3333333333333333
+        }
+      ],
+      [
+        629,
+        "다이아몬드 1",
+        {
+          "text": "1팀이 약 1.5티어 유리",
+          "side": "team1",
+          "amount": 1.6666666666666667
+        }
+      ],
+      [
+        705,
+        "다이아몬드 2",
+        {
+          "text": "1팀이 약 2티어 유리",
+          "side": "team1",
+          "amount": 2
+        }
+      ],
+      [
+        790,
+        "다이아몬드 3",
+        {
+          "text": "1팀이 약 2.5티어 유리",
+          "side": "team1",
+          "amount": 2.3333333333333335
+        }
+      ],
+      [
+        1518,
+        "레디언트",
+        {
+          "text": "1팀이 약 4.5티어 유리",
+          "side": "team1",
+          "amount": 4.666666666666667
+        }
+      ],
+      [
+        1518,
+        "레디언트",
+        {
+          "text": "1팀이 약 4.5티어 유리",
+          "side": "team1",
+          "amount": 4.666666666666667
+        }
+      ],
+      [
+        1518,
+        "레디언트",
+        {
+          "text": "1팀이 약 4.5티어 유리",
+          "side": "team1",
+          "amount": 4.666666666666667
+        }
+      ]
+    ],
+    "generatedCases": {
+      "cases": 320,
+      "digest": "4774c82e7d09d0aefcbd297f0a0fbad3bd1bc9ea151ab607c10ec8831a90c8a9"
+    },
+    "restore": {
+      "players": [
+        {
+          "id": "a",
+          "name": "a",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [
+        {
+          "id": "b",
+          "name": "b",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [
+            "c"
+          ],
+          "allyIds": [
+            "a"
+          ],
+          "matchSeed": false,
+          "wins": 0,
+          "losses": 0,
+          "streak": 0,
+          "queueNo": 1
+        },
+        {
+          "id": "a",
+          "name": "a",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": "TEAM_1",
+          "rivalIds": [],
+          "allyIds": [
+            "b"
+          ],
+          "matchSeed": false,
+          "wins": 0,
+          "losses": 0,
+          "streak": 0,
+          "queueNo": 2
+        }
+      ],
+      "team1": [],
+      "team2": [],
+      "balanceNote": "기준",
+      "balanceDetails": [
+        "상세"
+      ],
+      "sessionSavedAt": 1793790000000,
+      "rosterUpdatedAt": 100,
+      "lastMatchSyncAt": 50
+    },
+    "expired": {
+      "players": [
+        {
+          "id": "a",
+          "name": "a",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ],
+      "waitlist": [],
+      "team1": [],
+      "team2": [],
+      "balanceNote": null,
+      "balanceDetails": [],
+      "sessionSavedAt": null,
+      "rosterUpdatedAt": 0,
+      "lastMatchSyncAt": 50
+    },
+    "legacy": {
+      "id": "legacy",
+      "name": "이름",
+      "currentTier": {
+        "tier": "Gold",
+        "division": 2
+      },
+      "wins": 2,
+      "losses": 0,
+      "streak": 0
+    }
+  },
+  "store": [
+    {
+      "label": "addPlayer",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 0,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 0,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "addPlayer",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 2
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 0,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 2
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 0,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "addPlayer",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 2
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 3
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 0,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 2
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 3
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 0,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "updatePlayer",
+      "result": "b도 고정 듀오로 함께 이동합니다.",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 2
+          }
+        ],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 3
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 0,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 3
+            }
+          ],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 2
+            }
+          ],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 0,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "movePlayer",
+      "result": {
+        "ok": true
+      },
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 2
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 0,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 2
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 0,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "recordTeamResult",
+      "result": {
+        "ok": true,
+        "message": "1팀 승리로 기록했습니다. (2승 / 1패)"
+      },
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 1,
+            "streak": -1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 2
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 1,
+            "streak": -1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 1,
+              "streak": -1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 2
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 1,
+              "streak": -1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "recordPlayerResult",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 2
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 2
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "adjustPlayerRecord",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 2
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 2
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "adjustPlayerRecord",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 2
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": null
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 2
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": null
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "reconcileMatchStats",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 1,
+            "streak": -1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 1,
+            "streak": -1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [
+              "a"
+            ],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 2
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 1,
+              "streak": -1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 1,
+              "streak": -1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [
+                "a"
+              ],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 2
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "dismissPlayer",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 1,
+            "streak": -1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 1,
+            "streak": -1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 1,
+              "streak": -1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 1,
+              "streak": -1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "enlistPlayer",
+      "result": {
+        "ok": true,
+        "message": "1팀 고정이라 1팀으로 이동합니다."
+      },
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 1,
+            "streak": -1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 4
+          },
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 1,
+            "streak": -1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 1,
+              "streak": -1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 4
+            },
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 1,
+              "streak": -1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "autoBalance",
+      "result": {
+        "ok": true,
+        "message": "자동 밸런스 완료 · 균형",
+        "diff": 311,
+        "reason": "팀 고정 유지 · 고정 듀오 유지 · 인원 차이 1명 · 고티어 분산 · 점수 합 맞춤",
+        "details": [
+          "a → 1팀 (팀 고정)",
+          "b·a → 1팀 (고정 듀오)",
+          "고티어 b은(는) 1팀, c은(는) 2팀으로 분산",
+          "인원 2대1로 구성",
+          "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+        ]
+      },
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 1,
+            "streak": -1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 1,
+            "streak": -1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 4
+          }
+        ],
+        "team2": [
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "waitlist": [],
+        "balanceNote": "팀 고정 유지 · 고정 듀오 유지 · 인원 차이 1명 · 고티어 분산 · 점수 합 맞춤",
+        "balanceDetails": [
+          "a → 1팀 (팀 고정)",
+          "b·a → 1팀 (고정 듀오)",
+          "고티어 b은(는) 1팀, c은(는) 2팀으로 분산",
+          "인원 2대1로 구성",
+          "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+        ],
+        "sessionSavedAt": null,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 1,
+              "streak": -1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [],
+          "team1": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 1,
+              "streak": -1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 4
+            }
+          ],
+          "team2": [
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "balanceNote": "팀 고정 유지 · 고정 듀오 유지 · 인원 차이 1명 · 고티어 분산 · 점수 합 맞춤",
+          "balanceDetails": [
+            "a → 1팀 (팀 고정)",
+            "b·a → 1팀 (고정 듀오)",
+            "고티어 b은(는) 1팀, c은(는) 2팀으로 분산",
+            "인원 2대1로 구성",
+            "팀 평균 티어가 비슷하도록 점수 합을 맞춤"
+          ],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "resetTeams",
+      "state": {
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "A",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 1,
+            "streak": -1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": "TEAM_1",
+            "rivalIds": [],
+            "allyIds": [
+              "b"
+            ],
+            "wins": 0,
+            "losses": 1,
+            "streak": -1,
+            "riotName": "A",
+            "riotTag": "KR",
+            "queueNo": 1
+          },
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 4
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": 1793790000000,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "A",
+              "riotTag": "KR",
+              "wins": 0,
+              "losses": 1,
+              "streak": -1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": "TEAM_1",
+              "rivalIds": [],
+              "allyIds": [
+                "b"
+              ],
+              "wins": 0,
+              "losses": 1,
+              "streak": -1,
+              "riotName": "A",
+              "riotTag": "KR",
+              "queueNo": 1
+            },
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 4
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "removePlayer",
+      "state": {
+        "players": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 4
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": 1793790000000,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 4
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "importSavedPlayers",
+      "result": 1,
+      "state": {
+        "players": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 0,
+            "streak": 1
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 1,
+            "losses": 1,
+            "streak": 1
+          },
+          {
+            "id": "d",
+            "name": "d",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 4
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": 1793790000000,
+        "rosterUpdatedAt": 1793790000000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 0,
+              "streak": 1
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 1,
+              "losses": 1,
+              "streak": 1
+            },
+            {
+              "id": "d",
+              "name": "d",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 4
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1793790000000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "applyRemoteRoster",
+      "state": {
+        "players": [
+          {
+            "id": "e",
+            "name": "e",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ],
+        "team1": [],
+        "team2": [],
+        "waitlist": [
+          {
+            "id": "b",
+            "name": "b",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 0,
+            "streak": 1,
+            "queueNo": 4
+          },
+          {
+            "id": "c",
+            "name": "c",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 1,
+            "losses": 1,
+            "streak": 1,
+            "queueNo": 3
+          }
+        ],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": 1793790000000,
+        "rosterUpdatedAt": 1000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [
+            {
+              "id": "e",
+              "name": "e",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ],
+          "waitlist": [
+            {
+              "id": "b",
+              "name": "b",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 0,
+              "streak": 1,
+              "queueNo": 4
+            },
+            {
+              "id": "c",
+              "name": "c",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 1,
+              "losses": 1,
+              "streak": 1,
+              "queueNo": 3
+            }
+          ],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    },
+    {
+      "label": "clearRoster",
+      "state": {
+        "players": [],
+        "team1": [],
+        "team2": [],
+        "waitlist": [],
+        "balanceNote": null,
+        "balanceDetails": [],
+        "sessionSavedAt": 1793790000000,
+        "rosterUpdatedAt": 1000,
+        "lastMatchSyncAt": 1793790000000
+      },
+      "storage": {
+        "state": {
+          "players": [],
+          "waitlist": [],
+          "team1": [],
+          "team2": [],
+          "balanceNote": null,
+          "balanceDetails": [],
+          "sessionSavedAt": 1793790000000,
+          "rosterUpdatedAt": 1000,
+          "lastMatchSyncAt": 1793790000000
+        },
+        "version": 4
+      }
+    }
+  ],
+  "server": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status": 200,
+      "data": "asset",
+      "kv": []
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "status": 401,
+      "data": {
+        "ok": false,
+        "error": "비밀번호가 올바르지 않습니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":1,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjowfQ.lVThFuUDfr7gFVHJAIA5oYL75Fz0HSdrAXIvQ7m0m80",
+        "expiresInMs": 2592000000
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ]
+      ]
+    },
+    {
+      "path": "/api/roster",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "updatedAt": 0,
+        "players": []
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ]
+      ]
+    },
+    {
+      "path": "/api/roster",
+      "method": "PUT",
+      "status": 401,
+      "data": {
+        "error": "인증이 필요합니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ]
+      ]
+    },
+    {
+      "path": "/api/roster",
+      "method": "PUT",
+      "status": 400,
+      "data": {
+        "error": "잘못된 JSON입니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ]
+      ]
+    },
+    {
+      "path": "/api/roster",
+      "method": "PUT",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "updatedAt": 100
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/roster",
+      "method": "PUT",
+      "status": 409,
+      "data": {
+        "ok": false,
+        "newer": true,
+        "updatedAt": 100,
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ]
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "GET",
+      "status": 401,
+      "data": {
+        "error": "인증이 필요합니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "POST",
+      "status": 400,
+      "data": {
+        "ok": false,
+        "error": "치지직 닉네임을 입력하세요."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "application": {
+          "id": "test-id-1",
+          "name": "viewer",
+          "riotName": "nick",
+          "riotTag": "KR",
+          "queueNo": 1,
+          "createdAt": 1793790000000
+        }
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":2,\"items\":[{\"id\":\"test-id-1\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"createdAt\":1793790000000}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "POST",
+      "status": 409,
+      "data": {
+        "ok": false,
+        "error": "같은 치지직 닉네임이 이미 있습니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":2,\"items\":[{\"id\":\"test-id-1\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"createdAt\":1793790000000}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "items": [
+          {
+            "id": "test-id-1",
+            "name": "viewer",
+            "riotName": "nick",
+            "riotTag": "KR",
+            "queueNo": 1,
+            "createdAt": 1793790000000
+          }
+        ]
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":2,\"items\":[{\"id\":\"test-id-1\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"createdAt\":1793790000000}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join/test-id-1/approve",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "player": {
+          "id": "test-id-2",
+          "name": "viewer",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "riotName": "nick",
+          "riotTag": "KR",
+          "queueNo": 1,
+          "wins": 0,
+          "losses": 0,
+          "streak": 0,
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "canOrder": false,
+          "restrictions": [],
+          "lockedTeam": null,
+          "rivalIds": [],
+          "allyIds": []
+        },
+        "roster": {
+          "updatedAt": 1793790000000,
+          "players": [
+            {
+              "id": "a",
+              "name": "a",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "canOrder": false,
+              "restrictions": [],
+              "lockedTeam": null,
+              "rivalIds": [],
+              "allyIds": [],
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            },
+            {
+              "id": "test-id-2",
+              "name": "viewer",
+              "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "riotName": "nick",
+              "riotTag": "KR",
+              "queueNo": 1,
+              "wins": 0,
+              "losses": 0,
+              "streak": 0
+            }
+          ]
+        }
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":2,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join/missing/reject",
+      "method": "POST",
+      "status": 404,
+      "data": {
+        "ok": false,
+        "error": "신청을 찾을 수 없습니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":2,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "application": {
+          "id": "test-id-3",
+          "name": "other",
+          "riotName": "other",
+          "riotTag": "KR",
+          "queueNo": 2,
+          "createdAt": 1793790000000
+        }
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[{\"id\":\"test-id-3\",\"name\":\"other\",\"riotName\":\"other\",\"riotTag\":\"KR\",\"queueNo\":2,\"createdAt\":1793790000000}]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/join/test-id-3/reject",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/matches/import",
+      "method": "POST",
+      "status": 400,
+      "data": {
+        "ok": false,
+        "error": "시드가 필요합니다.",
+        "matches": []
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/access-log",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "items": [
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": false
+          }
+        ]
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/revoke-all",
+      "method": "POST",
+      "status": 401,
+      "data": {
+        "ok": false,
+        "error": "비밀번호가 올바르지 않습니다."
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/revoke-all",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "epoch": 1
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/roster",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "updatedAt": 1793790000000,
+        "players": [
+          {
+            "id": "a",
+            "name": "a",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "canOrder": false,
+            "restrictions": [],
+            "lockedTeam": null,
+            "rivalIds": [],
+            "allyIds": [],
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          },
+          {
+            "id": "test-id-2",
+            "name": "viewer",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "nick",
+            "riotTag": "KR",
+            "queueNo": 1,
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ]
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "token": "v1.eyJ2IjoxLCJleHAiOjE3OTYzODIwMDAwMDAsImVwb2NoIjoxfQ.Sh-rQYyLjPHAlHWxj8RhXDSe9cL0jWrblmHQOR1rop4",
+        "expiresInMs": 2592000000
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/auth/access-log",
+      "method": "GET",
+      "status": 200,
+      "data": {
+        "items": [
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": false
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": true
+          },
+          {
+            "ip": "local",
+            "at": 1793790000000,
+            "ok": false
+          }
+        ]
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/matches/import",
+      "method": "POST",
+      "status": 200,
+      "data": {
+        "ok": true,
+        "matches": [
+          {
+            "matchId": "m1",
+            "playedAt": 1793790000000,
+            "mapName": "Ascent",
+            "results": [
+              {
+                "playerId": "one",
+                "result": "win"
+              },
+              {
+                "playerId": "two",
+                "result": "loss"
+              }
+            ]
+          }
+        ],
+        "seedCalls": 2
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    },
+    {
+      "path": "/api/matches/import",
+      "method": "POST",
+      "status": 502,
+      "data": {
+        "ok": false,
+        "error": "HenrikDev 500",
+        "matches": []
+      },
+      "kv": [
+        [
+          "auth:login:local",
+          "{\"count\":0,\"resetAt\":1793790900000}"
+        ],
+        [
+          "auth:access-log",
+          "[{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":true},{\"ip\":\"local\",\"at\":1793790000000,\"ok\":false}]"
+        ],
+        [
+          "shared-roster",
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "join-queue",
+          "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "auth:session-epoch",
+          "{\"epoch\":1}"
+        ]
+      ]
+    }
+  ]
+}

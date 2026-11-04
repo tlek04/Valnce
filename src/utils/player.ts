@@ -1,10 +1,9 @@
-import { AppState, Player, RankRating, SavedPlayer, WeaponRestriction } from '../types';
+import { Player, SavedPlayer, WeaponRestriction } from '../types';
 import { sameRating } from '../constants/valorant';
 import { normalizeMatchStats } from './matchStats';
-import { repairLocks } from './placement';
 import { cloneRating, ratingFromUnknown } from './rating';
 
-const FALLBACK: RankRating = { tier: 'Gold', division: 2 };
+import { DEFAULT_RATING as FALLBACK } from '../constants/game';
 
 function asStringArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.filter((item): item is string => typeof item === 'string');
@@ -46,7 +45,7 @@ export function normalizePlayer(raw: unknown): Player {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
-  const queueNo = typeof data.queueNo === 'number' && data.queueNo > 0 ? Math.floor(data.queueNo) : undefined;
+  const queueNo = readQueueNo(data.queueNo);
 
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
@@ -69,90 +68,29 @@ export function normalizePlayer(raw: unknown): Player {
   };
 }
 
-export function syncRelations(list: Player[], id: string, rivalIds: string[], allyIds: string[]): Player[] {
-  return list.map((player) => {
-    if (player.id === id) return player;
-    const rivalSet = new Set(player.rivalIds ?? []);
-    const allySet = new Set(player.allyIds ?? []);
-    const shouldRival = rivalIds.includes(player.id);
-    const shouldAlly = allyIds.includes(player.id);
-
-    if (shouldRival) {
-      rivalSet.add(id);
-      allySet.delete(id);
-    } else {
-      rivalSet.delete(id);
-    }
-    if (shouldAlly) {
-      allySet.add(id);
-      rivalSet.delete(id);
-    } else {
-      allySet.delete(id);
-    }
-
-    return { ...player, rivalIds: [...rivalSet], allyIds: [...allySet] };
-  });
+export function readQueueNo(value: unknown): number | undefined {
+  return typeof value === 'number' && value > 0 ? Math.floor(value) : undefined;
 }
 
-export function stripPlayerLinks(list: Player[], id: string): Player[] {
-  return list
-    .filter((player) => player.id !== id)
-    .map((player) => ({
-      ...player,
-      rivalIds: (player.rivalIds ?? []).filter((item) => item !== id),
-      allyIds: (player.allyIds ?? []).filter((item) => item !== id),
-    }));
-}
-
-export function hydrateState(raw: Partial<AppState> | undefined): AppState {
-  const data = raw ?? {};
-  const byId = new Map<string, Player>();
-
-  const ingest = (list: unknown[] | undefined) => {
+/** 현재 보드(대기열·팀) 기준 다음 추가 순번 */
+export function nextAddNo(lists: Array<Array<{ queueNo?: number }> | undefined>): number {
+  let max = 0;
+  for (const list of lists) {
     for (const item of list ?? []) {
-      const player = normalizePlayer(item);
-      if (!byId.has(player.id)) byId.set(player.id, player);
-    }
-  };
-
-  ingest(data.players);
-  ingest(data.waitlist);
-  ingest(data.team1);
-  ingest(data.team2);
-
-  const seen = new Set<string>();
-  const take = (list: Player[] | undefined) => {
-    const next: Player[] = [];
-    for (const item of list ?? []) {
-      const player = byId.get(item.id);
-      if (!player || seen.has(player.id)) continue;
-      seen.add(player.id);
-      next.push(player);
-    }
-    return next;
-  };
-
-  const team1 = take(data.team1);
-  const team2 = take(data.team2);
-  const waitlist = take(data.waitlist);
-
-  for (const player of byId.values()) {
-    if (!seen.has(player.id)) {
-      waitlist.push(player);
-      seen.add(player.id);
+      const no = readQueueNo(item.queueNo);
+      if (no && no > max) max = no;
     }
   }
+  return max + 1;
+}
 
-  const repaired = repairLocks({ waitlist, team1, team2 });
-  return {
-    players: [...byId.values()].map(toSavedPlayer),
-    ...repaired,
-    balanceNote: null,
-    balanceDetails: [],
-    sessionSavedAt: null,
-    rosterUpdatedAt: 0,
-    lastMatchSyncAt: null,
-  };
+/** 보드에 올릴 때 순번 부여. 이미 있으면 유지. */
+export function withAddNo<T extends { queueNo?: number }>(
+  player: T,
+  boardLists: Array<Array<{ queueNo?: number }> | undefined>
+): T {
+  if (readQueueNo(player.queueNo)) return player;
+  return { ...player, queueNo: nextAddNo(boardLists) };
 }
 
 export function toSavedPlayer(raw: unknown): SavedPlayer {
@@ -161,7 +99,6 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
-  const queueNo = typeof data.queueNo === 'number' && data.queueNo > 0 ? Math.floor(data.queueNo) : undefined;
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
     name: name || '플레이어',
@@ -169,7 +106,6 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
     ...(data.matchSeed ? { matchSeed: true } : {}),
-    ...(queueNo ? { queueNo } : {}),
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
@@ -191,73 +127,8 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     ...(saved.riotName ? { riotName: saved.riotName } : {}),
     ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
     ...(saved.matchSeed ? { matchSeed: true } : {}),
-    ...(saved.queueNo ? { queueNo: saved.queueNo } : {}),
     wins: saved.wins ?? 0,
     losses: saved.losses ?? 0,
     streak: saved.streak ?? 0,
-  };
-}
-
-/** 새로고침·창 종료 후 보드를 유지하는 시간. */
-export const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
-
-export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
-  const seen = new Set<string>();
-  const players: SavedPlayer[] = [];
-  for (const item of raw?.players ?? []) {
-    const saved = toSavedPlayer(item);
-    if (seen.has(saved.id)) continue;
-    seen.add(saved.id);
-    players.push(saved);
-  }
-  return {
-    players,
-    waitlist: [],
-    team1: [],
-    team2: [],
-    balanceNote: null,
-    balanceDetails: [],
-    sessionSavedAt: null,
-    rosterUpdatedAt: 0,
-    lastMatchSyncAt: typeof raw?.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
-  };
-}
-
-function takeBoardColumn(list: unknown[] | undefined, used: Set<string>): Player[] {
-  const next: Player[] = [];
-  for (const item of list ?? []) {
-    const player = normalizePlayer(item);
-    if (used.has(player.id)) continue;
-    used.add(player.id);
-    next.push(player);
-  }
-  return next;
-}
-
-/** 기존 명단은 항상 복구하고, 보드는 2시간 안에 저장된 경우만 살린다. */
-export function restorePersistedState(raw: Partial<AppState> | undefined): AppState {
-  const library = hydrateLibrary(raw);
-  const savedAt = typeof raw?.sessionSavedAt === 'number' ? raw.sessionSavedAt : 0;
-  if (!raw || !savedAt || Date.now() - savedAt > SESSION_TTL_MS) {
-    return library;
-  }
-
-  const used = new Set<string>();
-  const team1 = takeBoardColumn(raw.team1 as unknown[] | undefined, used);
-  const team2 = takeBoardColumn(raw.team2 as unknown[] | undefined, used);
-  const waitlist = takeBoardColumn(raw.waitlist as unknown[] | undefined, used);
-  const repaired = repairLocks({ waitlist, team1, team2 });
-  const balanceDetails = Array.isArray(raw.balanceDetails)
-    ? raw.balanceDetails.filter((item): item is string => typeof item === 'string')
-    : [];
-
-  return {
-    players: library.players,
-    ...repaired,
-    balanceNote: typeof raw.balanceNote === 'string' ? raw.balanceNote : null,
-    balanceDetails,
-    sessionSavedAt: savedAt,
-    rosterUpdatedAt: typeof raw.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
-    lastMatchSyncAt: typeof raw.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
   };
 }

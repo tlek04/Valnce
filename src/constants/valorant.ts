@@ -55,6 +55,18 @@ export const TIER_STYLES: Record<ValorantTier, string> = {
   Radiant: 'bg-yellow-200/15 text-yellow-100 border-yellow-200/50',
 };
 
+/** 무기 카테고리별 리스트/칩 색 */
+export const WEAPON_CATEGORY_STYLES: Record<string, string> = {
+  권총: 'bg-amber-500/15 text-amber-300 border-amber-500/40',
+  SMG: 'bg-violet-500/15 text-violet-300 border-violet-500/40',
+  샷건: 'bg-orange-500/15 text-orange-300 border-orange-500/40',
+  라이플: 'bg-sky-500/15 text-sky-300 border-sky-500/40',
+  저격: 'bg-rose-500/15 text-rose-300 border-rose-500/40',
+  기관총: 'bg-red-500/15 text-red-300 border-red-500/40',
+  근접: 'bg-zinc-500/15 text-zinc-300 border-zinc-500/40',
+  세트: 'bg-teal-500/15 text-teal-300 border-teal-500/40',
+};
+
 export const WEAPONS: {
   id: WeaponId;
   nameKo: string;
@@ -138,15 +150,21 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
   },
 ];
 
-export const RESTRICTION_OPTIONS: RestrictionOption[] = WEAPONS.map((weapon) => ({
+export const WEAPON_RESTRICTION_OPTIONS: RestrictionOption[] = WEAPONS.map((weapon) => ({
   value: `weapon:${weapon.id}`,
   type: 'WEAPON' as const,
   weaponId: weapon.id,
   label: `${weapon.nameKo} 금지`,
-  short: `${weapon.nameKo} 금지`,
+  short: weapon.nameKo,
   group: weapon.category,
   searchText: `${weapon.nameKo} ${weapon.nameEn} ${weapon.category} ${weapon.aliases} 금지`,
 }));
+
+/** 폼 버튼판용: 세트 + 개별 무기 (커스텀 제외) */
+export const RESTRICTION_OPTIONS: RestrictionOption[] = [
+  ...PRESET_RESTRICTIONS.filter((option) => option.type !== 'CUSTOM'),
+  ...WEAPON_RESTRICTION_OPTIONS,
+];
 
 export function restrictionKey(restriction: WeaponRestriction): string {
   if (restriction.type === 'WEAPON') return `weapon:${restriction.weaponId ?? ''}`;
@@ -180,13 +198,19 @@ export function parseRatingKey(key: string): RankRating {
   };
 }
 
-export const RANK_OPTIONS: { value: string; label: string; searchText: string }[] = TIERS.flatMap((tier) => {
+export const RANK_OPTIONS: {
+  value: string;
+  label: string;
+  searchText: string;
+  badgeClass: string;
+}[] = TIERS.flatMap((tier) => {
   if (tier === 'Radiant') {
     return [
       {
         value: 'Radiant',
         label: TIER_LABELS.Radiant,
         searchText: `${TIER_LABELS.Radiant} radiant 레디언트`,
+        badgeClass: TIER_STYLES.Radiant,
       },
     ];
   }
@@ -194,6 +218,7 @@ export const RANK_OPTIONS: { value: string; label: string; searchText: string }[
     value: `${tier}-${division}`,
     label: `${TIER_LABELS[tier]} ${division}`,
     searchText: `${TIER_LABELS[tier]} ${division} ${tier} ${TIER_LABELS[tier]}${division}`,
+    badgeClass: TIER_STYLES[tier],
   }));
 });
 

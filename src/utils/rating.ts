@@ -74,11 +74,16 @@ export function formatMmr(value: number): string {
   return Math.round(value).toLocaleString('ko-KR');
 }
 
-export function teamAverageLabel(players: Player[]): string {
-  if (!players.length) return '-';
+export function teamAverageRating(players: Player[]): RankRating | null {
+  if (!players.length) return null;
   const average =
     players.reduce((sum, player) => sum + linearMmr(playerBaseTier(player)), 0) / players.length;
-  return formatRating(scoreToRating(average));
+  return scoreToRating(average);
+}
+
+export function teamAverageLabel(players: Player[]): string {
+  const rating = teamAverageRating(players);
+  return rating ? formatRating(rating) : '-';
 }
 
 /** 팀 평균 티어 인덱스(부 단위). 표시용. */

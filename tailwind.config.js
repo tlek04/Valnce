@@ -12,7 +12,7 @@ export default {
           sky: '#38BDF8',
           teal: '#0FDFC3',
           cream: '#ECE8E1',
-          muted: '#8B978F',
+          muted: '#A3AFA7',
           warn: '#E8C547',
         },
       },

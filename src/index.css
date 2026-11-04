@@ -7,6 +7,10 @@
   background-color: #0f1923;
 }
 
+html {
+  font-size: 17px;
+}
+
 html,
 body {
   margin: 0;
@@ -22,8 +26,11 @@ body {
   background-color: #0f1923;
   background-repeat: no-repeat;
   font-family: 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
   word-break: keep-all;
   overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {

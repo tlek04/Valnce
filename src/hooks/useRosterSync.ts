@@ -57,7 +57,7 @@ export function useRosterSync(onNotice?: (message: string) => void) {
       if (state.players === previous.players) return;
 
       const updatedAt = Date.now();
-      useAppStore.setState({ rosterUpdatedAt: updatedAt });
+      useAppStore.getState().setRosterUpdatedAt(updatedAt);
 
       if (pushTimer.current) window.clearTimeout(pushTimer.current);
       pushTimer.current = window.setTimeout(() => {

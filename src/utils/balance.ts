@@ -1,9 +1,8 @@
 import { Player } from '../types';
 import { advantageSummary, getPlayerScore, rankScore, teamMaxScore, teamScore } from './rating';
-import { allyGroups, areRivals, hasRivalConflict } from './relations';
+import { allyGroups, hasRivalConflict } from './relations';
 
-const MATCH_SIZE = 10;
-const TEAM_SIZE = 5;
+import { MATCH_SIZE, TEAM_SIZE } from '../constants/game';
 const MAX_WEIGHT = 0.55;
 const SPREAD_WEIGHT = 0.2;
 
@@ -33,24 +32,20 @@ interface Candidate {
   spreadDiff: number;
 }
 
-function unitsAreRivals(left: Unit, right: Unit): boolean {
-  return left.players.some((a) => right.players.some((b) => areRivals(a, b)));
-}
-
 function buildUnits(players: Player[]): Unit[] | { error: string } {
   const units: Unit[] = [];
   for (const group of allyGroups(players)) {
     if (group.length > TEAM_SIZE) {
-      return { error: '같은 팀으로 묶인 인원이 5명을 넘습니다.' };
+      return { error: '고정 듀오 인원이 5명을 넘습니다.' };
     }
     if (hasRivalConflict(group)) {
-      return { error: '같은 팀 묶기와 라이벌이 충돌합니다.' };
+      return { error: '고정 듀오와 라이벌이 충돌합니다.' };
     }
     const locks = [...new Set(group.map((player) => player.lockedTeam).filter(Boolean))] as Array<
       'TEAM_1' | 'TEAM_2'
     >;
     if (locks.length > 1) {
-      return { error: '같은 팀으로 묶인 플레이어의 팀 고정이 서로 다릅니다.' };
+      return { error: '고정 듀오 플레이어의 팀 고정이 서로 다릅니다.' };
     }
     units.push({
       players: group,
@@ -132,7 +127,7 @@ function explainBalance(best: Candidate, pool: Player[]): string {
   const rivals = pool.some((player) => (player.rivalIds ?? []).length > 0);
 
   if (locked.length > 0) parts.push('팀 고정 유지');
-  if (allies) parts.push('같은 팀 묶기 유지');
+  if (allies) parts.push('고정 듀오 유지');
   if (rivals) parts.push('라이벌 분리');
 
   if (best.sizeDiff === 0) parts.push('인원 균등');
@@ -163,7 +158,7 @@ function buildBalanceDetails(best: Candidate, selected: Player[], extras: Player
     if (group.length < 2) continue;
     const side = locateSide(group[0], best);
     if (!side) continue;
-    details.push(`${namesOf(group)} → ${sideLabel(side)} (같은 팀 묶기)`);
+    details.push(`${namesOf(group)} → ${sideLabel(side)} (고정 듀오)`);
   }
 
   const seenRival = new Set<string>();
@@ -246,7 +241,7 @@ function selectMatchPool(
 
   if (count !== MATCH_SIZE) {
     return {
-      error: '같은 팀 묶기 때문에 10명을 고를 수 없습니다. 묶기를 조정한 뒤 다시 시도하세요.',
+      error: '고정 듀오 때문에 10명을 고를 수 없습니다. 묶기를 조정한 뒤 다시 시도하세요.',
     };
   }
 
@@ -299,8 +294,6 @@ export function autoBalanceTeams(
       const pickSet = new Set(pick);
       const next1 = [...forced1, ...pick];
       const next2 = [...forced2, ...rest.filter((unit) => !pickSet.has(unit))];
-      if (next1.some((left) => next1.some((right) => left !== right && unitsAreRivals(left, right)))) continue;
-      if (next2.some((left) => next2.some((right) => left !== right && unitsAreRivals(left, right)))) continue;
       const players1 = flatten(next1);
       const players2 = flatten(next2);
       if (!isValidTeam(players1, 'TEAM_1') || !isValidTeam(players2, 'TEAM_2')) continue;
@@ -323,7 +316,7 @@ export function autoBalanceTeams(
       ok: false,
       ...empty,
       diff: 0,
-      message: '팀 고정 / 라이벌 / 같은 팀 묶기 조건 때문에 자동 밸런스를 만들 수 없습니다.',
+      message: '팀 고정 / 라이벌 / 고정 듀오 조건 때문에 자동 밸런스를 만들 수 없습니다.',
     };
   }
 

@@ -1,0 +1,1205 @@
+[
+  {
+    "name": "fetchRemoteRoster",
+    "status": 200,
+    "result": {
+      "updatedAt": 500,
+      "players": [
+        {
+          "id": "seed",
+          "name": "포뇨",
+          "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "riotName": "seed",
+          "riotTag": "KR",
+          "wins": 0,
+          "losses": 0,
+          "streak": 0
+        }
+      ]
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteRoster",
+    "status": 401,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteRoster",
+    "status": 409,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteRoster",
+    "status": 404,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteRoster",
+    "status": 502,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteRoster",
+    "status": 200,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteRoster",
+    "status": 0,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 200,
+    "result": {
+      "ok": true
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 401,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "conflict": true,
+      "roster": {
+        "updatedAt": 500,
+        "players": [
+          {
+            "id": "seed",
+            "name": "포뇨",
+            "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "riotName": "seed",
+            "riotTag": "KR",
+            "wins": 0,
+            "losses": 0,
+            "streak": 0
+          }
+        ]
+      }
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 404,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 502,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 200,
+    "result": {
+      "ok": true
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteRoster",
+    "status": 0,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/roster",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 200,
+    "result": {
+      "ok": true,
+      "application": {
+        "id": "application"
+      }
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "error": "인증이 필요합니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "error": "중복"
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 404,
+    "result": {
+      "ok": false,
+      "error": "참가 API가 아직 배포되지 않았습니다. 배포 후 다시 시도하세요."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 502,
+    "result": {
+      "ok": false,
+      "error": "서버 응답을 읽지 못했습니다. (502)"
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 200,
+    "result": {
+      "ok": false,
+      "error": "신청에 실패했습니다. (200)"
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "submitJoinApplication",
+    "status": 0,
+    "result": {
+      "ok": false,
+      "error": "신청 서버에 연결하지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 200,
+    "result": {
+      "ok": true,
+      "items": []
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "error": "인증이 필요합니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "error": "중복"
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 404,
+    "result": {
+      "ok": false,
+      "error": "신청 목록을 불러오지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 502,
+    "result": {
+      "ok": false,
+      "error": "신청 목록을 불러오지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 200,
+    "result": {
+      "ok": true,
+      "items": []
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchJoinQueue",
+    "status": 0,
+    "result": {
+      "ok": false,
+      "error": "신청 서버에 연결하지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join",
+        "options": {
+          "method": "GET",
+          "cache": "no-store",
+          "headers": {
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 200,
+    "result": {
+      "ok": true,
+      "player": {
+        "id": "seed",
+        "name": "포뇨",
+        "currentTier": {
+          "tier": "Gold",
+          "division": 2
+        },
+        "maxTier": {
+          "tier": "Gold",
+          "division": 2
+        },
+        "canOrder": false,
+        "restrictions": [],
+        "lockedTeam": null,
+        "rivalIds": [],
+        "allyIds": [],
+        "wins": 0,
+        "losses": 0,
+        "streak": 0,
+        "riotName": "seed",
+        "riotTag": "KR"
+      }
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "error": "인증이 필요합니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "error": "중복"
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 404,
+    "result": {
+      "ok": false,
+      "error": "승인에 실패했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 502,
+    "result": {
+      "ok": false,
+      "error": "승인에 실패했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 200,
+    "result": {
+      "ok": false,
+      "error": "승인에 실패했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "approveJoinApplication",
+    "status": 0,
+    "result": {
+      "ok": false,
+      "error": "승인 서버에 연결하지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/approve",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 200,
+    "result": {
+      "ok": true
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "error": "인증이 필요합니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "error": "중복"
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 404,
+    "result": {
+      "ok": false,
+      "error": "거절에 실패했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 502,
+    "result": {
+      "ok": false,
+      "error": "거절에 실패했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 200,
+    "result": {
+      "ok": false,
+      "error": "거절에 실패했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "rejectJoinApplication",
+    "status": 0,
+    "result": {
+      "ok": false,
+      "error": "거절 서버에 연결하지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/join/id%2Fwith%20space/reject",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          }
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 200,
+    "result": {
+      "ok": true
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "error": "인증이 필요합니다."
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "error": "중복"
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 404,
+    "result": {
+      "ok": false,
+      "error": "비밀번호가 올바르지 않습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 502,
+    "result": {
+      "ok": false,
+      "error": "비밀번호가 올바르지 않습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 200,
+    "result": {
+      "ok": false,
+      "error": "비밀번호가 올바르지 않습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "verifyStreamerPassword",
+    "status": 0,
+    "result": {
+      "ok": false,
+      "error": "인증 서버에 연결하지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/auth/login",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": "{\"password\":\"fake\"}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 200,
+    "result": {
+      "ok": true,
+      "matches": []
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "matches": [],
+      "error": "인증이 필요합니다."
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "matches": [],
+      "error": "중복"
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 404,
+    "result": {
+      "ok": false,
+      "matches": [],
+      "error": "전적 API가 아직 배포되지 않았습니다. 잠시 후 다시 시도하세요."
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 502,
+    "result": {
+      "ok": false,
+      "matches": [],
+      "error": "전적 응답을 읽지 못했습니다. (502)"
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 200,
+    "result": {
+      "ok": true,
+      "matches": []
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "importQualifyingMatches",
+    "status": 0,
+    "result": {
+      "ok": false,
+      "matches": [],
+      "error": "전적 API에 연결하지 못했습니다."
+    },
+    "requests": [
+      {
+        "url": "/api/matches/import",
+        "options": {
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake"
+          },
+          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+        }
+      }
+    ],
+    "token": "fake"
+  }
+]

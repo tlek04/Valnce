@@ -7,15 +7,7 @@ import { TIER_STYLES, formatRating } from '../constants/valorant';
 import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
 import { useAppStore } from '../store/useAppStore';
 
-export const SAVED_DRAG_PREFIX = 'saved:';
-
-export function savedDragId(id: string) {
-  return `${SAVED_DRAG_PREFIX}${id}`;
-}
-
-export function parseSavedDragId(id: string) {
-  return id.startsWith(SAVED_DRAG_PREFIX) ? id.slice(SAVED_DRAG_PREFIX.length) : null;
-}
+import { savedDragId, parseSavedDragId } from '../utils/dragIds';
 
 interface SavedPlayerPanelProps {
   onClose: () => void;

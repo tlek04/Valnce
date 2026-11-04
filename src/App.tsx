@@ -56,7 +56,7 @@ export default function App() {
     return (
       <ManageApp
         onLogout={() => {
-          navigate('landing');
+          navigate('gate');
         }}
       />
     );

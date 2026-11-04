@@ -55,3 +55,38 @@ export function orderGroup(group: Player[], leadId: string): Player[] {
   if (!lead) return group;
   return [lead, ...group.filter((player) => player.id !== leadId)];
 }
+
+export function syncRelations(list: Player[], id: string, rivalIds: string[], allyIds: string[]): Player[] {
+  return list.map((player) => {
+    if (player.id === id) return player;
+    const rivalSet = new Set(player.rivalIds ?? []);
+    const allySet = new Set(player.allyIds ?? []);
+    const shouldRival = rivalIds.includes(player.id);
+    const shouldAlly = allyIds.includes(player.id);
+
+    if (shouldRival) {
+      rivalSet.add(id);
+      allySet.delete(id);
+    } else {
+      rivalSet.delete(id);
+    }
+    if (shouldAlly) {
+      allySet.add(id);
+      rivalSet.delete(id);
+    } else {
+      allySet.delete(id);
+    }
+
+    return { ...player, rivalIds: [...rivalSet], allyIds: [...allySet] };
+  });
+}
+
+export function stripPlayerLinks(list: Player[], id: string): Player[] {
+  return list
+    .filter((player) => player.id !== id)
+    .map((player) => ({
+      ...player,
+      rivalIds: (player.rivalIds ?? []).filter((item) => item !== id),
+      allyIds: (player.allyIds ?? []).filter((item) => item !== id),
+    }));
+}

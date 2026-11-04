@@ -6,6 +6,7 @@ import PlayerCard from './PlayerCard';
 interface SortablePlayerCardProps {
   player: Player;
   grouped?: boolean;
+  showDelete?: boolean;
   onEdit: (player: Player) => void;
   onDelete: (id: string) => void;
 }
@@ -13,6 +14,7 @@ interface SortablePlayerCardProps {
 export default function SortablePlayerCard({
   player,
   grouped = false,
+  showDelete = false,
   onEdit,
   onDelete,
 }: SortablePlayerCardProps) {
@@ -32,7 +34,7 @@ export default function SortablePlayerCard({
       aria-label={`${player.name} 드래그하여 이동`}
       {...listeners}
     >
-      <PlayerCard player={player} onEdit={onEdit} onDelete={onDelete} />
+      <PlayerCard player={player} onEdit={onEdit} onDelete={onDelete} showDelete={showDelete} />
     </div>
   );
 }

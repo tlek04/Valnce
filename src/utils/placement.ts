@@ -1,7 +1,8 @@
 import { ColumnId, Player } from '../types';
 import { allyGroupOf, areRivals, hasRivalConflict, orderGroup } from './relations';
 
-const TEAM_LIMIT = 5;
+import { TEAM_SIZE as TEAM_LIMIT } from '../constants/game';
+import { isTeam, opposite, teamLabel, lockColumn, groupLock, groupCanOccupy, groupConflictsWith } from './teamRules';
 
 export interface PlacementState {
   waitlist: Player[];
@@ -32,45 +33,6 @@ function locate(state: PlacementState, id: string): ColumnId | null {
   if (state.team1.some((player) => player.id === id)) return 'team1';
   if (state.team2.some((player) => player.id === id)) return 'team2';
   return null;
-}
-
-function isTeam(column: ColumnId): column is 'team1' | 'team2' {
-  return column === 'team1' || column === 'team2';
-}
-
-function opposite(column: 'team1' | 'team2'): 'team1' | 'team2' {
-  return column === 'team1' ? 'team2' : 'team1';
-}
-
-function teamLabel(column: 'team1' | 'team2'): string {
-  return column === 'team1' ? '1팀' : '2팀';
-}
-
-export function lockColumn(player: Player): 'team1' | 'team2' | null {
-  if (player.lockedTeam === 'TEAM_1') return 'team1';
-  if (player.lockedTeam === 'TEAM_2') return 'team2';
-  return null;
-}
-
-function groupLock(group: Player[]): 'team1' | 'team2' | 'conflict' | null {
-  const locks = [...new Set(group.map(lockColumn).filter((item): item is 'team1' | 'team2' => item != null))];
-  if (locks.length > 1) return 'conflict';
-  return locks[0] ?? null;
-}
-
-function canOccupy(player: Player, column: ColumnId): boolean {
-  const lock = lockColumn(player);
-  if (!lock) return true;
-  if (column === 'waitlist') return true;
-  return lock === column;
-}
-
-function groupCanOccupy(group: Player[], column: ColumnId): boolean {
-  return group.every((player) => canOccupy(player, column));
-}
-
-function groupConflictsWith(group: Player[], team: Player[]): boolean {
-  return group.some((member) => team.some((player) => areRivals(member, player)));
 }
 
 function namesOf(players: Player[]): string {
@@ -157,7 +119,7 @@ function evictRivalsFromTeam(
 
   if (rivalsLockedHere && keepLockedHere) {
     takeAndInsert(state, keepIds, 'waitlist');
-    return `같은 팀 고정인 라이벌과 겹쳐 ${namesOf(keep)}을(를) 대기열로 돌렸습니다.`;
+    return `고정된 라이벌과 겹쳐 ${namesOf(keep)}을(를) 대기열로 돌렸습니다.`;
   }
 
   if (rivalsLockedHere) {
@@ -222,7 +184,7 @@ function pickDestination(
 ): { dest: ColumnId; note?: string } | { error: string } {
   const forced = groupLock(group);
   if (forced === 'conflict') {
-    return { error: '같은 팀으로 묶인 플레이어의 팀 고정이 서로 다릅니다.' };
+    return { error: '고정 듀오 플레이어의 팀 고정이 서로 다릅니다.' };
   }
 
   if (to === 'waitlist') return { dest: 'waitlist' };
@@ -285,10 +247,10 @@ export function applyMove(
   const group = orderGroup(allyGroupOf(rosterOf(next), id), id);
   if (group.length === 0) return null;
   if (hasRivalConflict(group)) {
-    return { ok: false, state, message: '같은 팀 묶기와 라이벌이 충돌합니다.' };
+    return { ok: false, state, message: '고정 듀오와 라이벌이 충돌합니다.' };
   }
   if (isTeam(to) && group.length > TEAM_LIMIT) {
-    return { ok: false, state, message: '같은 팀으로 묶인 인원이 5명을 넘습니다.' };
+    return { ok: false, state, message: '고정 듀오 인원이 5명을 넘습니다.' };
   }
 
   const ids = new Set(group.map((player) => player.id));
@@ -310,7 +272,7 @@ export function applyMove(
 
   const pulledAllies = group.filter((player) => player.id !== id && locate(next, player.id) !== dest);
   if (pulledAllies.length > 0) {
-    notes.push(`${namesOf(pulledAllies)}도 같은 팀으로 함께 이동합니다.`);
+    notes.push(`${namesOf(pulledAllies)}도 고정 듀오로 함께 이동합니다.`);
   }
 
   const originalDest = next[to];
@@ -367,8 +329,8 @@ export function applyRelationPlacement(state: PlacementState, player: Player): M
       ok: true,
       state: repairLocks(next),
       message: hasRivalConflict(group)
-        ? '같은 팀 묶기와 라이벌이 충돌해 대기열로 돌렸습니다.'
-        : '같은 팀으로 묶인 플레이어의 팀 고정이 달라 대기열로 돌렸습니다.',
+        ? '고정 듀오와 라이벌이 충돌해 대기열로 돌렸습니다.'
+        : '고정 듀오 플레이어의 팀 고정이 달라 대기열로 돌렸습니다.',
     };
   }
 

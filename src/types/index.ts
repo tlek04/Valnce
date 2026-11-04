@@ -64,8 +64,6 @@ export interface SavedPlayer {
   riotTag?: string;
   /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
-  /** 시청자 신청 순번 */
-  queueNo?: number;
   wins: number;
   losses: number;
   /** 양수 연승, 음수 연패, 0 없음 */
@@ -87,7 +85,7 @@ export interface Player {
   riotTag?: string;
   /** @deprecated 시드는 고정 닉 기준 */
   matchSeed?: boolean;
-  /** 시청자 신청 순번 */
+  /** 현재 보드(대기열·팀)에 올라와 있을 때의 추가 순번 */
   queueNo?: number;
   wins: number;
   losses: number;
@@ -147,6 +145,10 @@ export interface AppActions {
   clearRoster: () => void;
   importSavedPlayers: (incoming: SavedPlayer[]) => number;
   applyRemoteRoster: (incoming: SavedPlayer[], updatedAt: number) => void;
+  /** 동기화 구독자가 로컬 명단 변경 시각을 기록한다. */
+  setRosterUpdatedAt: (updatedAt: number) => void;
+  /** 기존 정책대로 성공 여부와 무관하게 전적 조회 시도를 기록한다. */
+  markMatchSyncAttempt: () => void;
   /** 보드에 있는 1·2팀 전원에게 승패를 반영하고 명단에도 저장한다. */
   recordTeamResult: (winner: 'TEAM_1' | 'TEAM_2') => { ok: boolean; message: string };
   recordPlayerResult: (id: string, result: 'win' | 'loss') => void;

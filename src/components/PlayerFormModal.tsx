@@ -1,17 +1,8 @@
-import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { X } from 'lucide-react';
-import { Player, RankRating, WeaponRestriction } from '../types';
-import { useAppStore } from '../store/useAppStore';
-import {
-  RANK_OPTIONS,
-  RESTRICTION_OPTIONS,
-  getRestrictionLabel,
-  parseRatingKey,
-  ratingKey,
-  restrictionKey,
-  sameRating,
-} from '../constants/valorant';
-import { cloneRating, isRatingAtLeast } from '../utils/rating';
+import { Player } from '../types';
+import { RANK_OPTIONS, WEAPON_CATEGORY_STYLES, getRestrictionLabel, parseRatingKey, ratingKey } from '../constants/valorant';
+import { isRatingAtLeast } from '../utils/rating';
+import { usePlayerForm } from '../hooks/usePlayerForm';
 import SearchSelect from './SearchSelect';
 import ChipList from './ChipList';
 
@@ -22,8 +13,6 @@ interface PlayerFormModalProps {
   onNotice?: (message: string) => void;
 }
 
-const DEFAULT_RATING: RankRating = { tier: 'Gold', division: 2 };
-
 function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
   if (player) return '수정 저장';
   if (lockedTeam === 'TEAM_1') return '1팀에 추가';
@@ -32,158 +21,49 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
 }
 
 export default function PlayerFormModal({ open, player, onClose, onNotice }: PlayerFormModalProps) {
-  const players = useAppStore((state) => state.players);
-  const boardPlayers = useAppStore((state) => [...state.waitlist, ...state.team1, ...state.team2]);
-  const addPlayer = useAppStore((state) => state.addPlayer);
-  const updatePlayer = useAppStore((state) => state.updatePlayer);
-  const formRef = useRef<HTMLFormElement>(null);
-  const previousFocus = useRef<HTMLElement | null>(null);
-  const [name, setName] = useState(player?.name ?? '');
-  const [riotName, setRiotName] = useState(player?.riotName ?? '');
-  const [riotTag, setRiotTag] = useState(player?.riotTag ?? '');
-  const [currentTier, setCurrentTier] = useState<RankRating>(player?.currentTier ?? DEFAULT_RATING);
-  const [maxTier, setMaxTier] = useState<RankRating>(player?.maxTier ?? player?.currentTier ?? DEFAULT_RATING);
-  const [internalTier, setInternalTier] = useState<RankRating | null>(player?.internalTier ?? null);
-  const [restrictions, setRestrictions] = useState<WeaponRestriction[]>(player?.restrictions ?? []);
-  const [canOrder, setCanOrder] = useState(player?.canOrder ?? false);
-  const [lockedTeam, setLockedTeam] = useState<Player['lockedTeam']>(player?.lockedTeam ?? null);
-  const [rivalIds, setRivalIds] = useState<string[]>(player?.rivalIds ?? []);
-  const [allyIds, setAllyIds] = useState<string[]>(player?.allyIds ?? []);
-
-  useEffect(() => {
-    if (!isRatingAtLeast(maxTier, currentTier)) setMaxTier(cloneRating(currentTier));
-  }, [currentTier, maxTier]);
-
-  useEffect(() => {
-    if (!open) return;
-    const saved = player ? useAppStore.getState().players.find((item) => item.id === player.id) : null;
-    const source = player ?? saved;
-    setName(source?.name ?? '');
-    setRiotName(source?.riotName ?? '');
-    setRiotTag(source?.riotTag ?? '');
-    setCurrentTier(source?.currentTier ?? DEFAULT_RATING);
-    setMaxTier(player?.maxTier ?? source?.currentTier ?? DEFAULT_RATING);
-    setInternalTier(player?.internalTier ?? null);
-    setRestrictions(player?.restrictions ?? []);
-    setCanOrder(player?.canOrder ?? false);
-    setLockedTeam(player?.lockedTeam ?? null);
-    setRivalIds(player?.rivalIds ?? []);
-    setAllyIds(player?.allyIds ?? []);
-  }, [open, player]);
-
-  useEffect(() => {
-    if (!open) return;
-    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      previousFocus.current?.focus();
-    };
-  }, [open]);
-
-  const trimmedName = name.trim();
-  const isDuplicate = useMemo(
-    () =>
-      players.some(
-        (item) => item.id !== player?.id && item.name.trim().toLowerCase() === trimmedName.toLowerCase()
-      ),
-    [players, player?.id, trimmedName]
-  );
-
-  const otherPlayers = boardPlayers.filter((item) => item.id !== player?.id);
-  const selectedKeys = new Set(restrictions.map(restrictionKey));
-  const weaponOptions = RESTRICTION_OPTIONS.filter((option) => !selectedKeys.has(option.value)).map(
-    (option) => ({
-      value: option.value,
-      label: option.label,
-      searchText: option.searchText,
-      group: option.group,
-    })
-  );
-
-  const addRestrictionByValue = (value: string) => {
-    const option = RESTRICTION_OPTIONS.find((item) => item.value === value);
-    if (!option || selectedKeys.has(option.value)) return;
-    setRestrictions((current) => [
-      ...current,
-      {
-        id: crypto.randomUUID(),
-        type: option.type,
-        weaponId: option.weaponId,
-      },
-    ]);
-  };
-
-  const addLink = (kind: 'rival' | 'ally', id: string) => {
-    if (!id) return;
-    if (kind === 'rival') {
-      setRivalIds((current) => (current.includes(id) ? current : [...current, id]));
-      setAllyIds((current) => current.filter((item) => item !== id));
-    } else {
-      setAllyIds((current) => (current.includes(id) ? current : [...current, id]));
-      setRivalIds((current) => current.filter((item) => item !== id));
-    }
-  };
-
-  const handleDialogKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
-    if (event.key === 'Escape') {
-      onClose();
-      return;
-    }
-    if (event.key !== 'Tab' || !formRef.current) return;
-    const focusable = [...formRef.current.querySelectorAll<HTMLElement>(
-      'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    )].filter((item) => !item.hasAttribute('disabled') && item.getAttribute('aria-hidden') !== 'true');
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  };
+  const {
+    formRef, name,
+    setName, riotName,
+    setRiotName, riotTag,
+    setRiotTag, currentTier,
+    setCurrentTier, maxTier,
+    setMaxTier, internalTier,
+    setInternalTier, restrictions,
+    setRestrictions, canOrder,
+    setCanOrder, lockedTeam,
+    setLockedTeam, rivalIds,
+    setRivalIds, allyIds,
+    setAllyIds, weaponPanelOpen,
+    setWeaponPanelOpen, trimmedName,
+    isDuplicate, otherPlayers,
+    selectedKeys, restrictionGroups,
+    toggleRestriction, addLink,
+    handleDialogKeyDown, handleSubmit
+  } = usePlayerForm({ open, player, onClose, onNotice });
 
   if (!open) return null;
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    if (!trimmedName) return;
-    const trimmedRiotName = riotName.trim();
-    const trimmedRiotTag = riotTag.trim();
-    const saved = player ? useAppStore.getState().players.find((item) => item.id === player.id) : null;
-    const payload: Player = {
-      id: player?.id ?? crypto.randomUUID(),
-      name: trimmedName,
-      currentTier: cloneRating(currentTier),
-      maxTier: cloneRating(isRatingAtLeast(maxTier, currentTier) ? maxTier : currentTier),
-      internalTier:
-        internalTier && !sameRating(internalTier, currentTier) ? cloneRating(internalTier) : undefined,
-      canOrder,
-      restrictions,
-      lockedTeam,
-      rivalIds,
-      allyIds,
-      riotName: trimmedRiotName || undefined,
-      riotTag: trimmedRiotTag || undefined,
-      wins: player?.wins ?? saved?.wins ?? 0,
-      losses: player?.losses ?? saved?.losses ?? 0,
-      streak: player?.streak ?? saved?.streak ?? 0,
-    };
-    const message = player ? updatePlayer(player.id, payload) : addPlayer(payload);
-    if (message) onNotice?.(message);
-    onClose();
+  const fieldLabel = 'mb-1.5 block text-base font-medium text-val-cream/90';
+  const toggleBtn = (active: boolean, tone: 'default' | 'sky' | 'red' | 'teal' = 'default') => {
+    if (tone === 'sky') {
+      return active
+        ? 'rounded-md border border-sky-400/70 bg-sky-500/35 px-3 py-1.5 text-sm font-semibold text-sky-100 transition-colors'
+        : 'rounded-md border border-sky-400/15 bg-sky-500/[0.06] px-3 py-1.5 text-sm text-sky-300/45 transition-colors hover:border-sky-400/30 hover:bg-sky-500/10 hover:text-sky-300/70';
+    }
+    if (tone === 'teal') {
+      return active
+        ? 'rounded-md border border-val-teal/70 px-3 py-1.5 text-sm font-semibold text-val-cream transition-colors'
+        : 'rounded-md border border-val-teal/15 bg-val-teal/[0.06] px-3 py-1.5 text-sm text-val-teal/45 transition-colors hover:border-val-teal/30 hover:bg-val-teal/10';
+    }
+    if (tone === 'red') {
+      return active
+        ? 'rounded-md border border-val-red/70 bg-val-red/35 px-3 py-1.5 text-sm font-semibold text-red-100 transition-colors'
+        : 'rounded-md border border-val-red/15 bg-val-red/[0.06] px-3 py-1.5 text-sm text-val-red/45 transition-colors hover:border-val-red/30 hover:bg-val-red/10 hover:text-val-red/70';
+    }
+    return active
+      ? 'rounded-md border border-val-red bg-val-red/15 px-3 py-1.5 text-sm text-val-cream transition-colors'
+      : 'rounded-md border border-val-line/50 bg-val-bg/40 px-3 py-1.5 text-sm text-val-muted/50 transition-colors hover:border-val-line hover:text-val-muted';
   };
-
-  const toggleBtn = (active: boolean) =>
-    `rounded-md border px-3 py-1.5 text-sm transition-colors ${
-      active
-        ? 'border-val-red bg-val-red/15 text-val-cream'
-        : 'border-val-line bg-val-bg text-val-muted hover:border-val-red/40'
-    }`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4">
@@ -195,7 +75,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
         aria-labelledby="player-form-title"
         onSubmit={handleSubmit}
         onKeyDown={handleDialogKeyDown}
-        className="relative z-10 w-full max-w-lg overflow-hidden rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
+        className="relative z-10 w-full max-w-lg overflow-visible rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
       >
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 id="player-form-title" className="font-display text-xl font-bold text-val-cream">
@@ -213,8 +93,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
 
         <div className="space-y-3">
           <div>
-            <label htmlFor="player-name" className="mb-1 block text-xs text-val-muted">
-              닉네임
+            <label htmlFor="player-name" className={fieldLabel}>
+              치지직 닉네임
             </label>
             <input
               id="player-name"
@@ -231,7 +111,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
 
           <div className="grid grid-cols-[1fr_6.5rem] gap-3">
             <div>
-              <label htmlFor="player-riot-name" className="mb-1 block text-xs text-val-muted">
+              <label htmlFor="player-riot-name" className={fieldLabel}>
                 발로란트 닉네임
               </label>
               <input
@@ -243,7 +123,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               />
             </div>
             <div>
-              <label htmlFor="player-riot-tag" className="mb-1 block text-xs text-val-muted">
+              <label htmlFor="player-riot-tag" className={fieldLabel}>
                 태그
               </label>
               <div className="relative">
@@ -263,9 +143,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label htmlFor="player-current-tier" className="mb-1 block text-xs text-val-muted">
-                현재 티어
-              </label>
+              <p className={fieldLabel}>현재 티어</p>
               <SearchSelect
                 id="player-current-tier"
                 options={RANK_OPTIONS}
@@ -275,9 +153,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               />
             </div>
             <div>
-              <label htmlFor="player-max-tier" className="mb-1 block text-xs text-val-muted">
-                최고 티어
-              </label>
+              <p className={fieldLabel}>최고 티어</p>
               <SearchSelect
                 id="player-max-tier"
                 options={RANK_OPTIONS.filter((option) =>
@@ -289,9 +165,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               />
             </div>
             <div>
-              <label htmlFor="player-internal-tier" className="mb-1 block text-xs text-val-muted">
-                내전 티어
-              </label>
+              <p className={fieldLabel}>내전 티어</p>
               <SearchSelect
                 id="player-internal-tier"
                 options={RANK_OPTIONS}
@@ -308,41 +182,46 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               type="button"
               aria-pressed={canOrder}
               onClick={() => setCanOrder((value) => !value)}
-              className={toggleBtn(canOrder)}
+              className={
+                canOrder
+                  ? 'rounded-md border border-val-teal/50 px-3 py-1.5 text-sm font-semibold text-val-cream transition-colors'
+                  : 'rounded-md border border-val-teal/15 px-3 py-1.5 text-sm text-val-teal/40 transition-colors'
+              }
+              style={{
+                backgroundColor: canOrder ? 'rgba(15, 223, 195, 0.6)' : 'rgba(15, 223, 195, 0.08)',
+              }}
             >
               {canOrder ? '오더 가능' : '오더 불가능'}
             </button>
-            {(
-              [
-                { value: 'TEAM_1' as const, label: '1팀 고정' },
-                { value: 'TEAM_2' as const, label: '2팀 고정' },
-              ]
-            ).map((option) => (
-              <button
-                key={option.label}
-                type="button"
-                aria-pressed={lockedTeam === option.value}
-                onClick={() =>
-                  setLockedTeam((current) => (current === option.value ? null : option.value))
-                }
-                className={toggleBtn(lockedTeam === option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
+            <button
+              type="button"
+              aria-pressed={lockedTeam === 'TEAM_1'}
+              onClick={() => setLockedTeam((current) => (current === 'TEAM_1' ? null : 'TEAM_1'))}
+              className={toggleBtn(lockedTeam === 'TEAM_1', 'sky')}
+            >
+              1팀 고정
+            </button>
+            <button
+              type="button"
+              aria-pressed={lockedTeam === 'TEAM_2'}
+              onClick={() => setLockedTeam((current) => (current === 'TEAM_2' ? null : 'TEAM_2'))}
+              className={toggleBtn(lockedTeam === 'TEAM_2', 'red')}
+            >
+              2팀 고정
+            </button>
           </div>
 
           <div>
-            <label htmlFor="player-weapon-limit" className="mb-1 block text-xs text-val-muted">
-              무기 제한
-            </label>
-            <SearchSelect
-              id="player-weapon-limit"
-              options={weaponOptions}
-              placeholder="무기 검색 후 선택"
-              clearOnSelect
-              onSelect={addRestrictionByValue}
-            />
+            <p className={fieldLabel}>무기 제한</p>
+            <button
+              type="button"
+              onClick={() => setWeaponPanelOpen(true)}
+              className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-left text-sm text-val-cream hover:border-val-red/40"
+            >
+              {restrictions.length > 0
+                ? `선택 ${restrictions.length}개 · 제한 선택`
+                : '제한 선택'}
+            </button>
             <ChipList
               items={restrictions.map((item) => ({ id: item.id, label: getRestrictionLabel(item) }))}
               onRemove={(id) => setRestrictions((current) => current.filter((item) => item.id !== id))}
@@ -351,9 +230,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label htmlFor="player-rivals" className="mb-1 block text-xs text-val-muted">
-                라이벌
-              </label>
+              <p className={fieldLabel}>라이벌</p>
+              <p className="mb-1.5 text-xs text-val-muted">같은 팀 불가</p>
               <SearchSelect
                 id="player-rivals"
                 options={otherPlayers
@@ -372,9 +250,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             </div>
 
             <div>
-              <label htmlFor="player-allies" className="mb-1 block text-xs text-val-muted">
-                같은 팀
-              </label>
+              <p className={fieldLabel}>고정 듀오</p>
+              <p className="mb-1.5 text-xs text-val-muted">같은 팀 묶기</p>
               <SearchSelect
                 id="player-allies"
                 options={otherPlayers
@@ -411,6 +288,86 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
           </button>
         </div>
       </form>
+
+      {weaponPanelOpen && (
+        <div className="absolute inset-0 z-20 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4">
+          <button
+            type="button"
+            aria-label="제한 선택 닫기"
+            className="absolute inset-0"
+            onClick={() => setWeaponPanelOpen(false)}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="weapon-limit-title"
+            className="relative z-10 flex max-h-[min(85vh,36rem)] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div>
+                <h3 id="weapon-limit-title" className="font-display text-lg font-bold text-val-cream">
+                  제한 선택
+                </h3>
+                <p className="mt-0.5 text-xs text-val-muted">버튼을 눌러 제한을 켜고 끕니다</p>
+              </div>
+              <button
+                type="button"
+                aria-label="닫기"
+                className="rounded-md p-1.5 text-val-muted hover:bg-white/5 hover:text-val-cream"
+                onClick={() => setWeaponPanelOpen(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+              {restrictionGroups.map((group) => (
+                <div key={group.name}>
+                  <p
+                    className={`mb-1.5 text-[11px] font-semibold ${
+                      (WEAPON_CATEGORY_STYLES[group.name] ?? WEAPON_CATEGORY_STYLES['세트'])
+                        .split(' ')
+                        .find((part) => part.startsWith('text-')) ?? 'text-val-muted'
+                    }`}
+                  >
+                    {group.name}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {group.options.map((option) => {
+                      const active = selectedKeys.has(option.value);
+                      const tone = WEAPON_CATEGORY_STYLES[option.group] ?? WEAPON_CATEGORY_STYLES['세트'];
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() => toggleRestriction(option.value)}
+                            className={`rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                            active
+                              ? tone
+                              : 'border-val-line/40 bg-val-bg/40 text-val-muted/45 hover:border-val-line hover:text-val-muted'
+                          }`}
+                        >
+                          {option.short}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setWeaponPanelOpen(false)}
+                className="rounded-lg bg-val-red px-4 py-2 text-sm font-semibold text-white hover:bg-val-red/90"
+              >
+                완료
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

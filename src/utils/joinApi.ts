@@ -1,3 +1,4 @@
+import { readJsonOrEmpty, readJsonText } from './apiResponse';
 import { JoinApplication, Player } from '../types';
 import { streamerAuthHeaders } from './streamerAuth';
 
@@ -16,19 +17,17 @@ export async function submitJoinApplication(input: {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(input),
     });
-    const text = await response.text();
-    let data: { ok?: boolean; application?: JoinApplication; error?: string } = {};
-    try {
-      data = text ? (JSON.parse(text) as typeof data) : {};
-    } catch {
+    const parsed = await readJsonText<{ ok?: boolean; application?: JoinApplication; error?: string }>(response);
+    if (!parsed.parsed) {
       return {
         ok: false,
         error:
-          response.status === 404 || text.toLowerCase().includes('<!doctype')
+          response.status === 404 || parsed.text.toLowerCase().includes('<!doctype')
             ? '참가 API가 아직 배포되지 않았습니다. 배포 후 다시 시도하세요.'
             : `서버 응답을 읽지 못했습니다. (${response.status})`,
       };
     }
+    const data = parsed.data;
     if (!response.ok || !data.ok || !data.application) {
       return {
         ok: false,
@@ -48,10 +47,10 @@ export async function fetchJoinQueue(): Promise<{ ok: boolean; items?: JoinAppli
       cache: 'no-store',
       headers: streamerAuthHeaders(),
     });
-    const data = (await response.json().catch(() => ({}))) as {
+    const data = await readJsonOrEmpty<{
       items?: JoinApplication[];
       error?: string;
-    };
+    }>(response);
     if (!response.ok) {
       return { ok: false, error: data.error || '신청 목록을 불러오지 못했습니다.' };
     }
@@ -74,12 +73,12 @@ export async function approveJoinApplication(
       method: 'POST',
       headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
     });
-    const data = (await response.json().catch(() => ({}))) as {
+    const data = await readJsonOrEmpty<{
       ok?: boolean;
       player?: Player;
       roster?: { updatedAt: number; players: unknown[] };
       error?: string;
-    };
+    }>(response);
     if (!response.ok || !data.ok || !data.player) {
       return { ok: false, error: data.error || '승인에 실패했습니다.' };
     }
@@ -95,7 +94,7 @@ export async function rejectJoinApplication(id: string): Promise<{ ok: boolean; 
       method: 'POST',
       headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
     });
-    const data = (await response.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+    const data = await readJsonOrEmpty<{ ok?: boolean; error?: string }>(response);
     if (!response.ok || !data.ok) {
       return { ok: false, error: data.error || '거절에 실패했습니다.' };
     }

@@ -9,14 +9,15 @@
 3. Root directory: 비움
 4. KV `ROSTER` 는 `wrangler.toml`의 `[[kv_namespaces]]` 에 고정 (대시보드만 넣으면 배포 때 사라짐)
 5. **Secrets** → `HENRIK_API_KEY` = [HenrikDev](https://docs.henrikdev.xyz) API 키
-6. **Secrets** → `STREAMER_PASSWORD` = 스트리머 매니저 입장·쓰기 API 비밀번호
+6. **Secrets** → `STREAMER_PASSWORD` = 스트리머 매니저 입장·세션 서명 비밀번호
 7. Redeploy
 
 ## 스트리머 / 시청자
 
 - `/` 랜딩 → 스트리머(`/manage`, 비밀번호) · 시청자(`/join`, 닉+발로닉 신청)
 - 시청자 신청은 KV `join-queue`에 쌓이고, 스트리머가 승인하면 명단+대기열에 추가
-- `PUT /api/roster`, `POST /api/matches/import`, 신청 목록/승인/거절은 `Authorization: Bearer <STREAMER_PASSWORD>` 필요
+- 로그인 후 세션 토큰이 발급되며, `PUT /api/roster` 등 쓰기 API는 `Authorization: Bearer <세션 토큰>` 필요
+- 접속 IP · 세션 일괄 회수: 매니지 **접속 IP** 패널 / 자세한 설명은 [docs/AUTH.md](docs/AUTH.md)
 
 `wrangler.toml`의 `assets.directory = "./dist"` 가 빌드 출력 경로입니다.
 

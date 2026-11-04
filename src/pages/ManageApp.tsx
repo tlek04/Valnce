@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import Board from '../components/Board';
 import Header from '../components/Header';
-import JoinQueuePanel from '../components/JoinQueuePanel';
 import PlayerFormModal from '../components/PlayerFormModal';
-import { useMatchAutoSync } from '../hooks/useMatchAutoSync';
+import { useMatchSync } from '../hooks/useMatchSync';
 import { useRosterSync } from '../hooks/useRosterSync';
 import { Player } from '../types';
 import { clearStreamerToken } from '../utils/streamerAuth';
@@ -23,7 +22,7 @@ export default function ManageApp({ onLogout }: ManageAppProps) {
   }, []);
 
   const syncStatus = useRosterSync(showNotice);
-  const { runMatchSync, syncing: matchSyncing } = useMatchAutoSync(showNotice);
+  const { runMatchSync, syncing: matchSyncing } = useMatchSync(showNotice);
 
   const openCreate = () => {
     setEditingPlayer(null);
@@ -56,7 +55,7 @@ export default function ManageApp({ onLogout }: ManageAppProps) {
           void runMatchSync(options);
         }}
         matchSyncing={matchSyncing}
-        onHome={() => {
+        onUnauthorized={() => {
           clearStreamerToken();
           onLogout();
         }}
@@ -72,16 +71,16 @@ export default function ManageApp({ onLogout }: ManageAppProps) {
           </p>
         </div>
       )}
-      <div className="mx-auto max-w-[1600px] space-y-4 px-4 pt-4">
-        <JoinQueuePanel
-          onNotice={showNotice}
-          onUnauthorized={() => {
-            showNotice('스트리머 인증이 만료되었습니다. 다시 로그인하세요.');
-            onLogout();
-          }}
-        />
-      </div>
-      <Board onAdd={openCreate} onEdit={openEdit} onNotice={showNotice} />
+      <Board
+        onAdd={openCreate}
+        onEdit={openEdit}
+        onNotice={showNotice}
+        onUnauthorized={() => {
+          clearStreamerToken();
+          showNotice('스트리머 인증이 만료되었습니다. 다시 로그인하세요.');
+          onLogout();
+        }}
+      />
       {formOpen && (
         <PlayerFormModal
           key={editingPlayer?.id ?? `new-${formKey}`}

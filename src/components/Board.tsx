@@ -1,116 +1,42 @@
-import { useMemo, useState } from 'react';
-import {
-  CollisionDetection,
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  pointerWithin,
-  rectIntersection,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { Trophy } from 'lucide-react';
-import { ColumnId, Player } from '../types';
-import { useAppStore } from '../store/useAppStore';
-import { allyGroupOf, orderGroup } from '../utils/relations';
+import { useEffect, useState } from 'react';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
+import { Player } from '../types';
+import { useBoardDrag } from '../hooks/useBoardDrag';
+import { advantageSummary, balanceLabel } from '../utils/rating';
 import PlayerCard from './PlayerCard';
 import TeamPanel from './TeamPanel';
 import WaitlistPanel from './WaitlistPanel';
-import { parseSavedDragId } from './SavedPlayerPanel';
-import { toSessionPlayer } from '../utils/player';
 
 interface BoardProps {
   onAdd: () => void;
   onEdit: (player: Player) => void;
   onNotice?: (message: string) => void;
+  onUnauthorized?: () => void;
 }
 
-function isColumnId(id: string): id is ColumnId {
-  return id === 'waitlist' || id === 'team1' || id === 'team2';
-}
+export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: BoardProps) {
+  const {
+    team1,
+    team2,
+    balanceDetails,
+    recordTeamResult,
+    activePlayer,
+    setActivePlayer,
+    sensors,
+    detectCollision,
+    handleDragStart,
+    handleDragEnd,
+    groupedIds,
+    allyNames,
+  } = useBoardDrag(onNotice);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
-const detectCollision: CollisionDetection = (args) => {
-  const pointerHits = pointerWithin(args);
-  if (pointerHits.length > 0) return pointerHits;
-  return rectIntersection(args);
-};
+  useEffect(() => {
+    if (balanceDetails.length === 0) setDetailsOpen(false);
+  }, [balanceDetails]);
 
-export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
-  const waitlist = useAppStore((state) => state.waitlist);
-  const team1 = useAppStore((state) => state.team1);
-  const team2 = useAppStore((state) => state.team2);
-  const players = useAppStore((state) => state.players);
-  const movePlayer = useAppStore((state) => state.movePlayer);
-  const enlistPlayer = useAppStore((state) => state.enlistPlayer);
-  const recordTeamResult = useAppStore((state) => state.recordTeamResult);
-  const [activePlayer, setActivePlayer] = useState<Player | null>(null);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
-  const columns = useMemo(
-    () => ({
-      waitlist,
-      team1,
-      team2,
-    }),
-    [waitlist, team1, team2]
-  );
-
-  const findContainer = (id: string): ColumnId | null => {
-    if (parseSavedDragId(id)) return null;
-    if (isColumnId(id)) return id;
-    if (waitlist.some((player) => player.id === id)) return 'waitlist';
-    if (team1.some((player) => player.id === id)) return 'team1';
-    if (team2.some((player) => player.id === id)) return 'team2';
-    return null;
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const rawId = String(event.active.id);
-    const savedId = parseSavedDragId(rawId);
-    const id = savedId ?? rawId;
-    const onBoard = [...waitlist, ...team1, ...team2].find((item) => item.id === id);
-    const saved = players.find((item) => item.id === id);
-    setActivePlayer(onBoard ?? (saved ? toSessionPlayer(saved) : null));
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActivePlayer(null);
-    if (!over) return;
-
-    const rawId = String(active.id);
-    const savedId = parseSavedDragId(rawId);
-    const overId = String(over.id);
-    const to = parseSavedDragId(overId) ? 'waitlist' : findContainer(overId);
-    if (!to) return;
-
-    const target = columns[to];
-    const index = isColumnId(overId) || parseSavedDragId(overId) ? target.length : target.findIndex((player) => player.id === overId);
-    const result = savedId
-      ? enlistPlayer(savedId, to, index < 0 ? target.length : index)
-      : movePlayer(rawId, to, index < 0 ? target.length : index);
-    if (result.message) onNotice?.(result.message);
-  };
-
-  const roster = useMemo(() => [...waitlist, ...team1, ...team2], [waitlist, team1, team2]);
-  const activeGroup = activePlayer
-    ? orderGroup(allyGroupOf(roster, activePlayer.id), activePlayer.id)
-    : [];
-  const groupedIds = useMemo(() => new Set(activeGroup.map((player) => player.id)), [activeGroup]);
-  const allyNames = activeGroup
-    .filter((player) => player.id !== activePlayer?.id)
-    .map((player) => player.name)
-    .join(', ');
+  const advantage =
+    team1.length > 0 && team2.length > 0 ? advantageSummary(team1, team2) : null;
 
   return (
     <DndContext
@@ -120,53 +46,75 @@ export default function Board({ onAdd, onEdit, onNotice }: BoardProps) {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActivePlayer(null)}
     >
-      <main className="mx-auto grid max-w-[1600px] gap-4 px-4 py-4 xl:grid-cols-[320px_1fr]">
+      <main className="mx-auto grid max-w-[1600px] gap-5 px-4 py-5 xl:grid-cols-[minmax(18rem,22rem)_1fr]">
         <WaitlistPanel
           onAdd={onAdd}
           onEdit={onEdit}
           onNotice={onNotice}
+          onUnauthorized={onUnauthorized}
           groupedIds={groupedIds}
           activeId={activePlayer?.id}
         />
-        <div id="match-board" className="space-y-3">
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <button
-              type="button"
-              disabled={team1.length === 0 || team2.length === 0}
-              onClick={() => {
-                const result = recordTeamResult('TEAM_1');
-                onNotice?.(result.message);
-              }}
-              style={{ backgroundColor: 'rgba(56, 189, 248, 0.68)' }}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <Trophy size={15} />
-              1팀 승
-            </button>
-            <button
-              type="button"
-              disabled={team1.length === 0 || team2.length === 0}
-              onClick={() => {
-                const result = recordTeamResult('TEAM_2');
-                onNotice?.(result.message);
-              }}
-              style={{ backgroundColor: 'rgba(255, 70, 85, 0.6)' }}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <Trophy size={15} />
-              2팀 승
-            </button>
-          </div>
+        <div id="match-board" className="min-w-0 space-y-3">
+          {advantage && (
+            <div className="space-y-1.5 rounded-xl border border-val-line bg-val-panel/60 px-4 py-2 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-val-muted">티어 차이</span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`font-display text-lg font-bold ${
+                      advantage.side === 'team1'
+                        ? 'text-[#38BDF8]'
+                        : advantage.side === 'team2'
+                          ? 'text-val-red'
+                          : 'text-val-cream'
+                    }`}
+                  >
+                    {advantage.text}
+                    {advantage.amount > 0 ? (
+                      <span className="ml-2 text-sm font-medium text-val-muted">
+                        {balanceLabel(advantage.amount)}
+                      </span>
+                    ) : null}
+                  </span>
+                  {balanceDetails.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setDetailsOpen((open) => !open)}
+                      className="shrink-0 text-xs font-semibold text-val-teal hover:underline"
+                    >
+                      {detailsOpen ? '접기' : '자세히'}
+                    </button>
+                  )}
+                </div>
+              </div>
+              {detailsOpen && balanceDetails.length > 0 && (
+                <ul className="space-y-1 rounded-lg border border-val-line bg-val-bg/70 px-3 py-2 text-xs leading-relaxed text-val-cream/90">
+                  {balanceDetails.map((line) => (
+                    <li key={line}>· {line}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
           <div className="grid gap-4 md:grid-cols-2">
             <TeamPanel
               side="TEAM_1"
               onEdit={onEdit}
+              canWin={team1.length > 0 && team2.length > 0}
+              onWin={() => {
+                recordTeamResult('TEAM_1');
+              }}
               groupedIds={groupedIds}
               activeId={activePlayer?.id}
             />
             <TeamPanel
               side="TEAM_2"
               onEdit={onEdit}
+              canWin={team1.length > 0 && team2.length > 0}
+              onWin={() => {
+                recordTeamResult('TEAM_2');
+              }}
               groupedIds={groupedIds}
               activeId={activePlayer?.id}
             />

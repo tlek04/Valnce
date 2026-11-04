@@ -27,10 +27,7 @@ export async function fetchRemoteRoster(): Promise<RemoteRoster | null> {
     const response = await fetch(apiUrl(), { method: 'GET', cache: 'no-store' });
     if (!response.ok) return null;
     const data = (await response.json()) as { updatedAt?: number; players?: unknown[] };
-    return {
-      updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
-      players: Array.isArray(data.players) ? data.players.map((item) => toSavedPlayer(item)) : [],
-    };
+    return normalizeRemoteRoster(data);
   } catch {
     return null;
   }
@@ -51,14 +48,18 @@ export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number
       return {
         ok: false,
         conflict: true,
-        roster: {
-          updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
-          players: Array.isArray(data.players) ? data.players.map((item) => toSavedPlayer(item)) : [],
-        },
+        roster: normalizeRemoteRoster(data),
       };
     }
     return response.ok ? { ok: true } : { ok: false };
   } catch {
     return { ok: false };
   }
+}
+
+function normalizeRemoteRoster(data: { updatedAt?: number; players?: unknown[] }): RemoteRoster {
+  return {
+    updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
+    players: Array.isArray(data.players) ? data.players.map(toSavedPlayer) : [],
+  };
 }

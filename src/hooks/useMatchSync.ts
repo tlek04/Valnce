@@ -3,7 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { importQualifyingMatches, isMatchSyncConfigured } from '../utils/matchImport';
 
 /** 전적 동기화 버튼을 눌렀을 때만 Henrik API를 호출한다. */
-export function useMatchAutoSync(onNotice?: (message: string) => void) {
+export function useMatchSync(onNotice?: (message: string) => void) {
   const [syncing, setSyncing] = useState(false);
   const inFlight = useRef(false);
 
@@ -23,8 +23,8 @@ export function useMatchAutoSync(onNotice?: (message: string) => void) {
       inFlight.current = true;
       setSyncing(true);
       try {
-        const imported = await importQualifyingMatches();
-        useAppStore.setState({ lastMatchSyncAt: Date.now() });
+        const imported = await importQualifyingMatches(useAppStore.getState().players);
+        useAppStore.getState().markMatchSyncAttempt();
 
         if (!imported.ok) {
           if (!options.soft) onNotice?.(imported.error || '전적 동기화에 실패했습니다.');
