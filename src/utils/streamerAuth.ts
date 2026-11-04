@@ -1,7 +1,9 @@
 import { readJsonOrEmpty } from './apiResponse';
 
-const STORAGE_KEY = 'valnce-streamer-token';
-const ROLE_KEY = 'valnce-auth-role';
+const STREAMER_TOKEN_KEY = 'valnce-streamer-token';
+const ADMIN_TOKEN_KEY = 'valnce-admin-token';
+/** @deprecated single-slot role; migrated away */
+const LEGACY_ROLE_KEY = 'valnce-auth-role';
 
 export type AuthRole = 'streamer' | 'admin';
 
@@ -11,14 +13,14 @@ export interface AccessLogEntry {
   ok: boolean;
 }
 
-export function getStreamerToken(): string | null {
+function readToken(key: string): string | null {
   try {
-    const local = localStorage.getItem(STORAGE_KEY)?.trim();
+    const local = localStorage.getItem(key)?.trim();
     if (local) return local;
-    const session = sessionStorage.getItem(STORAGE_KEY)?.trim();
+    const session = sessionStorage.getItem(key)?.trim();
     if (session) {
-      localStorage.setItem(STORAGE_KEY, session);
-      sessionStorage.removeItem(STORAGE_KEY);
+      localStorage.setItem(key, session);
+      sessionStorage.removeItem(key);
       return session;
     }
     return null;
@@ -27,56 +29,127 @@ export function getStreamerToken(): string | null {
   }
 }
 
+function writeToken(key: string, token: string): void {
+  localStorage.setItem(key, token);
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    /* ignore */
+  }
+}
+
+function removeToken(key: string): void {
+  localStorage.removeItem(key);
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** 예전 단일 토큰+role 저장을 슬롯별로 나눕니다. */
+function migrateLegacyAuthSlots(): void {
+  try {
+    const legacyRole = localStorage.getItem(LEGACY_ROLE_KEY);
+    const shared = localStorage.getItem(STREAMER_TOKEN_KEY)?.trim();
+    if (!legacyRole || !shared) {
+      if (legacyRole) localStorage.removeItem(LEGACY_ROLE_KEY);
+      return;
+    }
+    if (legacyRole === 'admin') {
+      if (!localStorage.getItem(ADMIN_TOKEN_KEY)) {
+        localStorage.setItem(ADMIN_TOKEN_KEY, shared);
+      }
+      localStorage.removeItem(STREAMER_TOKEN_KEY);
+    }
+    localStorage.removeItem(LEGACY_ROLE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getStreamerToken(): string | null {
+  migrateLegacyAuthSlots();
+  return readToken(STREAMER_TOKEN_KEY);
+}
+
+export function getAdminToken(): string | null {
+  migrateLegacyAuthSlots();
+  return readToken(ADMIN_TOKEN_KEY);
+}
+
+/** @deprecated use getAdminToken / getStreamerToken */
 export function getAuthRole(): AuthRole | null {
-  try {
-    const role = localStorage.getItem(ROLE_KEY);
-    return role === 'admin' || role === 'streamer' ? role : null;
-  } catch {
-    return null;
-  }
+  if (getAdminToken()) return 'admin';
+  if (getStreamerToken()) return 'streamer';
+  return null;
 }
 
+export function setStreamerSession(token: string): void {
+  writeToken(STREAMER_TOKEN_KEY, token);
+}
+
+export function setAdminSession(token: string): void {
+  writeToken(ADMIN_TOKEN_KEY, token);
+}
+
+/** role에 맞는 슬롯만 저장. 다른 역할 토큰은 건드리지 않습니다. */
 export function setAuthSession(token: string, role: AuthRole): void {
-  localStorage.setItem(STORAGE_KEY, token);
-  localStorage.setItem(ROLE_KEY, role);
+  if (role === 'admin') setAdminSession(token);
+  else setStreamerSession(token);
   try {
-    sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(LEGACY_ROLE_KEY);
   } catch {
     /* ignore */
   }
 }
 
-/** @deprecated use setAuthSession */
+/** @deprecated use setStreamerSession */
 export function setStreamerToken(token: string): void {
-  localStorage.setItem(STORAGE_KEY, token);
-  try {
-    sessionStorage.removeItem(STORAGE_KEY);
-  } catch {
-    /* ignore */
-  }
+  setStreamerSession(token);
 }
 
 export function clearStreamerToken(): void {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(ROLE_KEY);
+  removeToken(STREAMER_TOKEN_KEY);
+}
+
+export function clearAdminToken(): void {
+  removeToken(ADMIN_TOKEN_KEY);
+}
+
+export function clearAllAuthTokens(): void {
+  clearStreamerToken();
+  clearAdminToken();
   try {
-    sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(LEGACY_ROLE_KEY);
   } catch {
     /* ignore */
   }
 }
 
-export function streamerAuthHeaders(extra?: HeadersInit): HeadersInit {
-  const token = getStreamerToken();
+function bearerHeaders(token: string | null, extra?: HeadersInit): HeadersInit {
   return {
     ...(extra ?? {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
 
-export async function verifyStreamerPassword(
-  password: string
-): Promise<{ ok: boolean; role?: AuthRole; error?: string }> {
+/** 매니지·명단·신청 API — 스트리머 토큰 우선, 없으면 관리자 */
+export function streamerAuthHeaders(extra?: HeadersInit): HeadersInit {
+  return bearerHeaders(getStreamerToken() || getAdminToken(), extra);
+}
+
+/** access-log 등 관리자 전용 API */
+export function adminAuthHeaders(extra?: HeadersInit): HeadersInit {
+  return bearerHeaders(getAdminToken(), extra);
+}
+
+async function requestLogin(password: string): Promise<{
+  ok: boolean;
+  token?: string;
+  role?: AuthRole;
+  error?: string;
+}> {
   const trimmed = password.trim();
   try {
     const response = await fetch('/api/auth/login', {
@@ -93,11 +166,32 @@ export async function verifyStreamerPassword(
     if (!response.ok || !data.ok || !data.token || (data.role !== 'admin' && data.role !== 'streamer')) {
       return { ok: false, error: data.error || '비밀번호가 올바르지 않습니다.' };
     }
-    setAuthSession(data.token, data.role);
-    return { ok: true, role: data.role };
+    return { ok: true, token: data.token, role: data.role };
   } catch {
     return { ok: false, error: '인증 서버에 연결하지 못했습니다.' };
   }
+}
+
+export async function verifyStreamerPassword(
+  password: string
+): Promise<{ ok: boolean; role?: AuthRole; error?: string }> {
+  const result = await requestLogin(password);
+  if (!result.ok || !result.token || !result.role) return { ok: false, error: result.error };
+  setAuthSession(result.token, result.role);
+  return { ok: true, role: result.role };
+}
+
+/** 관리자 비번만 수락. 실패해도 스트리머 토큰을 바꾸지 않습니다. */
+export async function unlockAdminPassword(
+  password: string
+): Promise<{ ok: boolean; error?: string }> {
+  const result = await requestLogin(password);
+  if (!result.ok || !result.token) return { ok: false, error: result.error || '관리자 비밀번호가 아닙니다.' };
+  if (result.role !== 'admin') {
+    return { ok: false, error: '관리자 비밀번호가 아닙니다.' };
+  }
+  setAdminSession(result.token);
+  return { ok: true };
 }
 
 export async function fetchAccessLog(): Promise<{
@@ -108,7 +202,7 @@ export async function fetchAccessLog(): Promise<{
 }> {
   try {
     const response = await fetch('/api/auth/access-log', {
-      headers: streamerAuthHeaders(),
+      headers: adminAuthHeaders(),
     });
     const data = await readJsonOrEmpty<{ items?: AccessLogEntry[]; error?: string }>(response);
     if (response.status === 401) {
@@ -131,7 +225,7 @@ export async function clearAccessLog(): Promise<{
   try {
     const response = await fetch('/api/auth/access-log', {
       method: 'DELETE',
-      headers: streamerAuthHeaders(),
+      headers: adminAuthHeaders(),
     });
     const data = await readJsonOrEmpty<{ ok?: boolean; error?: string }>(response);
     if (response.status === 401) {
@@ -160,7 +254,7 @@ export async function revokeAllStreamerSessions(password: string): Promise<{
     if (!response.ok || !data.ok) {
       return { ok: false, error: data.error || '세션 회수에 실패했습니다.' };
     }
-    clearStreamerToken();
+    clearAllAuthTokens();
     return { ok: true };
   } catch {
     return { ok: false, error: '세션 회수 서버에 연결하지 못했습니다.' };

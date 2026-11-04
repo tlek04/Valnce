@@ -5,7 +5,11 @@
 - 같은 게이트(`/manage` 비밀번호 입력)에서 역할이 갈립니다.
   - Cloudflare Secret `STREAMER_PASSWORD` → `/manage` (방송용 매니지)
   - Cloudflare Secret `ADMIN_PASSWORD` → `/admin` (운영 관리 화면)
-- 로그인 성공 시 **세션 토큰**이 발급되며, 브라우저 `localStorage`에 토큰·역할이 저장됩니다. **비밀번호 원문은 저장하지 않습니다.**
+- 로그인 성공 시 **세션 토큰**이 발급됩니다. 브라우저는 역할을 **별도 슬롯**에 저장합니다.
+  - `valnce-streamer-token` — 스트리머(`/manage`)
+  - `valnce-admin-token` — 관리자(`/admin`)
+  - 한쪽 로그인·로그아웃이 다른 쪽 토큰을 지우지 않습니다.
+- **비밀번호 원문은 저장하지 않습니다.**
 - 보호 API는 `Authorization: Bearer <세션 토큰>`을 검사합니다.
 - 스트리머 비번으로는 관리 창에 들어가지 않습니다. 관리자 비번은 별도 Secret입니다.
 - 배포만으로는 토큰이 바뀌지 않습니다. **비밀번호 변경** 또는 **모든 세션 끊기(epoch)** 로 기존 토큰을 무효화합니다.
@@ -33,6 +37,7 @@
 - payload: `{ v, exp, epoch, role }` — 만료 기본 30일, `epoch`는 KV `auth:session-epoch`
 - 검증: 서명 + 만료 + **현재 epoch와 일치** + role
 - 스트리머 토큰은 `STREAMER_PASSWORD`로, 관리자 토큰은 `ADMIN_PASSWORD`로 서명됩니다.
+- 클라이언트: 명단·신청 등 staff API는 스트리머 토큰(없으면 관리자), access-log는 관리자 토큰만.
 
 ### 무효화 방법
 

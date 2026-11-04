@@ -1,10 +1,5 @@
 import { FormEvent, useState } from 'react';
-import {
-  getAuthRole,
-  getStreamerToken,
-  setAuthSession,
-  verifyStreamerPassword,
-} from '../utils/streamerAuth';
+import { unlockAdminPassword } from '../utils/streamerAuth';
 
 interface AdminUnlockOverlayProps {
   onClose: () => void;
@@ -20,23 +15,13 @@ export default function AdminUnlockOverlay({ onClose, onAdminEnter }: AdminUnloc
     event.preventDefault();
     if (!password.trim() || busy) return;
 
-    const prevToken = getStreamerToken();
-    const prevRole = getAuthRole();
-
     setBusy(true);
     setError(null);
-    const result = await verifyStreamerPassword(password);
+    const result = await unlockAdminPassword(password);
     setBusy(false);
 
-    if (!result.ok || result.role !== 'admin') {
-      if (prevToken && prevRole) {
-        setAuthSession(prevToken, prevRole);
-      }
-      setError(
-        result.role && result.role !== 'admin'
-          ? '관리자 비밀번호가 아닙니다.'
-          : result.error || '관리자 비밀번호가 아닙니다.'
-      );
+    if (!result.ok) {
+      setError(result.error || '관리자 비밀번호가 아닙니다.');
       return;
     }
 

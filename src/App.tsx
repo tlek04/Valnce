@@ -4,7 +4,12 @@ import JoinPage from './pages/JoinPage';
 import LandingPage from './pages/LandingPage';
 import ManageApp from './pages/ManageApp';
 import StreamerGate from './pages/StreamerGate';
-import { clearStreamerToken, getAuthRole, getStreamerToken } from './utils/streamerAuth';
+import {
+  clearAdminToken,
+  clearStreamerToken,
+  getAdminToken,
+  getStreamerToken,
+} from './utils/streamerAuth';
 
 type Route = 'landing' | 'gate' | 'manage' | 'admin' | 'join';
 
@@ -12,10 +17,10 @@ function pathToRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/manage') {
     if (!getStreamerToken()) return 'gate';
-    return getAuthRole() === 'admin' ? 'admin' : 'manage';
+    return 'manage';
   }
   if (path === '/admin') {
-    if (!getStreamerToken() || getAuthRole() !== 'admin') return 'gate';
+    if (!getAdminToken()) return 'gate';
     return 'admin';
   }
   if (path === '/join') return 'join';
@@ -34,13 +39,8 @@ export default function App() {
 
   const navigate = useCallback((next: Route) => {
     let target = next;
-    if (target === 'manage') {
-      if (!getStreamerToken()) target = 'gate';
-      else if (getAuthRole() === 'admin') target = 'admin';
-    }
-    if (target === 'admin' && (!getStreamerToken() || getAuthRole() !== 'admin')) {
-      target = 'gate';
-    }
+    if (target === 'manage' && !getStreamerToken()) target = 'gate';
+    if (target === 'admin' && !getAdminToken()) target = 'gate';
     const path = routeToPath(target);
     if (window.location.pathname !== path) {
       window.history.pushState({}, '', path);
@@ -71,8 +71,8 @@ export default function App() {
     return (
       <AdminApp
         onLogout={() => {
-          clearStreamerToken();
-          navigate('landing');
+          clearAdminToken();
+          navigate(getStreamerToken() ? 'manage' : 'landing');
         }}
       />
     );
@@ -82,6 +82,7 @@ export default function App() {
     return (
       <ManageApp
         onLogout={() => {
+          clearStreamerToken();
           navigate('gate');
         }}
         onAdminEnter={() => navigate('admin')}
@@ -96,7 +97,7 @@ export default function App() {
           navigate('gate');
           return;
         }
-        navigate(getAuthRole() === 'admin' ? 'admin' : 'manage');
+        navigate('manage');
       }}
       onSelectViewer={() => navigate('join')}
     />
