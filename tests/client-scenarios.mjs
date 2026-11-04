@@ -31,16 +31,22 @@ export async function clientScenarios(root = 'src') {
   try {
     for (const [name, args] of calls) {
       for (const [status, body] of responses) {
+        localStorage.clear();
         sessionStorage.clear();
-        sessionStorage.setItem('valnce-streamer-token', 'fake');
+        localStorage.setItem('valnce-streamer-token', 'fake');
         const requests = [];
         globalThis.fetch = async (url, options) => {
           requests.push({ url, options });
           if (status === 0) throw new Error('network failure');
           return new Response(body, { status });
         };
-        output.push({ name, status, result: await api[name](...args), requests,
-          token: sessionStorage.getItem('valnce-streamer-token') });
+        output.push({
+          name,
+          status,
+          result: await api[name](...args),
+          requests,
+          token: localStorage.getItem('valnce-streamer-token'),
+        });
       }
     }
   } finally { globalThis.fetch = originalFetch; }

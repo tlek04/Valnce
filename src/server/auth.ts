@@ -62,7 +62,12 @@ async function readSessionEpoch(env: AuthEnv): Promise<number> {
   if (!env.ROSTER) return 0;
   const stored = (await env.ROSTER.get(SESSION_EPOCH_KEY, 'json')) as { epoch?: number } | number | null;
   if (typeof stored === 'number' && Number.isFinite(stored)) return Math.max(0, Math.floor(stored));
-  if (stored && typeof stored.epoch === 'number' && Number.isFinite(stored.epoch)) {
+  if (
+    stored &&
+    typeof stored === 'object' &&
+    typeof stored.epoch === 'number' &&
+    Number.isFinite(stored.epoch)
+  ) {
     return Math.max(0, Math.floor(stored.epoch));
   }
   return 0;

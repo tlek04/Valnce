@@ -901,7 +901,8 @@
     "name": "verifyStreamerPassword",
     "status": 200,
     "result": {
-      "ok": true
+      "ok": false,
+      "error": "비밀번호가 올바르지 않습니다."
     },
     "requests": [
       {
