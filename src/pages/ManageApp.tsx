@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Board from '../components/Board';
 import Header from '../components/Header';
 import PlayerFormModal from '../components/PlayerFormModal';
+import ToastNotice from '../components/ToastNotice';
 import { useMatchSync } from '../hooks/useMatchSync';
 import { useRosterSync } from '../hooks/useRosterSync';
 import { Player } from '../types';
@@ -60,17 +61,7 @@ export default function ManageApp({ onLogout }: ManageAppProps) {
           onLogout();
         }}
       />
-      {notice && (
-        <div className="mx-auto max-w-[1600px] px-4 pt-3">
-          <p
-            role="status"
-            aria-live="polite"
-            className="rounded-lg border border-val-line bg-val-panel px-4 py-2 text-sm text-val-cream"
-          >
-            {notice.text}
-          </p>
-        </div>
-      )}
+      {notice && <ToastNotice text={notice.text} />}
       <Board
         onAdd={openCreate}
         onEdit={openEdit}

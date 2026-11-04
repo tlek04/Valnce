@@ -1,5 +1,6 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Minus, Plus, RefreshCw, Trash2 } from 'lucide-react';
+import ToastNotice from '../components/ToastNotice';
 import { useAppStore } from '../store/useAppStore';
 import { formatRating } from '../constants/valorant';
 import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
@@ -196,11 +197,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
         </div>
       </header>
 
-      {notice && (
-        <div className="mx-auto max-w-5xl px-4 pt-3">
-          <p className="rounded-lg border border-val-line bg-val-panel px-4 py-2 text-sm">{notice}</p>
-        </div>
-      )}
+      {notice && <ToastNotice text={notice} />}
 
       <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6">
         <section className="rounded-2xl border border-val-line bg-val-panel/70 p-4 sm:p-5">
