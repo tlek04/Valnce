@@ -84,6 +84,7 @@ export default function App() {
         onLogout={() => {
           navigate('gate');
         }}
+        onAdminEnter={() => navigate('admin')}
       />
     );
   }

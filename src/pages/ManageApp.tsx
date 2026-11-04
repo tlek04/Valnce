@@ -10,9 +10,10 @@ import { clearStreamerToken } from '../utils/streamerAuth';
 
 interface ManageAppProps {
   onLogout: () => void;
+  onAdminEnter?: () => void;
 }
 
-export default function ManageApp({ onLogout }: ManageAppProps) {
+export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
   const [formOpen, setFormOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [formKey, setFormKey] = useState(0);
@@ -60,6 +61,7 @@ export default function ManageApp({ onLogout }: ManageAppProps) {
           clearStreamerToken();
           onLogout();
         }}
+        onAdminEnter={onAdminEnter}
       />
       {notice && <ToastNotice text={notice.text} />}
       <Board

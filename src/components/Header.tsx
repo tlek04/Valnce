@@ -1,7 +1,11 @@
+import { PointerEvent, useRef, useState } from 'react';
 import { Camera, HelpCircle, RefreshCw, RotateCcw, Scale } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { useAppStore } from '../store/useAppStore';
 import { saveResultImage } from '../utils/saveResultImage';
+import AdminUnlockOverlay from './AdminUnlockOverlay';
+
+const ADMIN_HOLD_MS = 5000;
 
 interface HeaderProps {
   onNotice: (message: string) => void;
@@ -9,6 +13,7 @@ interface HeaderProps {
   onMatchSync?: (options?: { force?: boolean; soft?: boolean }) => void;
   matchSyncing?: boolean;
   onUnauthorized?: () => void;
+  onAdminEnter?: () => void;
 }
 
 export default function Header({
@@ -16,12 +21,48 @@ export default function Header({
   syncStatus = 'idle',
   onMatchSync,
   matchSyncing = false,
+  onAdminEnter,
 }: HeaderProps) {
   const matchCount = useAppStore((state) => state.waitlist.length + state.team1.length + state.team2.length);
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
   const resetTeams = useAppStore((state) => state.resetTeams);
   const autoBalance = useAppStore((state) => state.autoBalance);
   const canBalance = matchCount >= 2;
+
+  const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
+  const holdTimerRef = useRef<number | null>(null);
+  const holdTriggeredRef = useRef(false);
+
+  const clearHoldTimer = () => {
+    if (holdTimerRef.current != null) {
+      window.clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+  };
+
+  const runTeamReset = () => {
+    if (matchCount === 0) return;
+    resetTeams();
+    onNotice('팀 인원을 대기열로 옮겼습니다.');
+  };
+
+  const handleResetPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) return;
+    holdTriggeredRef.current = false;
+    clearHoldTimer();
+    holdTimerRef.current = window.setTimeout(() => {
+      holdTriggeredRef.current = true;
+      holdTimerRef.current = null;
+      setAdminUnlockOpen(true);
+    }, ADMIN_HOLD_MS);
+  };
+
+  const handleResetPointerUp = () => {
+    const wasHold = holdTriggeredRef.current;
+    clearHoldTimer();
+    if (wasHold) return;
+    runTeamReset();
+  };
 
   const handleExportImage = async () => {
     const node = document.getElementById('match-board');
@@ -82,13 +123,22 @@ export default function Header({
           <button
             type="button"
             aria-label="팀 초기화"
-            onClick={() => {
-              resetTeams();
-              onNotice('팀 인원을 대기열로 옮겼습니다.');
+            onPointerDown={handleResetPointerDown}
+            onPointerUp={handleResetPointerUp}
+            onPointerLeave={clearHoldTimer}
+            onPointerCancel={clearHoldTimer}
+            onClick={(event) => {
+              // 마우스/터치는 pointerup에서 처리. 키보드(Enter/Space)만 여기로.
+              if (event.detail !== 0) {
+                event.preventDefault();
+                return;
+              }
+              if (!holdTriggeredRef.current) runTeamReset();
             }}
-            disabled={matchCount === 0}
             style={{ backgroundColor: 'rgba(139, 151, 143, 0.45)' }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 ${
+              matchCount === 0 ? 'opacity-40' : ''
+            }`}
           >
             <RotateCcw size={17} />
             팀 초기화
@@ -143,6 +193,16 @@ export default function Header({
           </div>
         </div>
       </div>
+
+      {adminUnlockOpen && onAdminEnter && (
+        <AdminUnlockOverlay
+          onClose={() => setAdminUnlockOpen(false)}
+          onAdminEnter={() => {
+            setAdminUnlockOpen(false);
+            onAdminEnter();
+          }}
+        />
+      )}
     </header>
   );
 }

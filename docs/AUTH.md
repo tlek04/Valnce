@@ -25,6 +25,8 @@
 | `streamer` | `/manage` | 명단 PUT 등 스트리머 API (`requireStreamer` — admin 토큰도 허용) |
 | `admin` | `/admin` | 위 + 접속 IP 조회 (`requireAdmin`) · 승패 보정 · 명단 삭제 등 UI |
 
+관리자 화면 숨은 입장: `/manage` 헤더 **팀 초기화**를 **5초** 길게 누르면 관리자 비밀번호 입력이 뜹니다. (화면에 안내 없음)
+
 ## 토큰
 
 - 형식: HMAC-SHA256 서명 (`v1.<payload>.<sig>`)
