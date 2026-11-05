@@ -2021,7 +2021,8 @@
       ],
       "sessionSavedAt": 1793790000000,
       "rosterUpdatedAt": 100,
-      "lastMatchSyncAt": 50
+      "lastMatchSyncAt": 50,
+      "showMatchRecord": true
     },
     "expired": {
       "players": [
@@ -2063,7 +2064,8 @@
       "balanceDetails": [],
       "sessionSavedAt": null,
       "rosterUpdatedAt": 0,
-      "lastMatchSyncAt": 50
+      "lastMatchSyncAt": 50,
+      "showMatchRecord": true
     },
     "legacy": {
       "id": "legacy",
@@ -2135,7 +2137,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 0,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -2189,9 +2192,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 0,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -2283,7 +2287,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 0,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -2373,9 +2378,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 0,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -2503,7 +2509,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 0,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -2629,9 +2636,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 0,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -2765,7 +2773,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 0,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -2896,9 +2905,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 0,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -3034,7 +3044,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 0,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -3165,9 +3176,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 0,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -3304,7 +3316,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -3435,9 +3448,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -3570,7 +3584,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -3701,9 +3716,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -3836,7 +3852,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -3967,9 +3984,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -4102,7 +4120,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": null
+        "lastMatchSyncAt": null,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -4233,9 +4252,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": null
+          "lastMatchSyncAt": null,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -4368,7 +4388,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -4499,9 +4520,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -4611,7 +4633,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -4719,9 +4742,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -4856,7 +4880,8 @@
         "balanceDetails": [],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -4985,9 +5010,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -5137,7 +5163,8 @@
         ],
         "sessionSavedAt": null,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -5272,9 +5299,10 @@
           ],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -5404,7 +5432,8 @@
         "balanceDetails": [],
         "sessionSavedAt": 1793790000000,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -5532,9 +5561,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -5622,7 +5652,8 @@
         "balanceDetails": [],
         "sessionSavedAt": 1793790000000,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -5708,9 +5739,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -5814,7 +5846,8 @@
         "balanceDetails": [],
         "sessionSavedAt": 1793790000000,
         "rosterUpdatedAt": 1793790000000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -5915,9 +5948,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1793790000000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -5990,7 +6024,8 @@
         "balanceDetails": [],
         "sessionSavedAt": 1793790000000,
         "rosterUpdatedAt": 1000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -6061,9 +6096,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     },
     {
@@ -6077,7 +6113,8 @@
         "balanceDetails": [],
         "sessionSavedAt": 1793790000000,
         "rosterUpdatedAt": 1000,
-        "lastMatchSyncAt": 1793790000000
+        "lastMatchSyncAt": 1793790000000,
+        "showMatchRecord": true
       },
       "storage": {
         "state": {
@@ -6089,9 +6126,10 @@
           "balanceDetails": [],
           "sessionSavedAt": 1793790000000,
           "rosterUpdatedAt": 1000,
-          "lastMatchSyncAt": 1793790000000
+          "lastMatchSyncAt": 1793790000000,
+          "showMatchRecord": true
         },
-        "version": 4
+        "version": 5
       }
     }
   ],

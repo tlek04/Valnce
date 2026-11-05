@@ -8,7 +8,8 @@ import { ActionCreator } from './actionTypes';
 
 export const createPlayerActions: ActionCreator<
   'addPlayer' | 'updatePlayer' | 'removePlayer' | 'dismissPlayer' |
-  'clearRoster' | 'importSavedPlayers' | 'applyRemoteRoster' | 'setRosterUpdatedAt'
+  'clearRoster' | 'importSavedPlayers' | 'applyRemoteRoster' | 'setRosterUpdatedAt' |
+  'setShowMatchRecord'
 > = (set, get) => ({
   addPlayer: (player: Player) => {
     let message: string | undefined;
@@ -84,4 +85,5 @@ export const createPlayerActions: ActionCreator<
       rosterUpdatedAt: updatedAt,
     }),
   setRosterUpdatedAt: (updatedAt) => set({ rosterUpdatedAt: updatedAt }),
+  setShowMatchRecord: (value) => set({ showMatchRecord: Boolean(value) }),
 });

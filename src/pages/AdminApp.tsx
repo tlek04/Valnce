@@ -35,7 +35,6 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const importSavedPlayers = useAppStore((state) => state.importSavedPlayers);
   const applyRemoteRoster = useAppStore((state) => state.applyRemoteRoster);
   const setRosterUpdatedAt = useAppStore((state) => state.setRosterUpdatedAt);
-
   const [query, setQuery] = useState('');
   const { items: notices, showNotice } = useToastStack();
   const [accessItems, setAccessItems] = useState<AccessLogEntry[]>([]);

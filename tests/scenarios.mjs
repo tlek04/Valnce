@@ -55,7 +55,8 @@ export async function domainScenarios(root = 'src') {
   }
   output.generatedCases = { cases: samples.length, digest: digest(samples) };
   const persisted = { players: [a, a, b], team1: [a], team2: [], waitlist: [b, a], sessionSavedAt: fixedNow,
-    balanceNote: '기준', balanceDetails: ['상세'], rosterUpdatedAt: 100, lastMatchSyncAt: 50 };
+    balanceNote: '기준', balanceDetails: ['상세'], rosterUpdatedAt: 100, lastMatchSyncAt: 50,
+    showMatchRecord: true };
   output.restore = persistence.restorePersistedState(persisted);
   output.expired = persistence.restorePersistedState({ ...persisted, sessionSavedAt: fixedNow - 7200001 });
   output.legacy = data.toSavedPlayer({ id: 'legacy', name: ' 이름 ', currentTier: 'Gold-2', wins: 2.8, losses: -1 });

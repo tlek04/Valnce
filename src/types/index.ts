@@ -128,6 +128,8 @@ export interface AppState {
   rosterUpdatedAt: number;
   /** 커스텀 매치 전적을 마지막으로 재계산한 시각 */
   lastMatchSyncAt: number | null;
+  /** 보드 카드에 승패·연승 표시 */
+  showMatchRecord: boolean;
 }
 
 export type ColumnId = 'waitlist' | 'team1' | 'team2';
@@ -161,6 +163,7 @@ export interface AppActions {
   adjustPlayerRecord: (id: string, field: 'wins' | 'losses', delta: number) => void;
   /** qualifying 커스텀 매치로 태그 있는 플레이어 전적을 재계산한다. */
   reconcileMatchStats: (matches: QualifyingMatch[]) => void;
+  setShowMatchRecord: (value: boolean) => void;
 }
 
 export type AppStore = AppState & AppActions;

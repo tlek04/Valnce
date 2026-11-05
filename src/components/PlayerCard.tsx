@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
 import { Player } from '../types';
 import { TIER_STYLES, formatRating, getRestrictionLabel } from '../constants/valorant';
@@ -15,6 +15,30 @@ interface PlayerCardProps {
   overlay?: boolean;
 }
 
+/** 실제로 넘칠 때만 … 을 붙인다 (짧으면 절대 안 붙음). */
+function useEllipsisWhenOverflow<T extends HTMLElement>(text: string) {
+  const ref = useRef<T | null>(null);
+  const [overflow, setOverflow] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) {
+      setOverflow(false);
+      return;
+    }
+    const sync = () => {
+      setOverflow(el.scrollWidth > el.clientWidth + 1);
+    };
+    sync();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(sync);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [text]);
+
+  return { ref, overflow };
+}
+
 export default function PlayerCard({
   player,
   onEdit,
@@ -24,6 +48,7 @@ export default function PlayerCard({
 }: PlayerCardProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const inWaitlist = useAppStore((state) => state.waitlist.some((item) => item.id === player.id));
+  const showMatchRecord = useAppStore((state) => state.showMatchRecord);
   const roster = useAppStore((state) => [...state.waitlist, ...state.team1, ...state.team2]);
   const names = (ids: string[]) =>
     ids
@@ -41,7 +66,8 @@ export default function PlayerCard({
       ? 'border-sky-400/40 bg-sky-500/15 text-sky-300'
       : 'border-val-red/30 bg-val-red/10 text-val-red';
   const streakLabel = formatStreak(player.streak);
-  const hasRecord = player.wins > 0 || player.losses > 0 || player.streak !== 0;
+  const hasRecord =
+    showMatchRecord && (player.wins > 0 || player.losses > 0 || player.streak !== 0);
   const riotId = formatRiotId(player.riotName, player.riotTag);
   const queueNo = player.queueNo;
   // 팀·대기열 동일. 대기열+내전만 뱃지 단독(현재·최고 숨김).
@@ -49,24 +75,33 @@ export default function PlayerCard({
   const showCurrent = Boolean(scrimTier) && !inWaitlist;
   const showPeak = !waitlistScrimOnly;
 
+  const nameEllipsis = useEllipsisWhenOverflow<HTMLHeadingElement>(player.name);
+  const riotEllipsis = useEllipsisWhenOverflow<HTMLParagraphElement>(riotId);
+
   return (
     <article
       className={`rounded-xl border bg-val-panel/80 p-3 shadow-sm transition-colors ${
         overlay ? 'border-val-red/60 shadow-xl' : 'border-val-line hover:border-val-red/40'
       }`}
     >
-      <div className="grid grid-cols-[2rem_minmax(0,1fr)_auto] gap-x-2 gap-y-1.5">
-        <div className="flex shrink-0 items-center justify-center self-center">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-x-2 gap-y-1.5">
+        <div className="flex min-w-[1.25rem] items-center justify-center self-center">
           {queueNo ? (
             <span className="text-sm font-semibold leading-none text-val-muted">#{queueNo}</span>
           ) : null}
         </div>
-        <h3 className="min-w-0 self-center truncate text-lg font-semibold leading-none text-val-cream">
+        <h3
+          ref={nameEllipsis.ref}
+          className={`min-w-0 self-center whitespace-nowrap text-lg font-semibold leading-none text-val-cream ${
+            nameEllipsis.overflow ? 'overflow-hidden text-ellipsis' : 'overflow-hidden'
+          }`}
+          title={nameEllipsis.overflow ? player.name : undefined}
+        >
           {player.name}
         </h3>
 
-        <div className="row-span-2 flex shrink-0 flex-col items-end justify-start gap-1.5">
-          <div className="flex items-center justify-end gap-2 text-xs leading-none text-val-muted">
+        <div className="row-span-2 flex flex-col items-end justify-start gap-1.5">
+          <div className="flex flex-wrap items-center justify-end gap-2 text-xs leading-none text-val-muted">
             {showCurrent ? <span>현재 {formatRating(player.currentTier)}</span> : null}
             {showPeak ? <span>최고 {formatRating(player.maxTier)}</span> : null}
             <span
@@ -140,7 +175,15 @@ export default function PlayerCard({
         </div>
         <div className="min-w-0 self-center">
           {riotId ? (
-            <p className="truncate text-sm leading-none text-val-muted">{riotId}</p>
+            <p
+              ref={riotEllipsis.ref}
+              className={`whitespace-nowrap text-sm leading-none text-val-muted ${
+                riotEllipsis.overflow ? 'overflow-hidden text-ellipsis' : 'overflow-hidden'
+              }`}
+              title={riotEllipsis.overflow ? riotId : undefined}
+            >
+              {riotId}
+            </p>
           ) : null}
         </div>
 

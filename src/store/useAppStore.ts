@@ -19,6 +19,7 @@ export const useAppStore = create<AppStore>()(
       sessionSavedAt: null,
       rosterUpdatedAt: 0,
       lastMatchSyncAt: null,
+      showMatchRecord: true,
 
       ...createPlayerActions(set, get, api),
       ...createBoardActions(set, get, api),
@@ -26,7 +27,7 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: 'valorant-balancer-storage',
-      version: 4,
+      version: 5,
       partialize: (state) => ({
         players: state.players.map(toSavedPlayer),
         waitlist: state.waitlist,
@@ -37,6 +38,7 @@ export const useAppStore = create<AppStore>()(
         sessionSavedAt: Date.now(),
         rosterUpdatedAt: state.rosterUpdatedAt,
         lastMatchSyncAt: state.lastMatchSyncAt,
+        showMatchRecord: state.showMatchRecord,
       }),
       migrate: (persisted) => restorePersistedState(persisted as Partial<AppState>),
       merge: (persisted, current) => ({

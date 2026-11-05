@@ -24,6 +24,7 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     sessionSavedAt: null,
     rosterUpdatedAt: 0,
     lastMatchSyncAt: typeof raw?.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
+    showMatchRecord: raw?.showMatchRecord !== false,
   };
 }
 
@@ -75,5 +76,6 @@ export function restorePersistedState(raw: Partial<AppState> | undefined): AppSt
     sessionSavedAt: savedAt,
     rosterUpdatedAt: typeof raw.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
     lastMatchSyncAt: typeof raw.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
+    showMatchRecord: raw.showMatchRecord !== false,
   };
 }
