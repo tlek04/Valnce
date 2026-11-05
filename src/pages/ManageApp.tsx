@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import Board from '../components/Board';
 import Header from '../components/Header';
 import PlayerFormModal from '../components/PlayerFormModal';
 import ToastNotice from '../components/ToastNotice';
 import { useMatchSync } from '../hooks/useMatchSync';
 import { useRosterSync } from '../hooks/useRosterSync';
+import { useToastStack } from '../hooks/useToastStack';
 import { Player } from '../types';
-import { clearStreamerToken } from '../utils/streamerAuth';
-
 interface ManageAppProps {
   onLogout: () => void;
   onAdminEnter?: () => void;
@@ -17,11 +16,7 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
   const [formOpen, setFormOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [formKey, setFormKey] = useState(0);
-  const [notice, setNotice] = useState<{ text: string; id: number } | null>(null);
-
-  const showNotice = useCallback((text: string) => {
-    setNotice({ text, id: Date.now() });
-  }, []);
+  const { items: notices, showNotice } = useToastStack();
 
   const syncStatus = useRosterSync(showNotice);
   const { runMatchSync, syncing: matchSyncing } = useMatchSync(showNotice);
@@ -42,12 +37,6 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
     setEditingPlayer(null);
   };
 
-  useEffect(() => {
-    if (!notice) return;
-    const timer = window.setTimeout(() => setNotice(null), 3200);
-    return () => window.clearTimeout(timer);
-  }, [notice]);
-
   return (
     <div className="min-h-screen bg-val-bg text-val-cream">
       <Header
@@ -57,19 +46,14 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
           void runMatchSync(options);
         }}
         matchSyncing={matchSyncing}
-        onUnauthorized={() => {
-          clearStreamerToken();
-          onLogout();
-        }}
         onAdminEnter={onAdminEnter}
       />
-      {notice && <ToastNotice text={notice.text} />}
+      <ToastNotice items={notices} />
       <Board
         onAdd={openCreate}
         onEdit={openEdit}
         onNotice={showNotice}
         onUnauthorized={() => {
-          clearStreamerToken();
           showNotice('스트리머 인증이 만료되었습니다. 다시 로그인하세요.');
           onLogout();
         }}

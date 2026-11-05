@@ -78,13 +78,6 @@ export function getAdminToken(): string | null {
   return readToken(ADMIN_TOKEN_KEY);
 }
 
-/** @deprecated use getAdminToken / getStreamerToken */
-export function getAuthRole(): AuthRole | null {
-  if (getAdminToken()) return 'admin';
-  if (getStreamerToken()) return 'streamer';
-  return null;
-}
-
 export function setStreamerSession(token: string): void {
   writeToken(STREAMER_TOKEN_KEY, token);
 }
@@ -102,11 +95,6 @@ export function setAuthSession(token: string, role: AuthRole): void {
   } catch {
     /* ignore */
   }
-}
-
-/** @deprecated use setStreamerSession */
-export function setStreamerToken(token: string): void {
-  setStreamerSession(token);
 }
 
 export function clearStreamerToken(): void {

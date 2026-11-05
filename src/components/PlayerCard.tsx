@@ -44,7 +44,7 @@ export default function PlayerCard({
   const hasRecord = player.wins > 0 || player.losses > 0 || player.streak !== 0;
   const riotId = formatRiotId(player.riotName, player.riotTag);
   const queueNo = player.queueNo;
-  const showCurrent = Boolean(scrimTier && !inWaitlist);
+  const showCurrent = Boolean(scrimTier) || inWaitlist;
 
   return (
     <article

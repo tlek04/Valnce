@@ -58,6 +58,7 @@ export interface SavedPlayer {
   id: string;
   name: string;
   currentTier: RankRating;
+  maxTier?: RankRating;
   /** 발로란트 게임 닉 (내전용 별명과 달라도 됨) */
   riotName?: string;
   /** 발로란트 태그 (# 없이) */

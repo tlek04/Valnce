@@ -6,6 +6,13 @@ function joinUrl(path = '') {
   return `/api/join${path}`;
 }
 
+export type JoinStatus =
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  | 'joined'
+  | 'cancelled';
+
 export async function submitJoinApplication(input: {
   name: string;
   riotName: string;
@@ -45,6 +52,42 @@ export async function submitJoinApplication(input: {
   }
 }
 
+export async function fetchJoinStatus(id: string): Promise<{
+  ok: boolean;
+  status?: JoinStatus;
+  queueNo?: number;
+  name?: string;
+  auto?: boolean;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(joinUrl(`/status/${encodeURIComponent(id)}`), {
+      method: 'GET',
+      cache: 'no-store',
+    });
+    const data = await readJsonOrEmpty<{
+      ok?: boolean;
+      status?: JoinStatus;
+      queueNo?: number;
+      name?: string;
+      auto?: boolean;
+      error?: string;
+    }>(response);
+    if (!response.ok || !data.ok || !data.status) {
+      return { ok: false, error: data.error || '상태를 불러오지 못했습니다.' };
+    }
+    return {
+      ok: true,
+      status: data.status,
+      queueNo: data.queueNo,
+      name: data.name,
+      auto: data.auto,
+    };
+  } catch {
+    return { ok: false, error: '상태 서버에 연결하지 못했습니다.' };
+  }
+}
+
 export async function fetchJoinQueue(): Promise<{ ok: boolean; items?: JoinApplication[]; error?: string }> {
   try {
     const response = await fetch(joinUrl(), {
@@ -71,6 +114,8 @@ export async function approveJoinApplication(
   ok: boolean;
   player?: Player;
   roster?: { updatedAt: number; players: unknown[] };
+  mmr?: 'ok' | 'fallback';
+  items?: JoinApplication[];
   error?: string;
 }> {
   try {
@@ -82,28 +127,40 @@ export async function approveJoinApplication(
       ok?: boolean;
       player?: Player;
       roster?: { updatedAt: number; players: unknown[] };
+      mmr?: 'ok' | 'fallback';
+      items?: JoinApplication[];
       error?: string;
     }>(response);
     if (!response.ok || !data.ok || !data.player) {
       return { ok: false, error: data.error || '승인에 실패했습니다.' };
     }
-    return { ok: true, player: data.player, roster: data.roster };
+    return {
+      ok: true,
+      player: data.player,
+      roster: data.roster,
+      mmr: data.mmr,
+      items: data.items,
+    };
   } catch {
     return { ok: false, error: '승인 서버에 연결하지 못했습니다.' };
   }
 }
 
-export async function rejectJoinApplication(id: string): Promise<{ ok: boolean; error?: string }> {
+export async function rejectJoinApplication(
+  id: string
+): Promise<{ ok: boolean; items?: JoinApplication[]; error?: string }> {
   try {
     const response = await fetch(joinUrl(`/${encodeURIComponent(id)}/reject`), {
       method: 'POST',
       headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
     });
-    const data = await readJsonOrEmpty<{ ok?: boolean; error?: string }>(response);
+    const data = await readJsonOrEmpty<{ ok?: boolean; items?: JoinApplication[]; error?: string }>(
+      response
+    );
     if (!response.ok || !data.ok) {
       return { ok: false, error: data.error || '거절에 실패했습니다.' };
     }
-    return { ok: true };
+    return { ok: true, items: data.items };
   } catch {
     return { ok: false, error: '거절 서버에 연결하지 못했습니다.' };
   }
@@ -111,17 +168,25 @@ export async function rejectJoinApplication(id: string): Promise<{ ok: boolean; 
 
 export async function claimAutoJoinApplication(
   id: string
-): Promise<{ ok: boolean; player?: Player; error?: string }> {
+): Promise<{ ok: boolean; player?: Player; items?: JoinApplication[]; error?: string }> {
   try {
     const response = await fetch(joinUrl(`/${encodeURIComponent(id)}/claim`), {
       method: 'POST',
       headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
     });
-    const data = await readJsonOrEmpty<{ ok?: boolean; player?: Player; error?: string }>(response);
+    const data = await readJsonOrEmpty<{
+      ok?: boolean;
+      player?: Player;
+      items?: JoinApplication[];
+      error?: string;
+    }>(response);
+    if (response.status === 404) {
+      return { ok: false, items: data.items, error: data.error || '자동 합류에 실패했습니다.' };
+    }
     if (!response.ok || !data.ok || !data.player) {
       return { ok: false, error: data.error || '자동 합류에 실패했습니다.' };
     }
-    return { ok: true, player: data.player };
+    return { ok: true, player: data.player, items: data.items };
   } catch {
     return { ok: false, error: '자동 합류 서버에 연결하지 못했습니다.' };
   }

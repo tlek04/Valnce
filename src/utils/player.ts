@@ -99,10 +99,13 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
+  const currentTier = ratingFromUnknown(data.currentTier, FALLBACK);
+  const maxTier = ratingFromUnknown(data.maxTier, currentTier);
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
     name: name || '플레이어',
-    currentTier: ratingFromUnknown(data.currentTier, FALLBACK),
+    currentTier,
+    maxTier,
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
     ...(data.matchSeed ? { matchSeed: true } : {}),
@@ -114,11 +117,12 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
 
 export function toSessionPlayer(saved: SavedPlayer): Player {
   const currentTier = cloneRating(saved.currentTier);
+  const maxTier = cloneRating(saved.maxTier ?? currentTier);
   return {
     id: saved.id,
     name: saved.name,
     currentTier,
-    maxTier: cloneRating(currentTier),
+    maxTier,
     canOrder: false,
     restrictions: [],
     lockedTeam: null,

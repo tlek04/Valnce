@@ -70,10 +70,6 @@ export function teamMaxScore(players: Player[]): number {
   return Math.max(...players.map(getPlayerScore));
 }
 
-export function formatMmr(value: number): string {
-  return Math.round(value).toLocaleString('ko-KR');
-}
-
 export function teamAverageRating(players: Player[]): RankRating | null {
   if (!players.length) return null;
   const average =

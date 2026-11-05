@@ -10,9 +10,8 @@ const ADMIN_HOLD_MS = 5000;
 interface HeaderProps {
   onNotice: (message: string) => void;
   syncStatus?: 'idle' | 'syncing' | 'ok' | 'offline';
-  onMatchSync?: (options?: { force?: boolean; soft?: boolean }) => void;
+  onMatchSync?: (options?: { force?: boolean }) => void;
   matchSyncing?: boolean;
-  onUnauthorized?: () => void;
   onAdminEnter?: () => void;
 }
 

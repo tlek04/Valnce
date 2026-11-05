@@ -9,3 +9,5 @@ dist
 review-768.png
 .refactor-baseline/
 .test-cache/
+
+.wrangler/

@@ -61,16 +61,6 @@ export function formatRiotId(riotName?: string, riotTag?: string): string {
   return tag ? `${name}#${tag}` : name;
 }
 
-export function parseRiotId(value: string): { riotName: string; riotTag: string } {
-  const trimmed = value.trim();
-  const hash = trimmed.lastIndexOf('#');
-  if (hash <= 0) return { riotName: trimmed, riotTag: '' };
-  return {
-    riotName: trimmed.slice(0, hash).trim(),
-    riotTag: trimmed.slice(hash + 1).trim(),
-  };
-}
-
 export function normalizeRiotPart(value?: string): string {
   return (value ?? '')
     .trim()

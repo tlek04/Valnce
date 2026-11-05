@@ -15,7 +15,6 @@ export async function renderScreens(root = 'src') {
     import ManageApp from './${root}/pages/ManageApp';
     import PlayerFormModal from './${root}/components/PlayerFormModal';
     import SavedPlayerPanel from './${root}/components/SavedPlayerPanel';
-    import JoinApplicationCard from './${root}/components/JoinApplicationCard';
     export { useAppStore };
     const noop = () => {};
     export function render(player) {

@@ -1,6 +1,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Minus, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import ToastNotice from '../components/ToastNotice';
+import { useToastStack } from '../hooks/useToastStack';
 import { useAppStore } from '../store/useAppStore';
 import { formatRating } from '../constants/valorant';
 import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
@@ -36,7 +37,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const setRosterUpdatedAt = useAppStore((state) => state.setRosterUpdatedAt);
 
   const [query, setQuery] = useState('');
-  const [notice, setNotice] = useState<string | null>(null);
+  const { items: notices, showNotice } = useToastStack();
   const [accessItems, setAccessItems] = useState<AccessLogEntry[]>([]);
   const [accessLoading, setAccessLoading] = useState(false);
   const [clearLogBusy, setClearLogBusy] = useState(false);
@@ -45,16 +46,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const [clearConfirm, setClearConfirm] = useState('');
   const [syncBusy, setSyncBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const showNotice = useCallback((text: string) => {
-    setNotice(text);
-  }, []);
-
-  useEffect(() => {
-    if (!notice) return;
-    const timer = window.setTimeout(() => setNotice(null), 3200);
-    return () => window.clearTimeout(timer);
-  }, [notice]);
+  const pulledRef = useRef(false);
 
   const loadAccessLog = useCallback(async () => {
     setAccessLoading(true);
@@ -75,6 +67,27 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   useEffect(() => {
     void loadAccessLog();
   }, [loadAccessLog]);
+
+  useEffect(() => {
+    if (pulledRef.current) return;
+    pulledRef.current = true;
+    let cancelled = false;
+    (async () => {
+      setSyncBusy(true);
+      const remote = await fetchRemoteRoster();
+      if (cancelled) return;
+      setSyncBusy(false);
+      if (!remote) {
+        showNotice('서버 명단을 불러오지 못했습니다.');
+        return;
+      }
+      applyRemoteRoster(remote.players, remote.updatedAt);
+      showNotice(`서버 명단 ${remote.players.length}명을 불러왔습니다.`);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [applyRemoteRoster, showNotice]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -197,7 +210,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
         </div>
       </header>
 
-      {notice && <ToastNotice text={notice} />}
+      <ToastNotice items={notices} />
 
       <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6">
         <section className="rounded-2xl border border-val-line bg-val-panel/70 p-4 sm:p-5">

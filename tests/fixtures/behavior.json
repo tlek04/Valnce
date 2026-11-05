@@ -1937,6 +1937,10 @@
             "tier": "Gold",
             "division": 2
           },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
           "wins": 0,
           "losses": 0,
           "streak": 0
@@ -1945,6 +1949,10 @@
           "id": "b",
           "name": "b",
           "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
             "tier": "Gold",
             "division": 2
           },
@@ -2024,6 +2032,10 @@
             "tier": "Gold",
             "division": 2
           },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
           "wins": 0,
           "losses": 0,
           "streak": 0
@@ -2032,6 +2044,10 @@
           "id": "b",
           "name": "b",
           "currentTier": {
+            "tier": "Gold",
+            "division": 2
+          },
+          "maxTier": {
             "tier": "Gold",
             "division": 2
           },
@@ -2056,6 +2072,10 @@
         "tier": "Gold",
         "division": 2
       },
+      "maxTier": {
+        "tier": "Gold",
+        "division": 2
+      },
       "wins": 2,
       "losses": 0,
       "streak": 0
@@ -2070,6 +2090,10 @@
             "id": "a",
             "name": "a",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -2120,6 +2144,10 @@
               "id": "a",
               "name": "a",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -2177,6 +2205,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -2187,6 +2219,10 @@
             "id": "b",
             "name": "b",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -2259,6 +2295,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -2269,6 +2309,10 @@
               "id": "b",
               "name": "b",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -2345,6 +2389,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -2358,6 +2406,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 0,
             "losses": 0,
             "streak": 0
@@ -2366,6 +2418,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -2459,6 +2515,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -2472,6 +2532,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 0,
               "losses": 0,
               "streak": 0
@@ -2480,6 +2544,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -2578,6 +2646,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -2591,6 +2663,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 0,
             "losses": 0,
             "streak": 0
@@ -2599,6 +2675,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -2697,6 +2777,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -2710,6 +2794,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 0,
               "losses": 0,
               "streak": 0
@@ -2718,6 +2806,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -2823,6 +2915,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -2836,6 +2932,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 0,
             "losses": 0,
             "streak": 0
@@ -2844,6 +2944,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -2942,6 +3046,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -2955,6 +3063,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 0,
               "losses": 0,
               "streak": 0
@@ -2963,6 +3075,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -3069,6 +3185,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 1,
@@ -3082,6 +3202,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -3090,6 +3214,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -3188,6 +3316,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 1,
@@ -3201,6 +3333,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -3209,6 +3345,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -3311,6 +3451,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 1,
@@ -3324,6 +3468,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -3332,6 +3480,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -3430,6 +3582,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 1,
@@ -3443,6 +3599,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -3451,6 +3611,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -3553,6 +3717,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -3566,6 +3734,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -3574,6 +3746,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -3672,6 +3848,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -3685,6 +3865,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -3693,6 +3877,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -3795,6 +3983,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -3808,6 +4000,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -3816,6 +4012,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -3914,6 +4114,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -3927,6 +4131,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -3935,6 +4143,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -4037,6 +4249,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -4050,6 +4266,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -4058,6 +4278,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -4156,6 +4380,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -4169,6 +4397,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -4177,6 +4409,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -4279,6 +4515,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -4292,6 +4532,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -4300,6 +4544,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -4375,6 +4623,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -4388,6 +4640,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -4396,6 +4652,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -4479,6 +4739,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -4492,6 +4756,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -4500,6 +4768,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -4596,6 +4868,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -4609,6 +4885,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -4617,6 +4897,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -4730,6 +5014,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -4743,6 +5031,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -4751,6 +5043,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -4853,6 +5149,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -4866,6 +5166,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -4874,6 +5178,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -4980,6 +5288,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "A",
             "riotTag": "KR",
             "wins": 0,
@@ -4993,6 +5305,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -5001,6 +5317,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -5096,6 +5416,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "A",
               "riotTag": "KR",
               "wins": 0,
@@ -5109,6 +5433,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -5117,6 +5445,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -5216,6 +5548,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -5224,6 +5560,10 @@
             "id": "c",
             "name": "c",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -5294,6 +5634,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -5302,6 +5646,10 @@
               "id": "c",
               "name": "c",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -5377,6 +5725,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 0,
             "streak": 1
@@ -5388,6 +5740,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 1,
             "losses": 1,
             "streak": 1
@@ -5396,6 +5752,10 @@
             "id": "d",
             "name": "d",
             "currentTier": {
+              "tier": "Gold",
+              "division": 2
+            },
+            "maxTier": {
               "tier": "Gold",
               "division": 2
             },
@@ -5466,6 +5826,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 0,
               "streak": 1
@@ -5477,6 +5841,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "wins": 1,
               "losses": 1,
               "streak": 1
@@ -5485,6 +5853,10 @@
               "id": "d",
               "name": "d",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -5559,6 +5931,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "wins": 0,
             "losses": 0,
             "streak": 0
@@ -5623,6 +5999,10 @@
               "id": "e",
               "name": "e",
               "currentTier": {
+                "tier": "Gold",
+                "division": 2
+              },
+              "maxTier": {
                 "tier": "Gold",
                 "division": 2
               },
@@ -5929,6 +6309,10 @@
         [
           "shared-roster",
           "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ]
       ]
     },
@@ -5962,8 +6346,16 @@
           "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
         ],
         [
+          "auth:join:local",
+          "{\"count\":2,\"resetAt\":1793790900000}"
+        ],
+        [
           "join-queue",
           "{\"nextNo\":2,\"items\":[{\"id\":\"test-id-1\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"createdAt\":1793790000000}]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"pending\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -5989,8 +6381,16 @@
           "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
         ],
         [
+          "auth:join:local",
+          "{\"count\":3,\"resetAt\":1793790900000}"
+        ],
+        [
           "join-queue",
           "{\"nextNo\":2,\"items\":[{\"id\":\"test-id-1\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"createdAt\":1793790000000}]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"pending\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6024,8 +6424,16 @@
           "{\"updatedAt\":100,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0}]}"
         ],
         [
+          "auth:join:local",
+          "{\"count\":3,\"resetAt\":1793790900000}"
+        ],
+        [
           "join-queue",
           "{\"nextNo\":2,\"items\":[{\"id\":\"test-id-1\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"createdAt\":1793790000000}]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"pending\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6042,16 +6450,16 @@
             "tier": "Gold",
             "division": 2
           },
+          "maxTier": {
+            "tier": "Gold",
+            "division": 2
+          },
           "riotName": "nick",
           "riotTag": "KR",
           "queueNo": 1,
           "wins": 0,
           "losses": 0,
           "streak": 0,
-          "maxTier": {
-            "tier": "Gold",
-            "division": 2
-          },
           "canOrder": false,
           "restrictions": [],
           "lockedTeam": null,
@@ -6088,6 +6496,10 @@
                 "tier": "Gold",
                 "division": 2
               },
+              "maxTier": {
+                "tier": "Gold",
+                "division": 2
+              },
               "riotName": "nick",
               "riotTag": "KR",
               "queueNo": 1,
@@ -6096,7 +6508,9 @@
               "streak": 0
             }
           ]
-        }
+        },
+        "mmr": "fallback",
+        "items": []
       },
       "kv": [
         [
@@ -6109,11 +6523,19 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":3,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
           "{\"nextNo\":2,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6136,11 +6558,19 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":3,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
           "{\"nextNo\":2,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6173,11 +6603,23 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":4,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
           "{\"nextNo\":3,\"items\":[{\"id\":\"test-id-3\",\"name\":\"viewer\",\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":2,\"createdAt\":1793790000000,\"auto\":true,\"playerId\":\"test-id-2\"}]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"pending\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6210,7 +6652,8 @@
           "wins": 0,
           "losses": 0,
           "streak": 0
-        }
+        },
+        "items": []
       },
       "kv": [
         [
@@ -6223,11 +6666,23 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":4,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
           "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6250,11 +6705,23 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":4,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
           "{\"nextNo\":3,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6285,11 +6752,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
           "{\"nextNo\":4,\"items\":[{\"id\":\"test-id-4\",\"name\":\"other\",\"riotName\":\"other\",\"riotTag\":\"KR\",\"queueNo\":3,\"createdAt\":1793790000000}]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"pending\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6298,7 +6781,8 @@
       "method": "POST",
       "status": 200,
       "data": {
-        "ok": true
+        "ok": true,
+        "items": []
       },
       "kv": [
         [
@@ -6311,11 +6795,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6339,11 +6839,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6365,11 +6881,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6394,11 +6926,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6436,11 +6984,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6463,11 +7027,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6490,11 +7070,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ]
       ]
     },
@@ -6517,11 +7113,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6563,6 +7175,10 @@
               "tier": "Gold",
               "division": 2
             },
+            "maxTier": {
+              "tier": "Gold",
+              "division": 2
+            },
             "riotName": "nick",
             "riotTag": "KR",
             "queueNo": 1,
@@ -6583,11 +7199,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6616,11 +7248,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6682,11 +7330,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6712,11 +7376,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6748,11 +7428,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6796,11 +7492,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
@@ -6828,11 +7540,27 @@
         ],
         [
           "shared-roster",
-          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "{\"updatedAt\":1793790000000,\"players\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0},{\"id\":\"test-id-2\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"nick\",\"riotTag\":\"KR\",\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0}]}"
+        ],
+        [
+          "auth:join:local",
+          "{\"count\":5,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
-          "{\"nextNo\":4,\"items\":[]}"
+          "{\"nextNo\":1,\"items\":[]}"
+        ],
+        [
+          "join-status:test-id-1",
+          "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-3",
+          "{\"status\":\"joined\",\"queueNo\":2,\"name\":\"viewer\",\"auto\":true,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "join-status:test-id-4",
+          "{\"status\":\"rejected\",\"queueNo\":3,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
         ],
         [
           "auth:session-epoch",
