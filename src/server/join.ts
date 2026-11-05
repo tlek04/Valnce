@@ -5,6 +5,7 @@ import { ROSTER_KEY } from './roster';
 import { DEFAULT_RATING as DEFAULT_TIER } from '../constants/game';
 import { riotKey } from './identity';
 import { fetchRiotRatings } from './mmr';
+import { isViewerJoinOpen } from './siteSettings';
 
 const JOIN_KEY = 'join-queue';
 const JOIN_STATUS_PREFIX = 'join-status:';
@@ -158,6 +159,9 @@ export async function handleJoin(request: Request, env: Env, path: string): Prom
   }
 
   if (request.method === 'POST') {
+    if (!(await isViewerJoinOpen(env))) {
+      return json({ ok: false, error: '지금은 참가 신청을 받지 않습니다.' }, { status: 403 });
+    }
     return enqueueJoin(request, env);
   }
 

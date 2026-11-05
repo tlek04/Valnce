@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { fetchJoinStatus, JoinStatus, submitJoinApplication } from '../utils/joinApi';
 import { loadJoinProfile, saveJoinProfile } from '../utils/joinProfile';
+import { fetchSiteSettings } from '../utils/siteSettings';
 
 interface JoinPageProps {
   onBack: () => void;
@@ -22,6 +23,18 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<DoneState | null>(null);
+  const [joinOpen, setJoinOpen] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const settings = await fetchSiteSettings();
+      if (!cancelled) setJoinOpen(settings.showViewerCard);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!done || done.status !== 'pending') return;
@@ -73,6 +86,25 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       status: 'pending',
     });
   };
+
+  if (joinOpen === false) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md rounded-2xl border border-val-line bg-val-panel/80 p-6 text-center shadow-xl">
+          <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-muted">Closed</p>
+          <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청 마감</h1>
+          <p className="mt-3 text-sm text-val-muted">지금은 시청자 참가 신청을 받지 않습니다.</p>
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-6 rounded-lg border border-val-line px-4 py-2.5 text-sm font-semibold text-val-cream hover:bg-white/5"
+          >
+            처음으로
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (done) {
     const waiting = done.status === 'pending';

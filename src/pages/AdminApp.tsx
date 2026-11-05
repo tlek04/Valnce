@@ -13,6 +13,7 @@ import {
 } from '../utils/streamerAuth';
 import { fetchRemoteRoster, pushRemoteRoster } from '../utils/rosterSync';
 import { downloadRosterFile, readRosterFromFile } from '../utils/rosterShare';
+import { fetchSiteSettings, pushSiteSettings } from '../utils/siteSettings';
 
 interface AdminAppProps {
   onLogout: () => void;
@@ -35,6 +36,8 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const importSavedPlayers = useAppStore((state) => state.importSavedPlayers);
   const applyRemoteRoster = useAppStore((state) => state.applyRemoteRoster);
   const setRosterUpdatedAt = useAppStore((state) => state.setRosterUpdatedAt);
+  const showMatchRecord = useAppStore((state) => state.showMatchRecord);
+  const setShowMatchRecord = useAppStore((state) => state.setShowMatchRecord);
   const [query, setQuery] = useState('');
   const { items: notices, showNotice } = useToastStack();
   const [accessItems, setAccessItems] = useState<AccessLogEntry[]>([]);
@@ -44,6 +47,8 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const [revokeBusy, setRevokeBusy] = useState(false);
   const [clearConfirm, setClearConfirm] = useState('');
   const [syncBusy, setSyncBusy] = useState(false);
+  const [showViewerCard, setShowViewerCard] = useState(true);
+  const [settingsBusy, setSettingsBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const pulledRef = useRef(false);
 
@@ -66,6 +71,19 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   useEffect(() => {
     void loadAccessLog();
   }, [loadAccessLog]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const settings = await fetchSiteSettings();
+      if (cancelled) return;
+      setShowViewerCard(settings.showViewerCard);
+      setShowMatchRecord(settings.showMatchRecord);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [setShowMatchRecord]);
 
   useEffect(() => {
     if (pulledRef.current) return;
@@ -191,6 +209,52 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     onLogout();
   };
 
+  const saveSiteSetting = async (
+    patch: { showViewerCard?: boolean; showMatchRecord?: boolean },
+    revert: () => void,
+    successMessage: string
+  ) => {
+    setSettingsBusy(true);
+    const result = await pushSiteSettings(patch);
+    setSettingsBusy(false);
+    if (result.unauthorized) {
+      revert();
+      showNotice(result.error || '관리자 인증이 필요합니다.');
+      onLogout();
+      return;
+    }
+    if (!result.ok) {
+      revert();
+      showNotice(result.error || '설정을 저장하지 못했습니다.');
+      return;
+    }
+    if (result.settings) {
+      setShowViewerCard(result.settings.showViewerCard);
+      setShowMatchRecord(result.settings.showMatchRecord);
+    }
+    showNotice(successMessage);
+  };
+
+  const handleMatchRecordToggle = (checked: boolean) => {
+    const previous = showMatchRecord;
+    setShowMatchRecord(checked);
+    void saveSiteSetting(
+      { showMatchRecord: checked },
+      () => setShowMatchRecord(previous),
+      checked ? '카드에 승패를 표시합니다.' : '카드에서 승패를 숨깁니다.'
+    );
+  };
+
+  const handleViewerCardToggle = (checked: boolean) => {
+    const previous = showViewerCard;
+    setShowViewerCard(checked);
+    void saveSiteSetting(
+      { showViewerCard: checked },
+      () => setShowViewerCard(previous),
+      checked ? '대문에 시청자 카드를 표시합니다.' : '대문에서 시청자 카드를 숨깁니다.'
+    );
+  };
+
   return (
     <div className="min-h-screen bg-val-bg text-val-cream">
       <header className="border-b border-val-line bg-val-bg/90">
@@ -283,6 +347,47 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
               </button>
             </div>
           </form>
+        </section>
+
+        <section className="rounded-2xl border border-val-line bg-val-panel/70 p-4 sm:p-5">
+          <div>
+            <h2 className="text-lg font-semibold">표시 설정</h2>
+            <p className="mt-1 text-xs text-val-muted">
+              서버에 저장됩니다. 매니지·랜딩 등 모든 기기에 같이 적용됩니다
+            </p>
+          </div>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <label
+              className={`inline-flex items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
+                settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={showMatchRecord}
+                disabled={settingsBusy}
+                onChange={(event) => handleMatchRecordToggle(event.target.checked)}
+                className="h-4 w-4 accent-val-red"
+              />
+              승패 표시
+              <span className="text-xs font-medium text-val-muted">{showMatchRecord ? '켜짐' : '꺼짐'}</span>
+            </label>
+            <label
+              className={`inline-flex items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
+                settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={showViewerCard}
+                disabled={settingsBusy}
+                onChange={(event) => handleViewerCardToggle(event.target.checked)}
+                className="h-4 w-4 accent-val-teal"
+              />
+              시청자 카드
+              <span className="text-xs font-medium text-val-muted">{showViewerCard ? '켜짐' : '꺼짐'}</span>
+            </label>
+          </div>
         </section>
 
         <section className="rounded-2xl border border-val-line bg-val-panel/70 p-4 sm:p-5">

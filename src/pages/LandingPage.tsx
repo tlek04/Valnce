@@ -1,9 +1,25 @@
+import { useEffect, useState } from 'react';
+import { fetchSiteSettings } from '../utils/siteSettings';
+
 interface LandingPageProps {
   onSelectStreamer: () => void;
   onSelectViewer: () => void;
 }
 
 export default function LandingPage({ onSelectStreamer, onSelectViewer }: LandingPageProps) {
+  const [showViewerCard, setShowViewerCard] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const settings = await fetchSiteSettings();
+      if (!cancelled) setShowViewerCard(settings.showViewerCard);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
       <div className="mb-10 text-center">
@@ -19,7 +35,11 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
         <p className="mt-3 text-sm text-val-muted">내전 참가 방식을 선택하세요</p>
       </div>
 
-      <div className="grid w-full max-w-4xl grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
+      <div
+        className={`grid w-full gap-5 sm:gap-6 ${
+          showViewerCard ? 'max-w-4xl grid-cols-1 sm:grid-cols-2' : 'max-w-md grid-cols-1'
+        }`}
+      >
         <button
           type="button"
           onClick={onSelectStreamer}
@@ -33,18 +53,20 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
           </span>
         </button>
 
-        <button
-          type="button"
-          onClick={onSelectViewer}
-          className="group flex aspect-square flex-col items-center justify-center rounded-3xl border-2 border-val-line bg-val-panel/70 p-8 text-center transition hover:border-val-teal hover:bg-val-panel"
-        >
-          <span className="font-display text-4xl font-bold tracking-wide text-val-cream transition group-hover:text-val-teal sm:text-5xl">
-            시청자
-          </span>
-          <span className="mt-4 max-w-[14rem] text-sm leading-relaxed text-val-muted">
-            치지직 닉 · 발로란트 닉으로 참가 신청
-          </span>
-        </button>
+        {showViewerCard ? (
+          <button
+            type="button"
+            onClick={onSelectViewer}
+            className="group flex aspect-square flex-col items-center justify-center rounded-3xl border-2 border-val-line bg-val-panel/70 p-8 text-center transition hover:border-val-teal hover:bg-val-panel"
+          >
+            <span className="font-display text-4xl font-bold tracking-wide text-val-cream transition group-hover:text-val-teal sm:text-5xl">
+              시청자
+            </span>
+            <span className="mt-4 max-w-[14rem] text-sm leading-relaxed text-val-muted">
+              치지직 닉 · 발로란트 닉으로 참가 신청
+            </span>
+          </button>
+        ) : null}
       </div>
     </div>
   );

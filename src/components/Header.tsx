@@ -26,8 +26,6 @@ export default function Header({
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
   const resetTeams = useAppStore((state) => state.resetTeams);
   const autoBalance = useAppStore((state) => state.autoBalance);
-  const showMatchRecord = useAppStore((state) => state.showMatchRecord);
-  const setShowMatchRecord = useAppStore((state) => state.setShowMatchRecord);
   const canBalance = matchCount >= 2;
 
   const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
@@ -110,23 +108,6 @@ export default function Header({
               {syncStatus === 'ok' ? '명단 동기화됨' : syncStatus === 'syncing' ? '명단 동기화 중' : '명단 오프라인'}
             </span>
           )}
-          <label
-            className="inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg border border-val-line px-3 py-2 text-sm font-semibold text-val-cream hover:border-val-muted"
-            title="카드에 승패·연승을 보여줄지 선택합니다"
-          >
-            <input
-              type="checkbox"
-              checked={showMatchRecord}
-              onChange={(event) => {
-                setShowMatchRecord(event.target.checked);
-                onNotice(
-                  event.target.checked ? '카드에 승패를 표시합니다.' : '카드에서 승패를 숨깁니다.'
-                );
-              }}
-              className="h-4 w-4 accent-val-teal"
-            />
-            승패 표시
-          </label>
           <button
             type="button"
             aria-label="전적 동기화"

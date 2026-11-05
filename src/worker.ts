@@ -7,6 +7,7 @@ import {
 import { handleRoster } from './server/roster';
 import { handleJoin } from './server/join';
 import { handleMatchImport } from './server/matches';
+import { handleSiteSettings } from './server/siteSettings';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -23,6 +24,9 @@ export default {
     }
     if (path === '/api/roster') {
       return handleRoster(request, env);
+    }
+    if (path === '/api/site-settings') {
+      return handleSiteSettings(request, env);
     }
     if (path === '/api/matches/import') {
       return handleMatchImport(request, env);

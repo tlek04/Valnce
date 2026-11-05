@@ -74,6 +74,8 @@
 | `GET /api/auth/access-log` | Bearer **admin** 토큰 | `{ items: [{ ip, at, ok }] }` |
 | `DELETE /api/auth/access-log` | Bearer **admin** 토큰 | `{ ok: true }` — 로그 비우기 |
 | `POST /api/auth/revoke-all` | **ADMIN_PASSWORD** | epoch 증가, 전 세션 무효 |
+| `GET /api/site-settings` | 없음 | `{ showViewerCard, showMatchRecord }` |
+| `PUT /api/site-settings` | Bearer **admin** 토큰 | 표시 설정 부분 갱신(merge) |
 
 ## 로컬
 

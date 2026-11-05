@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Board from '../components/Board';
 import Header from '../components/Header';
 import PlayerFormModal from '../components/PlayerFormModal';
@@ -6,6 +6,8 @@ import ToastNotice from '../components/ToastNotice';
 import { useMatchSync } from '../hooks/useMatchSync';
 import { useRosterSync } from '../hooks/useRosterSync';
 import { useToastStack } from '../hooks/useToastStack';
+import { useAppStore } from '../store/useAppStore';
+import { fetchSiteSettings } from '../utils/siteSettings';
 import { Player } from '../types';
 interface ManageAppProps {
   onLogout: () => void;
@@ -17,9 +19,21 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [formKey, setFormKey] = useState(0);
   const { items: notices, showNotice } = useToastStack();
+  const setShowMatchRecord = useAppStore((state) => state.setShowMatchRecord);
 
   const syncStatus = useRosterSync(showNotice);
   const { runMatchSync, syncing: matchSyncing } = useMatchSync(showNotice);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const settings = await fetchSiteSettings();
+      if (!cancelled) setShowMatchRecord(settings.showMatchRecord);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [setShowMatchRecord]);
 
   const openCreate = () => {
     setEditingPlayer(null);
