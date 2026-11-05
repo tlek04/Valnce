@@ -44,7 +44,10 @@ export default function PlayerCard({
   const hasRecord = player.wins > 0 || player.losses > 0 || player.streak !== 0;
   const riotId = formatRiotId(player.riotName, player.riotTag);
   const queueNo = player.queueNo;
-  const showCurrent = Boolean(scrimTier) || inWaitlist;
+  // 팀·대기열 동일. 대기열+내전만 뱃지 단독(현재·최고 숨김).
+  const waitlistScrimOnly = inWaitlist && Boolean(scrimTier);
+  const showCurrent = Boolean(scrimTier) && !inWaitlist;
+  const showPeak = !waitlistScrimOnly;
 
   return (
     <article
@@ -53,7 +56,7 @@ export default function PlayerCard({
       }`}
     >
       <div className="grid grid-cols-[2rem_minmax(0,1fr)_auto] gap-x-2 gap-y-1.5">
-        <div className="flex items-center justify-center self-center">
+        <div className="flex shrink-0 items-center justify-center self-center">
           {queueNo ? (
             <span className="text-sm font-semibold leading-none text-val-muted">#{queueNo}</span>
           ) : null}
@@ -62,10 +65,10 @@ export default function PlayerCard({
           {player.name}
         </h3>
 
-        <div className="row-span-2 flex flex-col items-end justify-start gap-1.5">
+        <div className="row-span-2 flex shrink-0 flex-col items-end justify-start gap-1.5">
           <div className="flex items-center justify-end gap-2 text-xs leading-none text-val-muted">
             {showCurrent ? <span>현재 {formatRating(player.currentTier)}</span> : null}
-            <span>최고 {formatRating(player.maxTier)}</span>
+            {showPeak ? <span>최고 {formatRating(player.maxTier)}</span> : null}
             <span
               className={`rounded-md border px-2 py-0.5 text-base font-semibold leading-none ${
                 TIER_STYLES[(scrimTier ?? player.currentTier).tier]

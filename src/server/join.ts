@@ -41,12 +41,6 @@ async function writeJoinQueue(env: Env, payload: JoinQueuePayload) {
   await env.ROSTER.put(JOIN_KEY, JSON.stringify(payload));
 }
 
-function renumberWaiting(items: JoinApplication[]): JoinApplication[] {
-  return [...items]
-    .sort((a, b) => a.createdAt - b.createdAt || a.queueNo - b.queueNo)
-    .map((item, index) => ({ ...item, queueNo: index + 1 }));
-}
-
 async function writeJoinStatus(env: Env, id: string, record: JoinStatusRecord) {
   await env.ROSTER.put(`${JOIN_STATUS_PREFIX}${id}`, JSON.stringify(record));
 }
@@ -421,11 +415,9 @@ async function rejectJoin(env: Env, id: string): Promise<Response> {
   if (!target) {
     return json({ ok: false, error: '신청을 찾을 수 없습니다.' }, { status: 404 });
   }
-  const remaining = renumberWaiting(queue.items.filter((item) => item.id !== id));
-  await writeJoinQueue(env, {
-    nextNo: remaining.length + 1,
-    items: remaining,
-  });
+  // 거절해도 재번호하지 않음. nextNo는 줄이지 않아 보드·신청 순번 중복을 막는다.
+  const remaining = queue.items.filter((item) => item.id !== id);
+  await writeJoinQueue(env, { nextNo: queue.nextNo, items: remaining });
   await writeJoinStatus(env, id, {
     status: 'rejected',
     queueNo: target.queueNo,
