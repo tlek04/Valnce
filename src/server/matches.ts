@@ -37,35 +37,46 @@ function teamDidWin(
   return null;
 }
 
+type SeedFetchResult = { ok: true; matches: unknown[] } | { ok: false; reason: string };
+
+/** 닉네임#태그가 틀리거나 API 오류여도 전체 동기화를 막지 않는다. */
 async function fetchSeedMatches(
   seed: SeedIdentity,
   apiKey: string,
   cutoff: number
-): Promise<unknown[]> {
-  const url =
-    `https://api.henrikdev.xyz/valorant/v4/matches/kr/pc/` +
-    `${encodeURIComponent(seed.riotName)}/${encodeURIComponent(seed.riotTag)}` +
-    `?size=${PAGE_SIZE}&start=0&queue=custom`;
+): Promise<SeedFetchResult> {
+  const label = `${seed.riotName}#${seed.riotTag}`;
+  try {
+    const url =
+      `https://api.henrikdev.xyz/valorant/v4/matches/kr/pc/` +
+      `${encodeURIComponent(seed.riotName)}/${encodeURIComponent(seed.riotTag)}` +
+      `?size=${PAGE_SIZE}&start=0&queue=custom`;
 
-  const response = await fetch(url, {
-    headers: { Authorization: apiKey },
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!response.ok) {
-    if (response.status === 404) return [];
-    throw new Error(`HenrikDev ${response.status}`);
-  }
+    const response = await fetch(url, {
+      headers: { Authorization: apiKey },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) {
+      if (response.status === 404) {
+        return { ok: false, reason: `${label} 전적 없음(닉네임 확인)` };
+      }
+      return { ok: false, reason: `${label} 조회 실패(${response.status})` };
+    }
 
-  const payload = (await response.json()) as { data?: unknown[] };
-  const batch = Array.isArray(payload.data) ? payload.data : [];
-  const collected: unknown[] = [];
-  for (const match of batch) {
-    const meta = (match as { metadata?: { started_at?: string } }).metadata;
-    const startedAt = meta?.started_at ? Date.parse(meta.started_at) : NaN;
-    if (!Number.isFinite(startedAt) || startedAt < cutoff) continue;
-    collected.push(match);
+    const payload = (await response.json()) as { data?: unknown[] };
+    const batch = Array.isArray(payload.data) ? payload.data : [];
+    const collected: unknown[] = [];
+    for (const match of batch) {
+      const meta = (match as { metadata?: { started_at?: string } }).metadata;
+      const startedAt = meta?.started_at ? Date.parse(meta.started_at) : NaN;
+      if (!Number.isFinite(startedAt) || startedAt < cutoff) continue;
+      collected.push(match);
+    }
+    return { ok: true, matches: collected };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '조회 실패';
+    return { ok: false, reason: `${label} ${message}` };
   }
-  return collected;
 }
 
 function toQualifyingMatches(rawMatches: unknown[], roster: RosterIdentity[]): QualifyingMatch[] {
@@ -178,7 +189,7 @@ export async function handleMatchImport(request: Request, env: Env): Promise<Res
 
   const seeds = (body.seeds ?? [])
     .filter((item) => item?.riotName?.trim() && item?.riotTag?.trim())
-    .slice(0, 2);
+    .slice(0, 1);
   const roster = (body.roster ?? []).filter((item) => item?.id && item?.riotName?.trim() && item?.riotTag?.trim());
 
   if (seeds.length === 0) {
@@ -194,17 +205,35 @@ export async function handleMatchImport(request: Request, env: Env): Promise<Res
   if (typeof last === 'number' && Date.now() - last < 10000) return json({ ok: false, error: '전적 조회 후 10초 뒤 다시 시도하세요.', matches: [] }, { status: 429 });
   await env.ROSTER.put(rateKey, JSON.stringify(Date.now()), { expirationTtl: 60 });
   const cutoff = matchHistoryCutoff();
-  try {
-    const raw: unknown[] = [];
-    for (const seed of seeds) {
-      const matches = await fetchSeedMatches(seed, env.HENRIK_API_KEY, cutoff);
-      raw.push(...matches);
+  const raw: unknown[] = [];
+  const skippedSeeds: string[] = [];
+  let seedOk = 0;
+  for (const seed of seeds) {
+    const result = await fetchSeedMatches(seed, env.HENRIK_API_KEY, cutoff);
+    if (result.ok) {
+      seedOk += 1;
+      raw.push(...result.matches);
+    } else {
+      skippedSeeds.push(result.reason);
     }
-    const matches = toQualifyingMatches(raw, roster);
-    return json({ ok: true, matches, seedCalls: seeds.length });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : '전적 조회 실패';
-    return json({ ok: false, error: message, matches: [] }, { status: 502 });
   }
+  if (seedOk === 0) {
+    return json(
+      {
+        ok: false,
+        error: skippedSeeds[0] || '시드 전적을 가져오지 못했습니다. 닉네임#태그를 확인하세요.',
+        matches: [],
+        skippedSeeds,
+      },
+      { status: 502 }
+    );
+  }
+  const matches = toQualifyingMatches(raw, roster);
+  return json({
+    ok: true,
+    matches,
+    seedCalls: seedOk,
+    ...(skippedSeeds.length > 0 ? { skippedSeeds } : {}),
+  });
 }
 

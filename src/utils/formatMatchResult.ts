@@ -28,13 +28,12 @@ function playerLine(player: Player): string {
   return riot && riot !== player.name ? `${player.name} (${riot})` : player.name;
 }
 
-function teamBlock(title: string, players: Player[]): string {
-  if (players.length === 0) return `${title}\n없음`;
-  const names = players.map(playerLine).join('\n');
-  return `${title}\n${names}`;
+function teamLine(title: string, players: Player[]): string {
+  if (players.length === 0) return `${title}: 없음`;
+  return `${title}: ${players.map(playerLine).join(', ')}`;
 }
 
-/** 채팅·공지용 매치 결과 텍스트 (사람 읽기 쉬운 형식) */
+/** 채팅·공지용 매치 결과 텍스트 (팀당 한 줄) */
 export function formatMatchResultText(snapshot: MatchResultSnapshot): string {
   const header: string[] = [];
   const map = mapLabel(snapshot.matchMapId);
@@ -43,9 +42,9 @@ export function formatMatchResultText(snapshot: MatchResultSnapshot): string {
   if (sides) header.push(`공수: ${sides}`);
 
   const body = [
-    teamBlock(teamTitle('TEAM_1', snapshot.attackSide), snapshot.team1),
-    teamBlock(teamTitle('TEAM_2', snapshot.attackSide), snapshot.team2),
-  ].join('\n\n');
+    teamLine(teamTitle('TEAM_1', snapshot.attackSide), snapshot.team1),
+    teamLine(teamTitle('TEAM_2', snapshot.attackSide), snapshot.team2),
+  ].join('\n');
 
-  return header.length > 0 ? `${header.join('\n')}\n\n${body}` : body;
+  return header.length > 0 ? `${header.join('\n')}\n${body}` : body;
 }

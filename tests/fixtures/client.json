@@ -1396,7 +1396,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],
@@ -1420,7 +1420,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],
@@ -1444,7 +1444,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],
@@ -1468,7 +1468,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],
@@ -1492,7 +1492,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],
@@ -1515,7 +1515,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],
@@ -1539,7 +1539,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
+          "body": "{\"seeds\":[{\"riotName\":\"포 뇨\",\"riotTag\":\"S92\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
       }
     ],

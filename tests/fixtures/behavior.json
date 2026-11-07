@@ -9212,27 +9212,9 @@
     {
       "path": "/api/matches/import",
       "method": "POST",
-      "status": 200,
+      "status": 400,
       "data": {
-        "ok": true,
-        "matches": [
-          {
-            "matchId": "m1",
-            "playedAt": 1793790000000,
-            "mapName": "Ascent",
-            "results": [
-              {
-                "playerId": "one",
-                "result": "win"
-              },
-              {
-                "playerId": "two",
-                "result": "loss"
-              }
-            ]
-          }
-        ],
-        "seedCalls": 2
+        "error": "입력 형식이나 허용 범위를 확인하세요."
       },
       "kv": [
         [
@@ -9290,21 +9272,15 @@
         [
           "auth:trusted-devices",
           "[]"
-        ],
-        [
-          "match-import:local",
-          "1793790000000"
         ]
       ]
     },
     {
       "path": "/api/matches/import",
       "method": "POST",
-      "status": 429,
+      "status": 400,
       "data": {
-        "ok": false,
-        "error": "전적 조회 후 10초 뒤 다시 시도하세요.",
-        "matches": []
+        "error": "입력 형식이나 허용 범위를 확인하세요."
       },
       "kv": [
         [
@@ -9362,10 +9338,6 @@
         [
           "auth:trusted-devices",
           "[]"
-        ],
-        [
-          "match-import:local",
-          "1793790000000"
         ]
       ]
     }

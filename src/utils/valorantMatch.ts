@@ -1,34 +1,28 @@
 import { SavedPlayer } from '../types';
 import { riotIdentityKey } from './matchStats';
 
-export const MAX_MATCH_SEEDS = 2;
+export const MAX_MATCH_SEEDS = 1;
 
-/** 커스텀 전적 API 조회 고정 시드 (명단 닉네임 또는 발로란트 닉네임) */
-export const FIXED_MATCH_SEED_NAMES = ['포뇨', '게임은이게맞어'] as const;
+/** 커스텀 전적 API 조회 고정 시드 (명단 등록과 무관하게 이 닉네임#태그만 사용) */
+export const FIXED_MATCH_SEED = {
+  riotName: '포 뇨',
+  riotTag: 'S92',
+} as const;
+
+/** @deprecated FIXED_MATCH_SEED 사용. 구 코드·문서 호환 */
+export const FIXED_MATCH_SEED_NAMES = [FIXED_MATCH_SEED.riotName] as const;
 
 export function hasRiotIdentity(player: { riotName?: string; riotTag?: string }) {
   return Boolean(riotIdentityKey(player.riotName, player.riotTag));
 }
 
-function matchesFixedSeedName(player: SavedPlayer, seedName: string) {
-  const target = seedName.trim().normalize('NFC').toLowerCase();
-  if (!target) return false;
-  return (
-    player.name.trim().normalize('NFC').toLowerCase() === target ||
-    (player.riotName?.trim().normalize('NFC').toLowerCase() ?? '') === target
-  );
-}
-
-export function listMatchSeeds(players: SavedPlayer[]) {
-  const seeds: SavedPlayer[] = [];
-  for (const seedName of FIXED_MATCH_SEED_NAMES) {
-    const player = players.find(
-      (item) => matchesFixedSeedName(item, seedName) && hasRiotIdentity(item)
-    );
-    if (player && !seeds.some((item) => item.id === player.id)) seeds.push(player);
-    if (seeds.length >= MAX_MATCH_SEEDS) break;
-  }
-  return seeds;
+export function listMatchSeeds(_players?: SavedPlayer[]) {
+  return [
+    {
+      riotName: FIXED_MATCH_SEED.riotName,
+      riotTag: FIXED_MATCH_SEED.riotTag,
+    },
+  ];
 }
 
 export function listTaggedRoster(players: SavedPlayer[]) {

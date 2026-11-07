@@ -72,7 +72,7 @@ export interface SavedPlayer {
   restrictions?: WeaponRestriction[];
   rivalIds?: string[];
   allyIds?: string[];
-  /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
+  /** @deprecated 시드는 FIXED_MATCH_SEED(포 뇨#S92) 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
   wins: number;
   losses: number;
@@ -160,7 +160,7 @@ export interface AppState {
   rosterUpdatedAt: number;
   /** 공유 보드(대기열·팀·맵·공수)가 마지막으로 바뀐 시각. 서버 동기화 비교용. */
   boardUpdatedAt: number;
-  /** 커스텀 매치 전적을 마지막으로 재계산한 시각 */
+  /** 커스텀 매치 전적·참여를 마지막으로 성공 동기화한 시각 (하루 1회 자동) */
   lastMatchSyncAt: number | null;
   /** 보드 카드에 승패·연승 표시 */
   showMatchRecord: boolean;
@@ -209,7 +209,7 @@ export interface AppActions {
     updatedAt: number
   ) => void;
   setBoardUpdatedAt: (updatedAt: number) => void;
-  /** 기존 정책대로 성공 여부와 무관하게 전적 조회 시도를 기록한다. */
+  /** 전적 동기화 시각을 수동으로 찍는다. 보통은 reconcileMatchStats가 성공 시 갱신한다. */
   markMatchSyncAttempt: () => void;
   /** 보드에 있는 1·2팀 전원에게 승패를 반영하고 명단에도 저장한다. */
   recordTeamResult: (winner: 'TEAM_1' | 'TEAM_2') => { ok: boolean; message: string };

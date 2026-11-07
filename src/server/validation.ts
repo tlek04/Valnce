@@ -88,7 +88,7 @@ export async function validateRequest(request: Request): Promise<Response | null
   if (path === '/api/matches/import') {
     for (const key of ['seeds','roster']) {
       const list = body[key];
-      if (!Array.isArray(list) || list.length > (key === 'seeds' ? 2 : 500) || !list.every(v => object(v) && text(v.riotName) && text(v.riotTag) && (key === 'seeds' || text(v.id)))) return bad();
+      if (!Array.isArray(list) || list.length > (key === 'seeds' ? 1 : 500) || !list.every(v => object(v) && text(v.riotName) && text(v.riotTag) && (key === 'seeds' || text(v.id)))) return bad();
     }
   }
   return null;

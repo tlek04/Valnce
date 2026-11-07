@@ -92,9 +92,15 @@ export const createMatchActions: ActionCreator<
   reconcileMatchStats: (matches: QualifyingMatch[]) =>
     set((state) => {
       const now = Date.now();
-      const taggedIds = state.players.filter(hasRiotIdentity).map((player) => player.id);
-      const recomputed = recomputeStatsFromMatches(taggedIds, matches);
-      const playById = recomputePlayAtsFromMatches(taggedIds, matches, now);
+      // 전적에 한 번이라도 잡힌 사람만 갱신. 닉네임 틀린 사람(매칭 실패)은 그대로 둔다.
+      const appearedIds = new Set(
+        matches.flatMap((match) => match.results.map((entry) => entry.playerId))
+      );
+      const targetIds = state.players
+        .filter((player) => hasRiotIdentity(player) && appearedIds.has(player.id))
+        .map((player) => player.id);
+      const recomputed = recomputeStatsFromMatches(targetIds, matches);
+      const playById = recomputePlayAtsFromMatches(targetIds, matches, now);
 
       const patchPlayer = <
         T extends {

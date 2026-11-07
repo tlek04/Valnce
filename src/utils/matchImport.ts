@@ -8,6 +8,7 @@ export interface MatchImportResponse {
   ok: boolean;
   matches: QualifyingMatch[];
   error?: string;
+  skippedSeeds?: string[];
 }
 
 function apiUrl() {
@@ -20,19 +21,12 @@ export function isMatchSyncConfigured() {
 }
 
 export async function importQualifyingMatches(players: SavedPlayer[]): Promise<MatchImportResponse> {
-  const seeds = listMatchSeeds(players).map((player) => ({
-    riotName: player.riotName!.trim().replace(/^#+/, ''),
-    riotTag: player.riotTag!.trim().replace(/^#+/, ''),
+  const seeds = listMatchSeeds().map((seed) => ({
+    riotName: seed.riotName.trim().replace(/^#+/, ''),
+    riotTag: seed.riotTag.trim().replace(/^#+/, ''),
   }));
   const roster = listTaggedRoster(players);
 
-  if (seeds.length === 0) {
-    return {
-      ok: false,
-      matches: [],
-      error: '고정 시드(포뇨, 게임은이게맞어)에 닉네임#태그를 등록하세요.',
-    };
-  }
   if (roster.length === 0) {
     return { ok: false, matches: [], error: '승패를 맞출 명단에 닉네임#태그를 등록하세요.' };
   }
@@ -43,7 +37,12 @@ export async function importQualifyingMatches(players: SavedPlayer[]): Promise<M
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ seeds, roster }),
     });
-    const parsed = await readJsonText<{ ok?: boolean; matches?: QualifyingMatch[]; error?: string }>(response);
+    const parsed = await readJsonText<{
+      ok?: boolean;
+      matches?: QualifyingMatch[];
+      error?: string;
+      skippedSeeds?: string[];
+    }>(response);
     if (!parsed.parsed) {
       return {
         ok: false,
@@ -55,12 +54,21 @@ export async function importQualifyingMatches(players: SavedPlayer[]): Promise<M
       };
     }
     const data = parsed.data;
+    const skippedSeeds = Array.isArray(data.skippedSeeds)
+      ? data.skippedSeeds.filter((item): item is string => typeof item === 'string')
+      : undefined;
     if (!response.ok) {
-      return { ok: false, matches: [], error: data.error || `전적 조회 실패 (${response.status})` };
+      return {
+        ok: false,
+        matches: [],
+        error: data.error || `전적 조회 실패 (${response.status})`,
+        ...(skippedSeeds?.length ? { skippedSeeds } : {}),
+      };
     }
     return {
       ok: true,
       matches: Array.isArray(data.matches) ? data.matches : [],
+      ...(skippedSeeds?.length ? { skippedSeeds } : {}),
     };
   } catch {
     return { ok: false, matches: [], error: '전적 API에 연결하지 못했습니다.' };

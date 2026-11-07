@@ -1,9 +1,18 @@
-import { useCallback, useRef, useState } from 'react';
-import { PLAY_WINDOW_MS } from '../constants/game';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { DAY_MS, PLAY_WINDOW_MS } from '../constants/game';
 import { useAppStore } from '../store/useAppStore';
 import { importQualifyingMatches, isMatchSyncConfigured } from '../utils/matchImport';
 
-/** 전적 동기화 버튼을 눌렀을 때만 Henrik API를 호출한다. */
+/** 마지막 성공 동기화로부터 하루가 지났으면 자동 동기화 대상 */
+export function isDailyMatchSyncDue(lastAt: number | null, now = Date.now()) {
+  return lastAt == null || now - lastAt >= DAY_MS;
+}
+
+/**
+ * 전적·최근 참여 동기화.
+ * - 헤더 버튼: 즉시 강제 동기화
+ * - 하루 1회: 매니지 입장 후(및 매시간 점검) 자동 동기화
+ */
 export function useMatchSync(onNotice?: (message: string) => void) {
   const [syncing, setSyncing] = useState(false);
   const inFlight = useRef(false);
@@ -23,22 +32,26 @@ export function useMatchSync(onNotice?: (message: string) => void) {
       setSyncing(true);
       try {
         const imported = await importQualifyingMatches(useAppStore.getState().players);
-        useAppStore.getState().markMatchSyncAttempt();
 
         if (!imported.ok) {
           onNotice?.(imported.error || '전적 동기화에 실패했습니다.');
           return { ok: false as const, skipped: false as const };
         }
 
+        // 성공 시에만 lastMatchSyncAt을 갱신해 하루 1회 자동 주기를 맞춘다.
         useAppStore.getState().reconcileMatchStats(imported.matches);
         const count = imported.matches.length;
         const recent = imported.matches.filter(
           (match) => Date.now() - match.playedAt <= PLAY_WINDOW_MS
         ).length;
+        const skipped =
+          imported.skippedSeeds && imported.skippedSeeds.length > 0
+            ? ` · 제외 ${imported.skippedSeeds.length}명`
+            : '';
         onNotice?.(
           count > 0
-            ? `전적 동기화: ${count}판 반영 · 최근 24시간 ${recent}판 참여 반영`
-            : '조건에 맞는 커스텀이 없습니다. (시드 최근 판 · 명단 태그 2명+ · 8월~최신)'
+            ? `전적 동기화: ${count}판 반영 · 최근 24시간 ${recent}판 참여 반영${skipped}`
+            : `조건에 맞는 커스텀이 없습니다. (포 뇨#S92 최근 판 · 명단 태그 2명+ · 8월~최신)${skipped}`
         );
         return { ok: true as const, skipped: false as const, matchCount: count };
       } finally {
@@ -48,6 +61,35 @@ export function useMatchSync(onNotice?: (message: string) => void) {
     },
     [onNotice]
   );
+
+  useEffect(() => {
+    if (!isMatchSyncConfigured()) return;
+
+    let cancelled = false;
+    let removeHydration: (() => void) | undefined;
+    const tryDaily = () => {
+      if (cancelled || inFlight.current) return;
+      if (!isDailyMatchSyncDue(useAppStore.getState().lastMatchSyncAt)) return;
+      void runMatchSync({ force: true });
+    };
+
+    const start = () => {
+      if (!cancelled) tryDaily();
+    };
+
+    if (useAppStore.persist.hasHydrated()) {
+      start();
+    } else {
+      removeHydration = useAppStore.persist.onFinishHydration(start);
+    }
+
+    const timer = window.setInterval(tryDaily, 60 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+      removeHydration?.();
+    };
+  }, [runMatchSync]);
 
   return { runMatchSync, syncing };
 }
