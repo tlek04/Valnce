@@ -75,11 +75,6 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
               >
                 {streamerEntryOpen ? '스트리머' : '관리자'}
               </span>
-              <span className="mt-4 max-w-[14rem] text-sm leading-relaxed text-val-muted">
-                {streamerEntryOpen
-                  ? '비밀번호로 입장 · 팀 구성 · 신청 승인'
-                  : '스트리머 입장 닫힘 · 관리자 비밀번호로 입장'}
-              </span>
             </button>
           ) : null}
 
@@ -101,17 +96,12 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
               >
                 시청자
               </span>
-              <span className="mt-4 max-w-[16rem] text-sm leading-relaxed text-val-muted">
-                {viewerEntryOpen
-                  ? '성인만 · 마이크 필수 · 닉네임·태그·오더 신청 · 티어는 API 자동 · 보정은 스트리머에게'
-                  : '지금은 참가 신청을 받지 않습니다'}
-              </span>
             </button>
           ) : null}
         </div>
       )}
 
-      <p className="mx-auto mt-auto max-w-lg pt-10 text-center text-sm leading-relaxed text-val-muted/90">
+      <p className="mx-auto mt-8 max-w-lg text-center text-sm leading-relaxed text-val-muted/90">
         빠른 내전 진행을 위해 스트리머의 팬심으로 만든 페이지입니다.
         <br />
         재미로 하는 내전이니 독선적인 행동은 피해 주세요.

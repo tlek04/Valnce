@@ -20,10 +20,13 @@ function players(value: unknown, board = false): boolean {
       if (row[key] != null && (!Number.isSafeInteger(row[key]) || Math.abs(Number(row[key])) > 1000000 || (key !== 'streak' && Number(row[key]) < 0))) return false;
     }
     if (row.playAts != null && (!Array.isArray(row.playAts) || row.playAts.length > 1000 || !row.playAts.every(v => Number.isFinite(v) && v <= Date.now() + 60_000))) return false;
+    if (row.canOrder != null && typeof row.canOrder !== 'boolean') return false;
+    for (const key of ['allyIds','rivalIds']) if (row[key] != null && (!Array.isArray(row[key]) || row[key].length > 500 || !row[key].every(v => text(v)))) return false;
+    if (row.restrictions != null && (!Array.isArray(row.restrictions) || row.restrictions.length > 100 || !row.restrictions.every(v => object(v) && text(v.id) && text(v.type) && (v.customText == null || text(v.customText, 200)) && (v.weaponId == null || text(v.weaponId, 40))))) return false;
     if (board) {
       if (row.lockedTeam != null && !['TEAM_1','TEAM_2','MATCH','WAITLIST','BENCH'].includes(String(row.lockedTeam))) return false;
-      for (const key of ['allyIds','rivalIds']) if (row[key] != null && (!Array.isArray(row[key]) || row[key].length > 500 || !row[key].every(v => text(v)))) return false;
-      if (row.restrictions != null && (!Array.isArray(row.restrictions) || row.restrictions.length > 100 || !row.restrictions.every(v => object(v) && text(v.id) && text(v.type) && (v.customText == null || text(v.customText, 200))))) return false;
+    } else if (row.lockedTeam != null && !['TEAM_1','TEAM_2','MATCH','WAITLIST'].includes(String(row.lockedTeam))) {
+      return false;
     }
     return true;
   });

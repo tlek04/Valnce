@@ -1,6 +1,6 @@
 import { Player, QualifyingMatch } from '../types';
 import { adjustMatchStat, applyMatchResult, recomputeStatsFromMatches } from '../utils/matchStats';
-import { appendPlayAt, playCountFromAts } from '../utils/playCount';
+import { appendPlayAt, playCountFromAts, recomputePlayAtsFromMatches } from '../utils/playCount';
 import { toSavedPlayer } from '../utils/player';
 import { hasRiotIdentity } from '../utils/valorantMatch';
 import { resolvePlayer, replacePlayer, mapBoard } from './playerState';
@@ -91,24 +91,40 @@ export const createMatchActions: ActionCreator<
 
   reconcileMatchStats: (matches: QualifyingMatch[]) =>
     set((state) => {
+      const now = Date.now();
       const taggedIds = state.players.filter(hasRiotIdentity).map((player) => player.id);
       const recomputed = recomputeStatsFromMatches(taggedIds, matches);
-      const patchStats = <T extends { id: string; wins: number; losses: number; streak: number }>(
+      const playById = recomputePlayAtsFromMatches(taggedIds, matches, now);
+
+      const patchPlayer = <
+        T extends {
+          id: string;
+          wins: number;
+          losses: number;
+          streak: number;
+          playAts?: number[];
+          playCount?: number;
+        },
+      >(
         player: T
       ): T => {
-        const next = recomputed.get(player.id);
-        if (!next) return player;
-        return { ...player, wins: next.wins, losses: next.losses, streak: next.streak };
+        const nextStats = recomputed.get(player.id);
+        const nextAts = playById.get(player.id);
+        if (!nextStats && nextAts === undefined) return player;
+        return {
+          ...player,
+          ...(nextStats ?? {}),
+          ...(nextAts !== undefined
+            ? { playAts: nextAts, playCount: playCountFromAts(nextAts) }
+            : {}),
+        };
       };
 
       return {
-        players: state.players.map((player) => {
-          const next = recomputed.get(player.id);
-          return next ? { ...player, ...next } : player;
-        }),
-        ...mapBoard(state, patchStats),
-        lastMatchSyncAt: Date.now(),
-        rosterUpdatedAt: Date.now(),
+        players: state.players.map((player) => patchPlayer(player)),
+        ...mapBoard(state, patchPlayer),
+        lastMatchSyncAt: now,
+        rosterUpdatedAt: now,
       };
     }),
 });

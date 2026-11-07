@@ -29,3 +29,33 @@ export function appendPlayAt(playAts: number[], now = Date.now()): number[] {
 export function playCountFromAts(playAts: number[]): number {
   return playAts.length;
 }
+
+/**
+ * 시드 커스텀 전적 중 최근 24시간 참가 시각으로 playAts를 다시 만든다.
+ * 태그 있는 명단만 대상이며, 동기화 시 승패와 같이 전적 기준으로 덮어쓴다.
+ */
+export function recomputePlayAtsFromMatches(
+  taggedPlayerIds: string[],
+  matches: { playedAt: number; results: { playerId: string }[] }[],
+  now = Date.now()
+): Map<string, number[]> {
+  const windowStart = now - PLAY_WINDOW_MS;
+  const byId = new Map<string, number[]>();
+  for (const id of taggedPlayerIds) byId.set(id, []);
+
+  for (const match of matches) {
+    if (!Number.isFinite(match.playedAt) || match.playedAt <= windowStart || match.playedAt > now) {
+      continue;
+    }
+    for (const entry of match.results) {
+      const list = byId.get(entry.playerId);
+      if (!list) continue;
+      list.push(match.playedAt);
+    }
+  }
+
+  for (const [id, ats] of byId) {
+    byId.set(id, prunePlayAts(ats, now));
+  }
+  return byId;
+}

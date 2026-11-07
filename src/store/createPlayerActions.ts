@@ -125,9 +125,16 @@ export const createPlayerActions: ActionCreator<
                 name: remote.name,
                 currentTier: remote.currentTier,
                 maxTier: remote.maxTier ?? player.maxTier,
+                ...(remote.internalTier
+                  ? { internalTier: remote.internalTier }
+                  : { internalTier: undefined }),
                 ...(remote.riotName ? { riotName: remote.riotName } : {}),
                 ...(remote.riotTag ? { riotTag: remote.riotTag } : {}),
                 ...(remote.lockedTeam !== undefined ? { lockedTeam: remote.lockedTeam } : {}),
+                canOrder: Boolean(remote.canOrder),
+                restrictions: remote.restrictions ?? [],
+                rivalIds: remote.rivalIds ?? [],
+                allyIds: remote.allyIds ?? [],
                 wins: remote.wins,
                 losses: remote.losses,
                 streak: remote.streak,

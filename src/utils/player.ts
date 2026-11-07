@@ -115,6 +115,15 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
   const currentTier = ratingFromUnknown(data.currentTier, FALLBACK);
   const maxTier = ratingFromUnknown(data.maxTier, currentTier);
+  const parsedInternal =
+    data.internalTier == null ? undefined : ratingFromUnknown(data.internalTier, currentTier);
+  const internalTier =
+    parsedInternal && !sameRating(parsedInternal, currentTier) ? parsedInternal : undefined;
+  const restrictions = asRestrictions(data);
+  const rivalIds = asStringArray(
+    Array.isArray(data.rivalIds) && data.rivalIds.length > 0 ? data.rivalIds : data.rivalId
+  );
+  const allyIds = asStringArray(data.allyIds);
   // BENCH는 오늘 판 전용 — 명단에는 저장하지 않음
   const lockedTeam =
     data.lockedTeam === 'TEAM_1' || data.lockedTeam === 'TEAM_2'
@@ -127,9 +136,14 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     name: name || '플레이어',
     currentTier,
     maxTier,
+    ...(internalTier ? { internalTier } : {}),
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
     ...(lockedTeam ? { lockedTeam } : {}),
+    ...(data.canOrder ? { canOrder: true } : {}),
+    ...(restrictions.length > 0 ? { restrictions } : {}),
+    ...(rivalIds.length > 0 ? { rivalIds } : {}),
+    ...(allyIds.length > 0 ? { allyIds } : {}),
     ...(data.matchSeed ? { matchSeed: true } : {}),
     wins: stats.wins,
     losses: stats.losses,
@@ -142,16 +156,23 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
   const currentTier = cloneRating(saved.currentTier);
   const maxTier = cloneRating(saved.maxTier ?? currentTier);
   const play = playFields(saved);
+  const internalTier =
+    saved.internalTier && !sameRating(saved.internalTier, currentTier)
+      ? cloneRating(saved.internalTier)
+      : undefined;
   return {
     id: saved.id,
     name: saved.name,
     currentTier,
     maxTier,
-    canOrder: false,
-    restrictions: [],
+    ...(internalTier ? { internalTier } : {}),
+    canOrder: Boolean(saved.canOrder),
+    restrictions: Array.isArray(saved.restrictions)
+      ? asRestrictions({ restrictions: saved.restrictions })
+      : [],
     lockedTeam: saved.lockedTeam ?? null,
-    rivalIds: [],
-    allyIds: [],
+    rivalIds: asStringArray(saved.rivalIds),
+    allyIds: asStringArray(saved.allyIds),
     ...(saved.riotName ? { riotName: saved.riotName } : {}),
     ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
     ...(saved.matchSeed ? { matchSeed: true } : {}),

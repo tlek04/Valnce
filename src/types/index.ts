@@ -60,12 +60,18 @@ export interface SavedPlayer {
   name: string;
   currentTier: RankRating;
   maxTier?: RankRating;
+  /** 내전용 강제 티어. 보드 재합류 시 복원 */
+  internalTier?: RankRating;
   /** 발로란트 게임 닉네임 (내전용 별명과 달라도 됨) */
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
   /** 보드 합류 시 복원 — 고정 시청자(MATCH) 등. BENCH는 세션 전용이라 저장하지 않음 */
   lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | 'BENCH' | null;
+  canOrder?: boolean;
+  restrictions?: WeaponRestriction[];
+  rivalIds?: string[];
+  allyIds?: string[];
   /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
   wins: number;

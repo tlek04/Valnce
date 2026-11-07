@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { PLAY_WINDOW_MS } from '../constants/game';
 import { useAppStore } from '../store/useAppStore';
 import { importQualifyingMatches, isMatchSyncConfigured } from '../utils/matchImport';
 
@@ -31,9 +32,12 @@ export function useMatchSync(onNotice?: (message: string) => void) {
 
         useAppStore.getState().reconcileMatchStats(imported.matches);
         const count = imported.matches.length;
+        const recent = imported.matches.filter(
+          (match) => Date.now() - match.playedAt <= PLAY_WINDOW_MS
+        ).length;
         onNotice?.(
           count > 0
-            ? `전적 동기화: ${count}판 반영 (시드 합산·중복 제거)`
+            ? `전적 동기화: ${count}판 반영 · 최근 24시간 ${recent}판 참여 반영`
             : '조건에 맞는 커스텀이 없습니다. (시드 최근 판 · 명단 태그 2명+ · 8월~최신)'
         );
         return { ok: true as const, skipped: false as const, matchCount: count };
