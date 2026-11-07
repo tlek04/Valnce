@@ -304,6 +304,286 @@
     "token": "fake"
   },
   {
+    "name": "fetchRemoteBoard",
+    "status": 200,
+    "result": {
+      "updatedAt": 500,
+      "waitlist": [],
+      "team1": [],
+      "team2": [],
+      "matchMapId": null,
+      "attackSide": null,
+      "balanceNote": null,
+      "balanceDetails": []
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteBoard",
+    "status": 401,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteBoard",
+    "status": 409,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteBoard",
+    "status": 404,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteBoard",
+    "status": 502,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteBoard",
+    "status": 200,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "fetchRemoteBoard",
+    "status": 0,
+    "result": null,
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "GET",
+          "cache": "no-store"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 200,
+    "result": {
+      "ok": true
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 401,
+    "result": {
+      "ok": false,
+      "unauthorized": true
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 409,
+    "result": {
+      "ok": false,
+      "conflict": true,
+      "board": {
+        "updatedAt": 500,
+        "waitlist": [],
+        "team1": [],
+        "team2": [],
+        "matchMapId": null,
+        "attackSide": null,
+        "balanceNote": null,
+        "balanceDetails": []
+      }
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 404,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 502,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 200,
+    "result": {
+      "ok": true
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
+    "name": "pushRemoteBoard",
+    "status": 0,
+    "result": {
+      "ok": false
+    },
+    "requests": [
+      {
+        "url": "/api/board",
+        "options": {
+          "method": "PUT",
+          "headers": {
+            "content-type": "application/json",
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
+          },
+          "body": "{\"updatedAt\":123,\"waitlist\":[],\"team1\":[],\"team2\":[],\"matchMapId\":null,\"attackSide\":null,\"balanceNote\":null,\"balanceDetails\":[]}"
+        }
+      }
+    ],
+    "token": "fake"
+  },
+  {
     "name": "submitJoinApplication",
     "status": 200,
     "result": {

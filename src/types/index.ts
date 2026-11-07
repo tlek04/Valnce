@@ -90,7 +90,7 @@ export interface Player {
   riotTag?: string;
   /** @deprecated 시드는 고정 닉네임 기준 */
   matchSeed?: boolean;
-  /** 현재 보드(대기열·팀)에 올라와 있을 때의 추가 순번 */
+  /** 오늘 매니지 보드(대기열·팀)에 올라온 순서. 신청 티켓과 별개 */
   queueNo?: number;
   wins: number;
   losses: number;
@@ -134,6 +134,8 @@ export interface AppState {
   sessionSavedAt: number | null;
   /** 기존 플레이어 명단이 마지막으로 바뀐 시각. 서버 동기화 비교용. */
   rosterUpdatedAt: number;
+  /** 공유 보드(대기열·팀·맵·공수)가 마지막으로 바뀐 시각. 서버 동기화 비교용. */
+  boardUpdatedAt: number;
   /** 커스텀 매치 전적을 마지막으로 재계산한 시각 */
   lastMatchSyncAt: number | null;
   /** 보드 카드에 승패·연승 표시 */
@@ -166,6 +168,20 @@ export interface AppActions {
   applyRemoteRoster: (incoming: SavedPlayer[], updatedAt: number) => void;
   /** 동기화 구독자가 로컬 명단 변경 시각을 기록한다. */
   setRosterUpdatedAt: (updatedAt: number) => void;
+  /** 서버 공유 보드 스냅샷으로 대기열·팀·맵·공수를 통째로 맞춘다. */
+  applyRemoteBoard: (
+    snapshot: {
+      waitlist: Player[];
+      team1: Player[];
+      team2: Player[];
+      matchMapId: string | null;
+      attackSide: 'TEAM_1' | 'TEAM_2' | null;
+      balanceNote: string | null;
+      balanceDetails: string[];
+    },
+    updatedAt: number
+  ) => void;
+  setBoardUpdatedAt: (updatedAt: number) => void;
   /** 기존 정책대로 성공 여부와 무관하게 전적 조회 시도를 기록한다. */
   markMatchSyncAttempt: () => void;
   /** 보드에 있는 1·2팀 전원에게 승패를 반영하고 명단에도 저장한다. */

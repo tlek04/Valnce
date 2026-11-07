@@ -20,6 +20,18 @@ export interface RosterPayload {
   players: unknown[];
 }
 
+/** 공유 보드 스냅샷 (매니지 기기 간 폴링 sync) */
+export interface BoardPayload {
+  updatedAt: number;
+  waitlist: unknown[];
+  team1: unknown[];
+  team2: unknown[];
+  matchMapId: string | null;
+  attackSide: 'TEAM_1' | 'TEAM_2' | null;
+  balanceNote: string | null;
+  balanceDetails: string[];
+}
+
 export interface RosterIdentity {
   id: string;
   name?: string;

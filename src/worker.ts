@@ -6,6 +6,7 @@ import {
   handleAuthTrustDevice,
   handleAuthTrustStatus,
 } from './server/auth';
+import { handleBoard } from './server/board';
 import { handleRoster } from './server/roster';
 import { handleJoin } from './server/join';
 import { handleMatchImport } from './server/matches';
@@ -32,6 +33,9 @@ export default {
     }
     if (path === '/api/roster') {
       return handleRoster(request, env);
+    }
+    if (path === '/api/board') {
+      return handleBoard(request, env);
     }
     if (path === '/api/site-settings') {
       return handleSiteSettings(request, env);

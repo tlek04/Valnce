@@ -53,3 +53,10 @@ npm run dev:worker
 
 - `GET/PUT /api/roster`
 - 충돌 시 더 늦은 `updatedAt` 이김
+
+## 공유 보드 KV
+
+- `GET/PUT /api/board` (키 `shared-board`, 동일 `ROSTER` 바인딩)
+- 페이로드: `updatedAt`, `waitlist`/`team1`/`team2`, `matchMapId`, `attackSide`, `balanceNote`, `balanceDetails`
+- GET 공개, PUT은 staff Bearer. 충돌(409) 시 서버 스냅샷이 이김
+- 매니지 `useBoardSync`: hydrate 비교 → 5초·focus 폴링, 로컬 변경 시 debounce push

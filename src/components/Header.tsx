@@ -1,10 +1,8 @@
 import { PointerEvent, useRef, useState } from 'react';
-import { Camera, HelpCircle, Map, RefreshCw, RotateCcw, Scale, Swords } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import { ClipboardCopy, HelpCircle, Map, RefreshCw, RotateCcw, Scale, Swords } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { copyText } from '../utils/copyText';
-import { formatDrawSummary, formatMatchResultText } from '../utils/formatMatchResult';
-import { saveResultImage } from '../utils/saveResultImage';
+import { formatMatchResultText } from '../utils/formatMatchResult';
 import AdminUnlockOverlay from './AdminUnlockOverlay';
 
 const ADMIN_HOLD_MS = 5000;
@@ -12,6 +10,7 @@ const ADMIN_HOLD_MS = 5000;
 interface HeaderProps {
   onNotice: (message: string) => void;
   syncStatus?: 'idle' | 'syncing' | 'ok' | 'offline';
+  boardSyncStatus?: 'idle' | 'syncing' | 'ok' | 'offline';
   onMatchSync?: (options?: { force?: boolean }) => void;
   matchSyncing?: boolean;
   onAdminEnter?: () => void;
@@ -20,12 +19,14 @@ interface HeaderProps {
 export default function Header({
   onNotice,
   syncStatus = 'idle',
+  boardSyncStatus = 'idle',
   onMatchSync,
   matchSyncing = false,
   onAdminEnter,
 }: HeaderProps) {
   const matchCount = useAppStore((state) => state.waitlist.length + state.team1.length + state.team2.length);
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
+  const showMatchRecord = useAppStore((state) => state.showMatchRecord);
   const resetTeams = useAppStore((state) => state.resetTeams);
   const autoBalance = useAppStore((state) => state.autoBalance);
   const drawRandomMap = useAppStore((state) => state.drawRandomMap);
@@ -67,54 +68,16 @@ export default function Header({
     runTeamReset();
   };
 
-  const matchSnapshot = () => {
+  const handleCopyResult = async () => {
     const state = useAppStore.getState();
-    return {
+    const text = formatMatchResultText({
       team1: state.team1,
       team2: state.team2,
       matchMapId: state.matchMapId,
       attackSide: state.attackSide,
-    };
-  };
-
-  const handleExportImage = async () => {
-    const node = document.getElementById('match-board');
-    if (!node) return;
-    const text = formatMatchResultText(matchSnapshot());
+    });
     const copied = await copyText(text);
-    try {
-      const dataUrl = await toPng(node, {
-        cacheBust: true,
-        backgroundColor: '#0F1923',
-        pixelRatio: 2,
-      });
-      const { fileName } = await saveResultImage(dataUrl);
-      window.alert(
-        `${fileName.replace(/\.png$/i, '')}\n다운로드 폴더에 저장되었습니다.${
-          copied ? '\n팀 구성 텍스트도 복사했습니다.' : ''
-        }`
-      );
-    } catch {
-      if (copied) {
-        window.alert('이미지 저장에 실패했습니다.\n팀 구성 텍스트는 복사했습니다.');
-      } else {
-        window.alert('이미지 저장에 실패했습니다.');
-      }
-    }
-  };
-
-  const handleDrawMap = async () => {
-    const result = drawRandomMap();
-    const text = formatDrawSummary(matchSnapshot()) || `맵 · ${result.label}`;
-    const copied = await copyText(text);
-    onNotice(copied ? `맵 · ${result.label} (복사됨)` : `맵 · ${result.label}`);
-  };
-
-  const handleDrawAttack = async () => {
-    const result = drawAttackSide();
-    const text = formatDrawSummary(matchSnapshot()) || `공수 · ${result.label}`;
-    const copied = await copyText(text);
-    onNotice(copied ? `공수 · ${result.label} (복사됨)` : `공수 · ${result.label}`);
+    onNotice(copied ? '결과 텍스트를 복사했습니다.' : '결과 텍스트 복사에 실패했습니다.');
   };
 
   return (
@@ -146,17 +109,37 @@ export default function Header({
               {syncStatus === 'ok' ? '명단 동기화됨' : syncStatus === 'syncing' ? '명단 동기화 중' : '명단 오프라인'}
             </span>
           )}
-          <button
-            type="button"
-            aria-label="전적 동기화"
-            disabled={matchSyncing}
-            onClick={() => onMatchSync?.({ force: true })}
-            style={{ backgroundColor: 'rgba(168, 85, 247, 0.6)' }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <RefreshCw size={17} className={matchSyncing ? 'animate-spin' : undefined} />
-            {matchSyncing ? '동기화 중' : '전적 동기화'}
-          </button>
+          {boardSyncStatus !== 'idle' && (
+            <span
+              className={`hidden text-sm sm:inline ${
+                boardSyncStatus === 'ok'
+                  ? 'text-val-teal'
+                  : boardSyncStatus === 'syncing'
+                    ? 'text-val-teal/80'
+                    : 'text-val-warn'
+              }`}
+              title="대기열·팀 보드 서버 동기화"
+            >
+              {boardSyncStatus === 'ok'
+                ? '보드 동기화됨'
+                : boardSyncStatus === 'syncing'
+                  ? '보드 동기화 중'
+                  : '보드 오프라인'}
+            </span>
+          )}
+          {showMatchRecord && (
+            <button
+              type="button"
+              aria-label="전적 동기화"
+              disabled={matchSyncing}
+              onClick={() => onMatchSync?.({ force: true })}
+              style={{ backgroundColor: 'rgba(168, 85, 247, 0.6)' }}
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <RefreshCw size={17} className={matchSyncing ? 'animate-spin' : undefined} />
+              {matchSyncing ? '동기화 중' : '전적 동기화'}
+            </button>
+          )}
           <button
             type="button"
             aria-label="팀 초기화"
@@ -183,19 +166,22 @@ export default function Header({
           <button
             type="button"
             aria-label="결과 저장"
-            onClick={handleExportImage}
+            onClick={() => {
+              void handleCopyResult();
+            }}
             disabled={assignedCount === 0}
             style={{ backgroundColor: 'rgba(245, 158, 11, 0.88)' }}
             className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <Camera size={17} />
+            <ClipboardCopy size={17} />
             결과 저장
           </button>
           <button
             type="button"
             aria-label="랜덤 맵"
             onClick={() => {
-              void handleDrawMap();
+              const result = drawRandomMap();
+              onNotice(`맵 · ${result.label}`);
             }}
             style={{ backgroundColor: 'rgba(56, 189, 248, 0.55)' }}
             className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110"
@@ -207,7 +193,8 @@ export default function Header({
             type="button"
             aria-label="공수 추첨"
             onClick={() => {
-              void handleDrawAttack();
+              const result = drawAttackSide();
+              onNotice(`공수 · ${result.label}`);
             }}
             style={{ backgroundColor: 'rgba(251, 113, 133, 0.55)' }}
             className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110"

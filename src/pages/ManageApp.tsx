@@ -3,6 +3,7 @@ import Board from '../components/Board';
 import Header from '../components/Header';
 import PlayerFormModal from '../components/PlayerFormModal';
 import ToastNotice from '../components/ToastNotice';
+import { useBoardSync } from '../hooks/useBoardSync';
 import { useMatchSync } from '../hooks/useMatchSync';
 import { useRosterSync } from '../hooks/useRosterSync';
 import { useToastStack } from '../hooks/useToastStack';
@@ -42,6 +43,7 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
   }, [onLogout, showNotice]);
 
   const syncStatus = useRosterSync(showNotice, handleUnauthorized);
+  const boardSyncStatus = useBoardSync(showNotice, handleUnauthorized);
   const { runMatchSync, syncing: matchSyncing } = useMatchSync(showNotice);
 
   useEffect(() => {
@@ -107,6 +109,7 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
       <Header
         onNotice={showNotice}
         syncStatus={syncStatus}
+        boardSyncStatus={boardSyncStatus}
         onMatchSync={(options) => {
           void runMatchSync(options);
         }}

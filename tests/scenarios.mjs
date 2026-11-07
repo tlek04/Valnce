@@ -131,6 +131,25 @@ export async function serverScenarios(root = 'src') {
   await request('/api/roster', 'PUT', '{');
   await request('/api/roster', 'PUT', { players: [player('a')], updatedAt: 100 });
   await request('/api/roster', 'PUT', { players: [], updatedAt: 99 });
+  await request('/api/board');
+  await request('/api/board', 'PUT', { waitlist: [], team1: [], team2: [] }, false);
+  await request('/api/board', 'PUT', '{');
+  await request('/api/board', 'PUT', {
+    waitlist: [player('a')],
+    team1: [],
+    team2: [],
+    matchMapId: 'lotus',
+    attackSide: 'TEAM_1',
+    balanceNote: null,
+    balanceDetails: [],
+    updatedAt: 100,
+  });
+  await request('/api/board', 'PUT', {
+    waitlist: [],
+    team1: [],
+    team2: [],
+    updatedAt: 99,
+  });
   await request('/api/join', 'GET', undefined, false);
   await request('/api/join', 'POST', { name: '' }, false);
   const joined = await request('/api/join', 'POST', { name: 'viewer', riotName: 'nick', riotTag: 'KR' }, false);

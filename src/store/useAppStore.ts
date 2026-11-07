@@ -20,6 +20,7 @@ export const useAppStore = create<AppStore>()(
       attackSide: null,
       sessionSavedAt: null,
       rosterUpdatedAt: 0,
+      boardUpdatedAt: 0,
       lastMatchSyncAt: null,
       showMatchRecord: true,
 
@@ -41,6 +42,7 @@ export const useAppStore = create<AppStore>()(
         attackSide: state.attackSide,
         sessionSavedAt: Date.now(),
         rosterUpdatedAt: state.rosterUpdatedAt,
+        boardUpdatedAt: state.boardUpdatedAt,
         lastMatchSyncAt: state.lastMatchSyncAt,
       }),
       migrate: (persisted) => restorePersistedState(persisted as Partial<AppState>) as never,

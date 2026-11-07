@@ -7,23 +7,60 @@ export async function clientScenarios(root = 'src') {
   const api = await loadSource('client-entry.ts', `
     export * from './${root}/utils/joinApi';
     export * from './${root}/utils/rosterSync';
+    export * from './${root}/utils/boardSync';
     export * from './${root}/utils/streamerAuth';
     export * from './${root}/utils/matchImport';
     export { useAppStore } from './${root}/store/useAppStore';
   `);
   const roster = [player('seed', { name: '포뇨', riotName: 'seed', riotTag: 'KR' })];
+  const emptyBoard = {
+    waitlist: [],
+    team1: [],
+    team2: [],
+    matchMapId: null,
+    attackSide: null,
+    balanceNote: null,
+    balanceDetails: [],
+  };
   api.useAppStore.getState().applyRemoteRoster(roster, 1);
   const calls = [
     ['fetchRemoteRoster', []], ['pushRemoteRoster', [roster, 123]],
+    ['fetchRemoteBoard', []], ['pushRemoteBoard', [emptyBoard, 123]],
     ['submitJoinApplication', [{ name: 'viewer', riotName: 'riot', riotTag: 'KR' }]],
     ['fetchJoinQueue', []], ['approveJoinApplication', ['id/with space']],
     ['rejectJoinApplication', ['id/with space']], ['verifyStreamerPassword', ['fake']],
     ['importQualifyingMatches', [roster]],
   ];
   const responses = [
-    [200, JSON.stringify({ ok: true, updatedAt: 500, players: roster, items: [], player: roster[0], application: { id: 'application' }, matches: [] })],
+    [200, JSON.stringify({
+      ok: true,
+      updatedAt: 500,
+      players: roster,
+      waitlist: [],
+      team1: [],
+      team2: [],
+      matchMapId: null,
+      attackSide: null,
+      balanceNote: null,
+      balanceDetails: [],
+      items: [],
+      player: roster[0],
+      application: { id: 'application' },
+      matches: [],
+    })],
     [401, JSON.stringify({ error: '인증이 필요합니다.' })],
-    [409, JSON.stringify({ updatedAt: 500, players: roster, error: '중복' })],
+    [409, JSON.stringify({
+      updatedAt: 500,
+      players: roster,
+      waitlist: [],
+      team1: [],
+      team2: [],
+      matchMapId: null,
+      attackSide: null,
+      balanceNote: null,
+      balanceDetails: [],
+      error: '중복',
+    })],
     [404, '<!doctype html>'], [502, '{'], [200, ''], [0, 'network failure'],
   ];
   const originalFetch = globalThis.fetch;

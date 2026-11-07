@@ -114,6 +114,7 @@ export function useRosterSync(
         state.applyRemoteRoster(remote.players, remote.updatedAt);
 
         if (opts?.enlistNew) {
+          // 공유 보드에 이미 있으면 board sync가 권위 — 여기서 다시 올리지 않음
           for (const player of remote.players) {
             if (beforeIds.has(player.id)) continue;
             const board = useAppStore.getState();

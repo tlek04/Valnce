@@ -77,7 +77,7 @@ export function readQueueNo(value: unknown): number | undefined {
   return typeof value === 'number' && value > 0 ? Math.floor(value) : undefined;
 }
 
-/** 현재 보드(대기열·팀) 기준 다음 추가 순번 */
+/** 오늘 보드(대기열·팀)에 있는 순번 중 다음 번호 */
 export function nextAddNo(lists: Array<Array<{ queueNo?: number }> | undefined>): number {
   let max = 0;
   for (const list of lists) {
@@ -89,7 +89,7 @@ export function nextAddNo(lists: Array<Array<{ queueNo?: number }> | undefined>)
   return max + 1;
 }
 
-/** 보드에 올릴 때 순번 부여. 이미 있으면 유지. */
+/** 보드에 올릴 때 보드 추가 순번 부여. 이미 보드 순번이 있으면 유지. */
 export function withAddNo<T extends { queueNo?: number }>(
   player: T,
   boardLists: Array<Array<{ queueNo?: number }> | undefined>

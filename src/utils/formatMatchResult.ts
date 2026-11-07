@@ -9,47 +9,43 @@ export interface MatchResultSnapshot {
 }
 
 function attackLabel(attackSide: 'TEAM_1' | 'TEAM_2' | null): string | null {
-  if (attackSide === 'TEAM_1') return '1팀 공격 · 2팀 수비';
-  if (attackSide === 'TEAM_2') return '2팀 공격 · 1팀 수비';
+  if (attackSide === 'TEAM_1') return '1팀 공격 / 2팀 수비';
+  if (attackSide === 'TEAM_2') return '2팀 공격 / 1팀 수비';
   return null;
 }
 
-function teamHeading(side: 'TEAM_1' | 'TEAM_2', attackSide: 'TEAM_1' | 'TEAM_2' | null): string {
+function teamTitle(side: 'TEAM_1' | 'TEAM_2', attackSide: 'TEAM_1' | 'TEAM_2' | null): string {
   const title = side === 'TEAM_1' ? '1팀' : '2팀';
   if (!attackSide) return title;
   return `${title} (${attackSide === side ? '공격' : '수비'})`;
 }
 
-/** 채팅·공지용 매치 결과 텍스트 */
-export function formatMatchResultText(snapshot: MatchResultSnapshot): string {
-  const lines: string[] = [];
-  const map = mapLabel(snapshot.matchMapId);
-  const sides = attackLabel(snapshot.attackSide);
-  if (map) lines.push(`맵 · ${map}`);
-  if (sides) lines.push(`공수 · ${sides}`);
-  if (lines.length > 0) lines.push('');
-
-  lines.push(teamHeading('TEAM_1', snapshot.attackSide));
-  for (const player of snapshot.team1) {
-    lines.push(`· ${player.name}`);
-  }
-  if (snapshot.team1.length === 0) lines.push('· (없음)');
-
-  lines.push('');
-  lines.push(teamHeading('TEAM_2', snapshot.attackSide));
-  for (const player of snapshot.team2) {
-    lines.push(`· ${player.name}`);
-  }
-  if (snapshot.team2.length === 0) lines.push('· (없음)');
-
-  return lines.join('\n');
+function playerLine(player: Player): string {
+  const riot =
+    player.riotName && player.riotTag
+      ? `${player.riotName}#${player.riotTag}`
+      : player.riotName?.trim() || '';
+  return riot && riot !== player.name ? `${player.name} (${riot})` : player.name;
 }
 
-export function formatDrawSummary(snapshot: Pick<MatchResultSnapshot, 'matchMapId' | 'attackSide'>): string {
-  const parts: string[] = [];
+function teamBlock(title: string, players: Player[]): string {
+  if (players.length === 0) return `${title}\n없음`;
+  const names = players.map(playerLine).join('\n');
+  return `${title}\n${names}`;
+}
+
+/** 채팅·공지용 매치 결과 텍스트 (사람 읽기 쉬운 형식) */
+export function formatMatchResultText(snapshot: MatchResultSnapshot): string {
+  const header: string[] = [];
   const map = mapLabel(snapshot.matchMapId);
   const sides = attackLabel(snapshot.attackSide);
-  if (map) parts.push(`맵 · ${map}`);
-  if (sides) parts.push(`공수 · ${sides}`);
-  return parts.join('\n');
+  if (map) header.push(`맵: ${map}`);
+  if (sides) header.push(`공수: ${sides}`);
+
+  const body = [
+    teamBlock(teamTitle('TEAM_1', snapshot.attackSide), snapshot.team1),
+    teamBlock(teamTitle('TEAM_2', snapshot.attackSide), snapshot.team2),
+  ].join('\n\n');
+
+  return header.length > 0 ? `${header.join('\n')}\n\n${body}` : body;
 }
