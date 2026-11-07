@@ -176,7 +176,7 @@ async function resolveAuth(
   const token = bearerToken(request);
   if (!token) return null;
   const epoch = await readSessionEpoch(env);
-  const skipEpoch = await isTrustedDevice(env, deviceIdFromRequest(request));
+  const skipEpoch = await isTrustedDevice(env, deviceIdFromRequest(request), trustProof(request));
   const verifyOpts = skipEpoch ? { skipEpoch: true } : undefined;
   if (
     env.STREAMER_PASSWORD &&
@@ -209,7 +209,7 @@ async function readLoginAttempts(env: AuthEnv, ip: string) {
 
 async function writeLoginAttempts(env: AuthEnv, ip: string, count: number, resetAt: number) {
   if (!env.ROSTER) return;
-  await env.ROSTER.put(`auth:login:${ip}`, JSON.stringify({ count, resetAt }));
+  await env.ROSTER.put(`auth:login:${ip}`, JSON.stringify({ count, resetAt }), { expirationTtl: 900 });
 }
 
 /** 스트리머 또는 관리자 토큰. 스트리머 입장 OFF면 스트리머 역할만 403(토큰 유지). */
@@ -311,6 +311,9 @@ export async function handleAuthRevokeAll(request: Request, env: AuthEnv): Promi
     return json({ ok: false, error: 'ADMIN_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
   }
 
+  const ip = clientIp(request);
+  const attempts = await readLoginAttempts(env, ip);
+  if (attempts.count >= LOGIN_MAX_ATTEMPTS) return json({ error: '로그인 시도가 너무 많습니다. 잠시 후 다시 시도하세요.' }, { status: 429 });
   let body: { password?: string };
   try {
     body = (await request.json()) as { password?: string };
@@ -320,10 +323,12 @@ export async function handleAuthRevokeAll(request: Request, env: AuthEnv): Promi
 
   const password = (body.password ?? '').trim();
   if (password !== env.ADMIN_PASSWORD) {
+    await writeLoginAttempts(env, ip, attempts.count + 1, attempts.resetAt);
     await appendAccessLog(env, { ip: clientIp(request), at: Date.now(), ok: false });
     return json({ ok: false, error: '비밀번호가 올바르지 않습니다.' }, { status: 401 });
   }
 
+  await writeLoginAttempts(env, ip, 0, attempts.resetAt);
   const nextEpoch = (await readSessionEpoch(env)) + 1;
   await writeSessionEpoch(env, nextEpoch);
   await appendAccessLog(env, { ip: clientIp(request), at: Date.now(), ok: true });
@@ -361,7 +366,7 @@ export async function handleAuthTrustDevice(request: Request, env: AuthEnv): Pro
     const denied = await requireAdmin(request, env);
     if (denied) return denied;
     const devices = await readTrustedDevices(env);
-    return json({ devices });
+    return json({ devices: devices.map(({ proof: _proof, ...device }) => device) });
   }
 
   if (request.method === 'POST') {
@@ -377,8 +382,9 @@ export async function handleAuthTrustDevice(request: Request, env: AuthEnv): Pro
     if (!deviceId) {
       return json({ error: 'deviceId가 필요합니다.' }, { status: 400 });
     }
-    const devices = await trustDevice(env, deviceId, body.label);
-    return json({ ok: true, devices });
+    const proof = crypto.randomUUID();
+    const devices = await trustDevice(env, deviceId, body.label, proof);
+    return json({ ok: true, devices: devices.map(({ proof: _proof, ...device }) => device) }, { headers: { 'Set-Cookie': 'valnce-trust=' + proof + '; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000' } });
   }
 
   if (request.method === 'DELETE') {
@@ -395,8 +401,12 @@ export async function handleAuthTrustDevice(request: Request, env: AuthEnv): Pro
       return json({ error: 'deviceId가 필요합니다.' }, { status: 400 });
     }
     const devices = await untrustDevice(env, deviceId);
-    return json({ ok: true, devices });
+    return json({ ok: true, devices: devices.map(({ proof: _proof, ...device }) => device) });
   }
 
   return json({ error: 'Method not allowed' }, { status: 405 });
+}
+
+function trustProof(request: Request): string | undefined {
+  return request.headers.get('Cookie')?.match(/(?:^|;\s*)valnce-trust=([a-zA-Z0-9-]{20,100})(?:;|$)/)?.[1];
 }

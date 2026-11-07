@@ -1,50 +1,12 @@
 import { Env } from './server/types';
-import {
-  handleAuthAccessLog,
-  handleAuthLogin,
-  handleAuthRevokeAll,
-  handleAuthTrustDevice,
-  handleAuthTrustStatus,
-} from './server/auth';
-import { handleBoard } from './server/board';
-import { handleRoster } from './server/roster';
-import { handleJoin } from './server/join';
-import { handleMatchImport } from './server/matches';
-import { handleSiteSettings } from './server/siteSettings';
-
+import { json } from './server/http';
+export { ApplicationState } from './server/applicationState';
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-    const path = url.pathname.replace(/\/+$/, '') || '/';
-    if (path === '/api/auth/login') {
-      return handleAuthLogin(request, env);
-    }
-    if (path === '/api/auth/access-log') {
-      return handleAuthAccessLog(request, env);
-    }
-    if (path === '/api/auth/revoke-all') {
-      return handleAuthRevokeAll(request, env);
-    }
-    if (path === '/api/auth/trust-status') {
-      return handleAuthTrustStatus(request, env);
-    }
-    if (path === '/api/auth/trust-device') {
-      return handleAuthTrustDevice(request, env);
-    }
-    if (path === '/api/roster') {
-      return handleRoster(request, env);
-    }
-    if (path === '/api/board') {
-      return handleBoard(request, env);
-    }
-    if (path === '/api/site-settings') {
-      return handleSiteSettings(request, env);
-    }
-    if (path === '/api/matches/import') {
-      return handleMatchImport(request, env);
-    }
-    if (path === '/api/join' || path.startsWith('/api/join/')) {
-      return handleJoin(request, env, path);
+    const path = new URL(request.url).pathname;
+    if (path === '/api' || path.startsWith('/api/')) {
+      if (!env.STATE) return json({ error: 'STATE 저장소가 연결되지 않았습니다.' }, { status: 503 });
+      return env.STATE.get(env.STATE.idFromName('shared-v1')).fetch(request);
     }
     return env.ASSETS.fetch(request);
   },

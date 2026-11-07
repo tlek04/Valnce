@@ -19,6 +19,7 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
   const addPlayer = useAppStore((state) => state.addPlayer);
   const updatePlayer = useAppStore((state) => state.updatePlayer);
   const formRef = useRef<HTMLFormElement>(null);
+  const weaponRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const [name, setName] = useState(player?.name ?? '');
   const [riotId, setRiotId] = useState(formatRiotId(player?.riotName, player?.riotTag));
@@ -63,6 +64,24 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
       previousFocus.current?.focus();
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!weaponPanelOpen || !weaponRef.current) return;
+    const panel = weaponRef.current;
+    const prior = document.activeElement as HTMLElement | null;
+    formRef.current?.setAttribute('inert', '');
+    panel.querySelector<HTMLElement>('button')?.focus();
+    const keydown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); setWeaponPanelOpen(false); }
+      if (event.key !== 'Tab') return;
+      const buttons = [...panel.querySelectorAll<HTMLElement>('button:not([disabled])')];
+      const first = buttons[0], last = buttons[buttons.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    panel.addEventListener('keydown', keydown);
+    return () => { panel.removeEventListener('keydown', keydown); formRef.current?.removeAttribute('inert'); prior?.focus(); };
+  }, [weaponPanelOpen]);
 
   const trimmedName = name.trim();
   const isDuplicate = useMemo(
@@ -175,7 +194,7 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
   };
 
   return {
-    formRef, name,
+    formRef, weaponRef, name,
     setName, riotId,
     setRiotId, currentTier,
     setCurrentTier, maxTier,

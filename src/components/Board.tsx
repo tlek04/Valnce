@@ -130,7 +130,8 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
               onEdit={onEdit}
               canWin={team1.length > 0 && team2.length > 0}
               onWin={() => {
-                recordTeamResult('TEAM_1');
+                const result = recordTeamResult('TEAM_1');
+                if (result.message) onNotice?.(result.message);
               }}
               groupedIds={groupedIds}
               activeId={activePlayer?.id}
@@ -140,7 +141,8 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
               onEdit={onEdit}
               canWin={team1.length > 0 && team2.length > 0}
               onWin={() => {
-                recordTeamResult('TEAM_2');
+                const result = recordTeamResult('TEAM_2');
+                if (result.message) onNotice?.(result.message);
               }}
               groupedIds={groupedIds}
               activeId={activePlayer?.id}

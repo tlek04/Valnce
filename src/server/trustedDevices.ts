@@ -6,6 +6,7 @@ export interface TrustedDevice {
   id: string;
   label?: string;
   trustedAt: number;
+  proof?: string;
 }
 
 type TrustEnv = Pick<Env, 'ROSTER'>;
@@ -23,17 +24,18 @@ export async function readTrustedDevices(env: TrustEnv): Promise<TrustedDevice[]
   );
 }
 
-export async function isTrustedDevice(env: TrustEnv, deviceId: string): Promise<boolean> {
+export async function isTrustedDevice(env: TrustEnv, deviceId: string, proof?: string): Promise<boolean> {
   const id = deviceId.trim();
   if (!id) return false;
   const list = await readTrustedDevices(env);
-  return list.some((item) => item.id === id);
+  return list.some((item) => item.id === id && !!proof && item.proof === proof);
 }
 
 export async function trustDevice(
   env: TrustEnv,
   deviceId: string,
-  label?: string
+  label?: string,
+  proof?: string
 ): Promise<TrustedDevice[]> {
   const id = deviceId.trim();
   if (!id) return readTrustedDevices(env);
@@ -45,12 +47,13 @@ export async function trustDevice(
         item.id === id
           ? {
               ...item,
+              proof,
               label: nextLabel ?? item.label,
               trustedAt: Date.now(),
             }
           : item
       )
-    : [...list, { id, label: nextLabel, trustedAt: Date.now() }];
+    : [...list, { id, label: nextLabel, trustedAt: Date.now(), proof }];
   if (env.ROSTER) {
     await env.ROSTER.put(TRUSTED_DEVICES_KEY, JSON.stringify(next));
   }

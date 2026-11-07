@@ -59,6 +59,7 @@ export async function fetchJoinStatus(id: string): Promise<{
   queueNo?: number;
   name?: string;
   auto?: boolean;
+  notFound?: boolean;
   error?: string;
 }> {
   try {
@@ -75,7 +76,7 @@ export async function fetchJoinStatus(id: string): Promise<{
       error?: string;
     }>(response);
     if (!response.ok || !data.ok || !data.status) {
-      return { ok: false, error: data.error || '상태를 불러오지 못했습니다.' };
+      return { ok: false, notFound: response.status === 404, error: data.error || '상태를 불러오지 못했습니다.' };
     }
     return {
       ok: true,

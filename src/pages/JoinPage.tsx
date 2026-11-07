@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { fetchJoinStatus, JoinStatus, submitJoinApplication } from '../utils/joinApi';
 import {
   clearJoinSession,
@@ -29,6 +29,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   const [canOrder, setCanOrder] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const submitting = useRef(false);
   const [done, setDone] = useState<DoneState | null>(() => loadJoinSession());
   const [joinOpen, setJoinOpen] = useState<boolean | null>(null);
   const [restoring, setRestoring] = useState(() => Boolean(loadJoinSession()));
@@ -55,8 +56,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       const result = await fetchJoinStatus(session.id);
       if (cancelled) return;
       if (!result.ok || !result.status) {
-        clearJoinSession();
-        setDone(null);
+        if (result.notFound) { clearJoinSession(); setDone(null); }
         setRestoring(false);
         return;
       }
@@ -105,11 +105,13 @@ export default function JoinPage({ onBack }: JoinPageProps) {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (busy) return;
+    if (submitting.current) return;
+    submitting.current = true;
     setBusy(true);
     setError(null);
     const parsed = parseRiotId(riotId);
     if (!parsed.riotName || !parsed.riotTag) {
+      submitting.current = false;
       setBusy(false);
       setError('발로란트 닉네임#태그 형식으로 입력하세요.');
       return;
@@ -121,6 +123,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       canOrder,
     };
     const result = await submitJoinApplication(profile);
+    submitting.current = false;
     setBusy(false);
     if (!result.ok || !result.application) {
       setError(result.error || '알 수 없는 오류입니다.');
@@ -239,21 +242,29 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청</h1>
-        <div className="mt-3 space-y-3 text-sm leading-relaxed text-val-muted">
-          <p>
-            재미로 하는 내전입니다. 독선적인 플레이·태도는 피해 주세요. 성인(만 19세 이상)·마이크는
-            필수입니다.
-          </p>
-          <p>
-            치지직 닉네임과 발로란트 닉네임#태그를 적어 주세요. 티어는 API로 자동 반영되며, 보정이
-            필요하면 스트리머에게 말해 주세요.
-          </p>
-          <ul className="space-y-1.5 rounded-lg border border-val-line/80 bg-val-bg/60 px-3.5 py-2.5 text-val-cream/85">
-            <li>승인되어도 밸런스에 따라 이번 판에 못 들어갈 수 있습니다.</li>
-            <li>밸런스 추첨 때 치지직 채팅에 없으면 제외될 수 있습니다.</li>
-            <li>최근 24시간 참여 횟수가 적을수록 다음 판에 뽑힐 확률이 높아집니다.</li>
-            <li>2만 5천 치즈 후원 시 고정 멤버로 참가할 수 있습니다.</li>
-          </ul>
+        <div className="mt-4 space-y-4 text-sm leading-relaxed text-val-muted">
+          <section aria-labelledby="join-requirements">
+            <h2 id="join-requirements" className="font-semibold text-val-cream">참가 전 확인</h2>
+            <p className="mt-1">성인(만 19세 이상)·마이크는 필수입니다. 함께 즐기는 내전인 만큼 독선적인 플레이나 태도는 피해 주세요.</p>
+          </section>
+          <section aria-labelledby="join-process" className="rounded-lg border border-val-line/80 bg-val-bg/60 px-3.5 py-3">
+            <h2 id="join-process" className="font-semibold text-val-cream">신청부터 참가까지</h2>
+            <ol className="mt-2 list-decimal space-y-2 pl-4">
+              <li>치지직 닉네임과 발로란트 닉네임#태그를 정확히 입력해 주세요. 오더 가능 여부도 선택할 수 있습니다.</li>
+              <li>처음 신청하거나 새 브라우저를 사용하면 스트리머 승인이 필요합니다. 이전에 승인받은 브라우저에서는 같은 계정으로 자동 합류할 수 있습니다.</li>
+              <li>신청 후 결과 화면에서 상태를 확인해 주세요. 티어는 API로 반영하며, 조회 실패나 보정이 필요하면 스트리머에게 알려 주세요.</li>
+            </ol>
+          </section>
+          <section aria-labelledby="join-selection">
+            <h2 id="join-selection" className="font-semibold text-val-cream">선발 안내</h2>
+            <ul className="mt-1.5 list-disc space-y-1.5 pl-4">
+              <li>승인은 이번 판 참가 확정이 아닙니다. 인원과 밸런스에 따라 대기할 수 있습니다.</li>
+              <li>추첨 때 치지직 채팅에 없으면 제외될 수 있습니다.</li>
+              <li>최근 24시간 참여 횟수가 적을수록 다음 판에 뽑힐 확률이 높아집니다.</li>
+              <li>2만 5천 치즈 후원 시 고정 멤버로 참가할 수 있습니다.</li>
+            </ul>
+          </section>
+          <p className="border-t border-val-line pt-3 text-xs">신청은 한 번만 눌러 주세요. 이미 신청했거나 참가 중이라는 안내가 나오면 반복 신청하지 말고 기존 상태를 확인하거나 스트리머에게 문의해 주세요. 연결 오류가 나면 잠시 후 다시 시도해 주세요.</p>
         </div>
 
         <label htmlFor="join-name" className="mt-6 block text-xs font-semibold text-val-muted">

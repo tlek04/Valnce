@@ -61,7 +61,8 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const [trustBusy, setTrustBusy] = useState(false);
   const [trustReady, setTrustReady] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const pulledRef = useRef(false);
+  const serverRevision = useRef(0);
+  const pushQueue = useRef<Promise<boolean>>(Promise.resolve(true));
   const deviceId = useMemo(() => getOrCreateDeviceId(), []);
 
   const loadAccessLog = useCallback(async () => {
@@ -109,8 +110,6 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   }, [setShowMatchRecord]);
 
   useEffect(() => {
-    if (pulledRef.current) return;
-    pulledRef.current = true;
     let cancelled = false;
     (async () => {
       setSyncBusy(true);
@@ -121,7 +120,8 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
         showNotice('서버 명단을 불러오지 못했습니다.');
         return;
       }
-      const localUpdatedAt = useAppStore.getState().rosterUpdatedAt ?? 0;
+      serverRevision.current = remote.updatedAt;
+    const localUpdatedAt = useAppStore.getState().rosterUpdatedAt ?? 0;
       if (remote.updatedAt >= localUpdatedAt) {
         applyRemoteRoster(remote.players, remote.updatedAt);
         showNotice(`서버 명단 ${remote.players.length}명을 불러왔습니다.`);
@@ -145,21 +145,28 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     });
   }, [players, query]);
 
-  const pushRoster = async () => {
+  const pushRoster = () => {
     setSyncBusy(true);
-    const state = useAppStore.getState();
-    const result = await pushRemoteRoster(state.players, state.rosterUpdatedAt || Date.now());
-    setSyncBusy(false);
-    if (!result.ok) {
-      if (result.conflict) {
-        applyRemoteRoster(result.roster.players, result.roster.updatedAt);
-        showNotice('서버 명단이 더 최신입니다. 서버 내용으로 맞췄습니다.');
-        return;
+    const next = pushQueue.current.then(async () => {
+      const state = useAppStore.getState();
+      const result = await pushRemoteRoster(state.players, state.rosterUpdatedAt || Date.now(), serverRevision.current);
+      if (result.ok) {
+        serverRevision.current = result.updatedAt ?? serverRevision.current;
+        showNotice('서버 명단에 반영했습니다.');
+        return true;
       }
-      showNotice('명단 업로드에 실패했습니다.');
-      return;
-    }
-    showNotice('서버 명단에 반영했습니다.');
+      if (result.conflict) {
+        if (useAppStore.getState().players === state.players) {
+          applyRemoteRoster(result.roster.players, result.roster.updatedAt);
+          serverRevision.current = result.roster.updatedAt;
+        }
+        showNotice('다른 기기의 변경과 겹쳤습니다. 서버 명단을 불러온 뒤 다시 확인해 주세요.');
+      } else showNotice('명단 업로드에 실패했습니다. 다시 서버에 올려 주세요.');
+      return false;
+    });
+    pushQueue.current = next;
+    void next.finally(() => { if (pushQueue.current === next) setSyncBusy(false); });
+    return next;
   };
 
   const handleAdjust = async (id: string, field: 'wins' | 'losses', delta: number) => {
@@ -170,8 +177,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`「${name}」을(를) 명단에서 삭제할까요?`)) return;
     removePlayer(id);
-    await pushRoster();
-    showNotice(`${name} 삭제됨`);
+    if (await pushRoster()) showNotice(`${name} 삭제됨`);
   };
 
   const handleClearRoster = async () => {
@@ -185,8 +191,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     clearRoster();
     setRosterUpdatedAt(Date.now());
     setClearConfirm('');
-    await pushRoster();
-    showNotice('명단을 비웠습니다.');
+    if (await pushRoster()) showNotice('명단을 비웠습니다.');
   };
 
   const handlePullRoster = async () => {
@@ -197,6 +202,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       showNotice('서버 명단을 불러오지 못했습니다.');
       return;
     }
+    serverRevision.current = remote.updatedAt;
     const localUpdatedAt = useAppStore.getState().rosterUpdatedAt ?? 0;
     if (remote.updatedAt < localUpdatedAt) {
       if (

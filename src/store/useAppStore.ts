@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { AppState, AppStore } from '../types';
 import { toSavedPlayer } from '../utils/player';
 import { restorePersistedState } from './persistence';
@@ -30,6 +30,17 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: 'valorant-balancer-storage',
+      storage: createJSONStorage(() => ({
+        getItem: (name) => {
+          try {
+            const raw = localStorage.getItem(name);
+            if (raw) JSON.parse(raw);
+            return raw;
+          } catch { return null; }
+        },
+        setItem: (name, value) => { try { localStorage.setItem(name, value); } catch { /* storage unavailable */ } },
+        removeItem: (name) => { try { localStorage.removeItem(name); } catch { /* storage unavailable */ } },
+      })),
       version: 6,
       partialize: (state) => ({
         players: state.players.map(toSavedPlayer),

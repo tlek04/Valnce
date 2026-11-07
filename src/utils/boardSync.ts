@@ -14,7 +14,7 @@ export interface RemoteBoard {
 }
 
 export type PushBoardResult =
-  | { ok: true }
+  | { ok: true; updatedAt?: number }
   | { ok: false; conflict?: false; unauthorized?: boolean }
   | { ok: false; conflict: true; board: RemoteBoard };
 
@@ -43,7 +43,8 @@ export async function fetchRemoteBoard(): Promise<RemoteBoard | null> {
 
 export async function pushRemoteBoard(
   snapshot: Omit<RemoteBoard, 'updatedAt'>,
-  updatedAt: number
+  updatedAt: number,
+  baseUpdatedAt = 0
 ): Promise<PushBoardResult> {
   try {
     const response = await staffFetch(apiUrl(), {
@@ -51,6 +52,7 @@ export async function pushRemoteBoard(
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         updatedAt,
+        baseUpdatedAt,
         waitlist: snapshot.waitlist,
         team1: snapshot.team1,
         team2: snapshot.team2,
@@ -67,7 +69,9 @@ export async function pushRemoteBoard(
     if (response.status === 401) {
       return { ok: false, unauthorized: true };
     }
-    return response.ok ? { ok: true } : { ok: false };
+    if (!response.ok) return { ok: false };
+    const data = await response.json().catch(() => ({})) as { updatedAt?: number };
+    return { ok: true, ...(typeof data.updatedAt === 'number' ? { updatedAt: data.updatedAt } : {}) };
   } catch {
     return { ok: false };
   }

@@ -8,7 +8,7 @@ export interface RemoteRoster {
 }
 
 export type PushRosterResult =
-  | { ok: true }
+  | { ok: true; updatedAt?: number }
   | { ok: false; conflict?: false; unauthorized?: boolean }
   | { ok: false; conflict: true; roster: RemoteRoster };
 
@@ -33,13 +33,14 @@ export async function fetchRemoteRoster(): Promise<RemoteRoster | null> {
   }
 }
 
-export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number): Promise<PushRosterResult> {
+export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number, baseUpdatedAt = 0): Promise<PushRosterResult> {
   try {
     const response = await staffFetch(apiUrl(), {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         updatedAt,
+        baseUpdatedAt,
         players: players.map((player) => toSavedPlayer(player)),
       }),
     });
@@ -54,7 +55,9 @@ export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number
     if (response.status === 401) {
       return { ok: false, unauthorized: true };
     }
-    return response.ok ? { ok: true } : { ok: false };
+    if (!response.ok) return { ok: false };
+    const data = await response.json().catch(() => ({})) as { updatedAt?: number };
+    return { ok: true, ...(typeof data.updatedAt === 'number' ? { updatedAt: data.updatedAt } : {}) };
   } catch {
     return { ok: false };
   }

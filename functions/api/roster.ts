@@ -1,6 +1,5 @@
-import { handleRoster, RosterEnv } from '../../src/server/roster';
-
-// Pages compatibility entry point; Workers uses the same handler.
-type RosterContext = { request: Request; env: RosterEnv };
-export const onRequestGet = ({ request, env }: RosterContext) => handleRoster(request, env);
-export const onRequestPut = ({ request, env }: RosterContext) => handleRoster(request, env);
+import worker from '../../src/worker';
+import { Env } from '../../src/server/types';
+type RosterContext = { request: Request; env: Env };
+export const onRequestGet = ({ request, env }: RosterContext) => worker.fetch(request, env);
+export const onRequestPut = onRequestGet;

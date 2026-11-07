@@ -19,7 +19,9 @@ function withResult(player: Player, result: 'win' | 'loss'): Player {
 export const createMatchActions: ActionCreator<
   'recordTeamResult' | 'recordPlayerResult' | 'adjustPlayerRecord' |
   'reconcileMatchStats' | 'markMatchSyncAttempt'
-> = (set, get) => ({
+> = (set, get) => {
+  let lastResult: { signature: string; at: number } | undefined;
+  return ({
   markMatchSyncAttempt: () => set({ lastMatchSyncAt: Date.now() }),
   recordTeamResult: (winner) => {
     const state = get();
@@ -27,6 +29,12 @@ export const createMatchActions: ActionCreator<
       return { ok: false, message: '양 팀에 선수가 있어야 결과를 기록할 수 있습니다.' };
     }
 
+    const signature = JSON.stringify([state.team1.map(p => p.id).sort(), state.team2.map(p => p.id).sort()]);
+    const now = Date.now();
+    if (lastResult?.signature === signature && now - lastResult.at < 1500) {
+      return { ok: false, message: '방금 경기 결과를 기록했습니다. 중복 입력을 막았습니다.' };
+    }
+    lastResult = { signature, at: now };
     const winners = winner === 'TEAM_1' ? state.team1 : state.team2;
     const losers = winner === 'TEAM_1' ? state.team2 : state.team1;
     const nextById = new Map<string, Player>();
@@ -104,3 +112,4 @@ export const createMatchActions: ActionCreator<
       };
     }),
 });
+};

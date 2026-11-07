@@ -50,6 +50,11 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
           Valnce
         </h1>
         <p className="mt-3 text-sm text-val-muted">내전 참가 방식을 선택하세요</p>
+        <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-val-muted/90">
+          빠른 내전 진행을 위해 스트리머의 팬심으로 만든 페이지입니다.
+          <br />
+          재미로 하는 내전이니 독선적인 행동은 피해 주세요.
+        </p>
       </div>
 
       {!ready ? (

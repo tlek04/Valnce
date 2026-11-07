@@ -1,9 +1,9 @@
 import { Env, JoinApplication, JoinQueuePayload, RosterPayload } from './types';
 import { json } from './http';
 import { requireStreamer } from './auth';
-import { boardSeats, readSharedBoard } from './board';
+import { BOARD_KEY, boardSeats, readSharedBoard } from './board';
 import { ROSTER_KEY } from './roster';
-import { DEFAULT_RATING as DEFAULT_TIER } from '../constants/game';
+import { BOARD_TTL_SECONDS, DEFAULT_RATING as DEFAULT_TIER } from '../constants/game';
 import { riotKey } from './identity';
 import { fetchRiotRatings } from './mmr';
 import { isViewerJoinOpen } from './siteSettingsStore';
@@ -35,7 +35,7 @@ function clientIp(request: Request) {
 
 async function readJoinQueue(env: Env): Promise<JoinQueuePayload> {
   const stored = (await env.ROSTER.get(JOIN_KEY, 'json')) as JoinQueuePayload | null;
-  const items = Array.isArray(stored?.items) ? stored!.items : [];
+  const items = Array.isArray(stored?.items) ? stored.items.filter(item => item && item.createdAt > Date.now() - 7 * 86400000) : [];
   const nextNo = typeof stored?.nextNo === 'number' && stored.nextNo > 0 ? stored.nextNo : 1;
   const revision = typeof stored?.revision === 'number' && stored.revision >= 0 ? stored.revision : 0;
   return { nextNo, items, revision };
@@ -52,34 +52,9 @@ async function writeJoinQueue(env: Env, payload: JoinQueuePayload) {
   );
 }
 
-const JOIN_LOCK_KEY = 'join-queue-lock';
-const JOIN_LOCK_TTL_MS = 12_000;
-
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/** KV는 원자적 CAS가 없어, 토큰 락 + 즉시 read/write로 덮어쓰기 레이스를 줄인다. */
-async function withJoinQueueLock<T>(env: Env, fn: () => Promise<T>): Promise<T | { lockFailed: true }> {
-  const token = crypto.randomUUID();
-  for (let attempt = 0; attempt < 30; attempt++) {
-    const now = Date.now();
-    const lock = (await env.ROSTER.get(JOIN_LOCK_KEY, 'json')) as { at?: number; token?: string } | null;
-    const held = typeof lock?.at === 'number' && lock.at > 0 && now - lock.at < JOIN_LOCK_TTL_MS;
-    if (!held) {
-      await env.ROSTER.put(JOIN_LOCK_KEY, JSON.stringify({ at: now, token }));
-      try {
-        return await fn();
-      } finally {
-        const current = (await env.ROSTER.get(JOIN_LOCK_KEY, 'json')) as { token?: string } | null;
-        if (current?.token === token) {
-          await env.ROSTER.put(JOIN_LOCK_KEY, JSON.stringify({ at: 0 }));
-        }
-      }
-    }
-    await sleep(40 + Math.floor(Math.random() * 80));
-  }
-  return { lockFailed: true };
+/** The ApplicationState coordinator serializes requests and atomically commits their writes. */
+async function withJoinQueueLock<T>(_env: Env, fn: () => Promise<T>): Promise<T | { lockFailed: true }> {
+  return fn();
 }
 
 function isLockFailed<T>(value: T | { lockFailed: true }): value is { lockFailed: true } {
@@ -102,7 +77,7 @@ async function commitJoinQueue(
 }
 
 async function writeJoinStatus(env: Env, id: string, record: JoinStatusRecord) {
-  await env.ROSTER.put(`${JOIN_STATUS_PREFIX}${id}`, JSON.stringify(record));
+  await env.ROSTER.put(`${JOIN_STATUS_PREFIX}${id}`, JSON.stringify(record), { expirationTtl: 7 * 86400 });
 }
 
 async function readJoinStatus(env: Env, id: string): Promise<JoinStatusRecord | null> {
@@ -122,7 +97,7 @@ async function checkJoinRateLimit(env: Env, ip: string): Promise<Response | null
   if (count >= JOIN_RATE_MAX) {
     return json({ ok: false, error: '신청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { status: 429 });
   }
-  await env.ROSTER.put(key, JSON.stringify({ count: count + 1, resetAt }));
+  await env.ROSTER.put(key, JSON.stringify({ count: count + 1, resetAt }), { expirationTtl: 900 });
   return null;
 }
 
@@ -261,6 +236,9 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
     return json({ ok: false, error: '발로란트 닉네임과 태그를 입력하세요.' }, { status: 400 });
   }
 
+  const cookie = request.headers.get('Cookie')?.match(/(?:^|;\s*)valnce-viewer=([a-zA-Z0-9-]{20,100})(?:;|$)/)?.[1];
+  const viewerToken = cookie || crypto.randomUUID();
+  const approvedIdentity = cookie ? await env.ROSTER.get('viewer-approved:' + cookie, 'json') : null;
   const nameKey = name.normalize('NFC').toLowerCase();
   const tagKey = riotKey(riotName, riotTag);
 
@@ -307,7 +285,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           riotKey(item.riotName, item.riotTag) === tagKey
       );
 
-      if (existingByRiot && typeof existingByRiot.id === 'string') {
+      if (existingByRiot && typeof existingByRiot.id === 'string' && approvedIdentity === tagKey) {
         if (onBoardAlready(existingByRiot.id)) {
           return json(
             { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.' },
@@ -318,18 +296,10 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           return json({ ok: false, error: '이미 대기열 합류 요청이 있습니다.' }, { status: 409 });
         }
 
-        const prevName = typeof existingByRiot.name === 'string' ? existingByRiot.name : '';
-        if (prevName.normalize('NFC').toLowerCase() !== nameKey) {
-          const updatedAt = Date.now();
-          const nextPlayers = rosterPlayers.map((item) =>
-            item.id === existingByRiot.id ? { ...item, name } : item
-          );
-          await env.ROSTER.put(ROSTER_KEY, JSON.stringify({ updatedAt, players: nextPlayers }));
-        }
-
+        if (queue.items.length >= 500) return json({ error: '신청 대기열이 가득 찼습니다.' }, { status: 429 });
         const application: JoinApplication = {
           id: crypto.randomUUID(),
-          name,
+          name: typeof existingByRiot.name === 'string' ? existingByRiot.name : name,
           riotName: typeof existingByRiot.riotName === 'string' ? existingByRiot.riotName : riotName,
           riotTag: typeof existingByRiot.riotTag === 'string' ? existingByRiot.riotTag : riotTag,
           queueNo: queue.nextNo,
@@ -343,6 +313,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           items: [...queue.items, application],
         });
         if (!committed) continue;
+        await env.ROSTER.put('viewer-application:' + application.id, JSON.stringify(viewerToken), { expirationTtl: 7 * 86400 });
         await writeJoinStatus(env, application.id, {
           status: 'pending',
           queueNo: application.queueNo,
@@ -364,7 +335,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
         queue.items.some((item) => item.name.normalize('NFC').toLowerCase() === nameKey) ||
         rosterPlayers.some(
           (item) =>
-            typeof item.name === 'string' && item.name.normalize('NFC').toLowerCase() === nameKey
+            typeof item.name === 'string' && item.name.normalize('NFC').toLowerCase() === nameKey && item !== existingByRiot
         );
       if (nameTaken) {
         return json({ ok: false, error: '같은 치지직 닉네임이 이미 있습니다.' }, { status: 409 });
@@ -376,12 +347,13 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           (item) =>
             typeof item.riotName === 'string' &&
             typeof item.riotTag === 'string' &&
-            riotKey(item.riotName, item.riotTag) === tagKey
+            riotKey(item.riotName, item.riotTag) === tagKey && item !== existingByRiot
         );
       if (riotTaken) {
         return json({ ok: false, error: '같은 발로란트 닉네임#태그가 이미 있습니다.' }, { status: 409 });
       }
 
+      if (queue.items.length >= 500) return json({ error: '신청 대기열이 가득 찼습니다.' }, { status: 429 });
       const application: JoinApplication = {
         id: crypto.randomUUID(),
         name,
@@ -396,6 +368,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
         items: [...queue.items, application],
       });
       if (!committed) continue;
+      await env.ROSTER.put('viewer-application:' + application.id, JSON.stringify(viewerToken), { expirationTtl: 7 * 86400 });
       await writeJoinStatus(env, application.id, {
         status: 'pending',
         queueNo: application.queueNo,
@@ -410,6 +383,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
   if (isLockFailed(locked)) {
     return json({ ok: false, error: '신청 처리가 잠시 바쁩니다. 다시 시도하세요.' }, { status: 409 });
   }
+  if (locked.ok) locked.headers.append('Set-Cookie', 'valnce-viewer=' + viewerToken + '; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000');
   return locked;
 }
 
@@ -477,6 +451,9 @@ async function buildApprovedResponse(
     return json({ ok: false, error: '명단 저장에 실패했습니다.' }, { status: 500 });
   }
 
+  const viewerToken = await env.ROSTER.get('viewer-application:' + application.id, 'json');
+  if (typeof viewerToken === 'string') await env.ROSTER.put('viewer-approved:' + viewerToken, JSON.stringify(tagKey), { expirationTtl: 30 * 86400 });
+  await addApprovedToBoard(env, { ...toSessionPlayer(saved, application.queueNo), canOrder: Boolean(application.canOrder) });
   await writeJoinStatus(env, application.id, {
     status: 'approved',
     queueNo: application.queueNo,
@@ -653,6 +630,7 @@ async function claimAutoJoin(env: Env, id: string): Promise<Response> {
         items: remaining,
       });
       if (!committed) continue;
+      await addApprovedToBoard(env, { ...toSessionPlayer(saved, application.queueNo), canOrder: Boolean(application.canOrder) });
       await writeJoinStatus(env, application.id, {
         status: 'joined',
         queueNo: application.queueNo,
@@ -708,4 +686,12 @@ async function rejectJoin(env: Env, id: string): Promise<Response> {
     return json({ ok: false, error: '거절 처리가 잠시 바쁩니다. 다시 시도하세요.' }, { status: 409 });
   }
   return locked;
+}
+
+async function addApprovedToBoard(env: Env, player: ReturnType<typeof toSessionPlayer>) {
+  const board = await readSharedBoard(env);
+  const seats = boardSeats(board) as Array<{ id?: string; queueNo?: number }>;
+  if (seats.some(row => row.id === player.id)) return;
+  const queueNo = Math.max(0, ...seats.map(row => typeof row.queueNo === 'number' ? row.queueNo : 0)) + 1;
+  await env.ROSTER.put(BOARD_KEY, JSON.stringify({ ...board, waitlist: [...board.waitlist, { ...player, queueNo }], updatedAt: Math.max(Date.now(), board.updatedAt + 1) }), { expirationTtl: BOARD_TTL_SECONDS });
 }

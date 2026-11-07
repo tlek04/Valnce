@@ -12,6 +12,7 @@ export interface SearchOption {
 
 interface SearchSelectProps {
   id?: string;
+  label?: string;
   options: SearchOption[];
   value?: string | null;
   onSelect: (value: string) => void;
@@ -22,6 +23,7 @@ interface SearchSelectProps {
 
 export default function SearchSelect({
   id,
+  label,
   options,
   value,
   onSelect,
@@ -107,6 +109,7 @@ export default function SearchSelect({
         <input
           id={inputId}
           role="combobox"
+          aria-label={label ?? placeholder}
           aria-expanded={open}
           aria-controls={listId}
           aria-autocomplete="list"
@@ -168,7 +171,8 @@ export default function SearchSelect({
                     type="button"
                     id={`${listId}-${option.value}`}
                     role="option"
-                    aria-selected={option.value === value || isActive}
+                    tabIndex={-1}
+                    aria-selected={option.value === value}
                     className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-white/5 ${
                       isActive ? 'bg-white/5' : ''
                     }`}

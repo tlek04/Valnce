@@ -72,7 +72,7 @@ export async function handleBoard(request: Request, env: BoardEnv): Promise<Resp
     const denied = await requireStreamer(request, env);
     if (denied) return denied;
 
-    let body: Partial<BoardPayload>;
+    let body: Partial<BoardPayload> & { baseUpdatedAt?: number };
     try {
       body = (await request.json()) as Partial<BoardPayload>;
     } catch {
@@ -83,13 +83,14 @@ export async function handleBoard(request: Request, env: BoardEnv): Promise<Resp
       return json({ error: 'waitlist·team1·team2 배열이 필요합니다.' }, { status: 400 });
     }
 
-    const updatedAt = typeof body.updatedAt === 'number' ? body.updatedAt : Date.now();
+    let updatedAt = Date.now();
     const raw = parseStored((await env.ROSTER.get(BOARD_KEY, 'json')) as BoardPayload | null);
     // 만료된 보드는 빈 슬레이트로 보고 덮어쓴다. 살아 있는 보드만 LWW 409.
-    if (!isBoardExpired(raw) && raw.updatedAt > updatedAt) {
+    if ((body.baseUpdatedAt ?? 0) !== (isBoardExpired(raw) ? 0 : raw.updatedAt)) {
       return json({ ok: false, newer: true, ...raw }, { status: 409 });
     }
 
+    updatedAt = Math.max(updatedAt, raw.updatedAt + 1);
     const payload: BoardPayload = {
       updatedAt,
       waitlist: body.waitlist,

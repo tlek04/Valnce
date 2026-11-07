@@ -5,7 +5,7 @@ import { toSavedPlayer } from '../utils/player';
 export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
   const seen = new Set<string>();
   const players: SavedPlayer[] = [];
-  for (const item of raw?.players ?? []) {
+  for (const item of Array.isArray(raw?.players) ? raw.players : []) {
     const saved = toSavedPlayer(item);
     if (seen.has(saved.id)) continue;
     seen.add(saved.id);

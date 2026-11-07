@@ -65,6 +65,7 @@ export async function fetchRiotRatings(
 
   const response = await fetch(url, {
     headers: { Authorization: apiKey },
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) return null;
 

@@ -49,6 +49,7 @@ async function fetchSeedMatches(
 
   const response = await fetch(url, {
     headers: { Authorization: apiKey },
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) {
     if (response.status === 404) return [];
@@ -187,6 +188,11 @@ export async function handleMatchImport(request: Request, env: Env): Promise<Res
     return json({ ok: false, error: '닉네임#태그가 등록된 명단이 필요합니다.', matches: [] }, { status: 400 });
   }
 
+  const ip = request.headers.get('CF-Connecting-IP') || 'local';
+  const rateKey = 'match-import:' + ip;
+  const last = await env.ROSTER.get(rateKey, 'json');
+  if (typeof last === 'number' && Date.now() - last < 10000) return json({ ok: false, error: '전적 조회 후 10초 뒤 다시 시도하세요.', matches: [] }, { status: 429 });
+  await env.ROSTER.put(rateKey, JSON.stringify(Date.now()), { expirationTtl: 60 });
   const cutoff = matchHistoryCutoff();
   try {
     const raw: unknown[] = [];

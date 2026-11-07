@@ -9,6 +9,7 @@ export interface RosterStorage {
 }
 
 export interface Env {
+  STATE?: { idFromName(name: string): unknown; get(id: unknown): { fetch(request: Request): Promise<Response> } };
   ROSTER: RosterStorage;
   ASSETS: { fetch(request: Request): Promise<Response> };
   HENRIK_API_KEY?: string;

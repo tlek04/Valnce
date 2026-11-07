@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { loadSource, memoryStorage } from './load-source.mjs';
+import { bindState } from './state-runtime.mjs';
 
 export const fixedNow = 1793790000000;
 export function player(id, extra = {}) {
@@ -104,7 +105,7 @@ export async function storeScenarios(root = 'src') {
 }
 
 export async function serverScenarios(root = 'src') {
-  const worker = (await loadSource(`${root}/worker.ts`)).default;
+  const { default: worker, ApplicationState } = await loadSource(`${root}/worker.ts`);
   const values = new Map();
   const env = {
     STREAMER_PASSWORD: 'test-only',
@@ -118,6 +119,7 @@ export async function serverScenarios(root = 'src') {
     },
     ASSETS: { fetch: async () => new Response('asset') },
   };
+  const runtime = bindState(ApplicationState, env);
   const output = [];
   let authToken = '';
   let deviceId = '';
@@ -132,7 +134,7 @@ export async function serverScenarios(root = 'src') {
     }), env);
     const text = await response.text();
     let data; try { data = JSON.parse(text); } catch { data = text; }
-    output.push({ path, method, status: response.status, data, kv: [...values.entries()] });
+    output.push({ path, method, status: response.status, data, kv: [...runtime.values.entries()].filter(([key]) => key.startsWith('data:')).map(([key, entry]) => [key.slice(5), JSON.stringify(entry.value)]) });
     return data;
   }
   await request('/', 'GET', undefined, false);

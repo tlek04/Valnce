@@ -1,190 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useSharedSync, SyncAdapter } from './useSharedSync';
 import { useAppStore } from '../store/useAppStore';
 import { isApplyingRemoteBoard } from '../utils/boardApplyGuard';
-import {
-  boardSnapshotFromState,
-  fetchRemoteBoard,
-  isBoardSyncConfigured,
-  pushRemoteBoard,
-} from '../utils/boardSync';
-
-type SyncStatus = 'idle' | 'syncing' | 'ok' | 'offline';
-
-function boardChanged(
-  state: ReturnType<typeof useAppStore.getState>,
-  previous: ReturnType<typeof useAppStore.getState>
-) {
-  return (
-    state.waitlist !== previous.waitlist ||
-    state.team1 !== previous.team1 ||
-    state.team2 !== previous.team2 ||
-    state.matchMapId !== previous.matchMapId ||
-    state.attackSide !== previous.attackSide ||
-    state.balanceNote !== previous.balanceNote ||
-    state.balanceDetails !== previous.balanceDetails
-  );
-}
-
-/** 대기열·팀·맵·공수 보드를 서버(KV)와 맞춘다. last-write-wins. */
-export function useBoardSync(
-  onNotice?: (message: string) => void,
-  onUnauthorized?: () => void
-) {
-  const [status, setStatus] = useState<SyncStatus>('idle');
-  const pushTimer = useRef<number | null>(null);
-  const hydrated = useRef(false);
-  const pulling = useRef(false);
-  const pushEpoch = useRef(0);
-
-  useEffect(() => {
-    if (!isBoardSyncConfigured()) return;
-
-    let started = false;
-
-    const clearPushTimer = () => {
-      if (pushTimer.current) {
-        window.clearTimeout(pushTimer.current);
-        pushTimer.current = null;
-      }
-    };
-
-    const pushBoard = (updatedAt: number) => {
-      clearPushTimer();
-      const epoch = ++pushEpoch.current;
-      pushTimer.current = window.setTimeout(() => {
-        setStatus('syncing');
-        const snapshotAt = updatedAt;
-        const snapshot = boardSnapshotFromState(useAppStore.getState());
-        void pushRemoteBoard(snapshot, snapshotAt).then((result) => {
-          if (epoch !== pushEpoch.current) return;
-          if (result.ok) {
-            setStatus('ok');
-            return;
-          }
-          if ('unauthorized' in result && result.unauthorized) {
-            onUnauthorized?.();
-            return;
-          }
-          if (result.conflict) {
-            const localAt = useAppStore.getState().boardUpdatedAt ?? 0;
-            if (localAt > snapshotAt) {
-              pushBoard(localAt);
-              return;
-            }
-            // 원격이 앞서도 로컬에만 있는 인원(방금 승인 등)은 대기열에 합친다
-            const local = boardSnapshotFromState(useAppStore.getState());
-            const remoteIds = new Set(
-              [...result.board.waitlist, ...result.board.team1, ...result.board.team2].map(
-                (row) => row.id
-              )
-            );
-            const missing = [...local.waitlist, ...local.team1, ...local.team2].filter(
-              (row) => !remoteIds.has(row.id)
-            );
-            const merged = {
-              ...result.board,
-              waitlist: [...result.board.waitlist, ...missing],
-            };
-            const nextAt = Math.max(result.board.updatedAt, localAt) + 1;
-            useAppStore.getState().applyRemoteBoard(merged, nextAt);
-            pushBoard(nextAt);
-            setStatus('ok');
-            return;
-          }
-          setStatus('offline');
-        });
-      }, 700);
-    };
-
-    const finishHydration = async () => {
-      if (started) return;
-      started = true;
-      setStatus('syncing');
-      const remote = await fetchRemoteBoard();
-      if (!remote) {
-        setStatus('offline');
-        hydrated.current = true;
-        return;
-      }
-
-      const localUpdatedAt = useAppStore.getState().boardUpdatedAt ?? 0;
-      if (remote.updatedAt > localUpdatedAt) {
-        useAppStore.getState().applyRemoteBoard(remote, remote.updatedAt);
-        const count = remote.waitlist.length + remote.team1.length + remote.team2.length;
-        if (count > 0) {
-          onNotice?.(`서버 보드 ${count}명을 불러왔습니다.`);
-        }
-        setStatus('ok');
-      } else if (localUpdatedAt > remote.updatedAt) {
-        const state = useAppStore.getState();
-        const pushed = await pushRemoteBoard(
-          boardSnapshotFromState(state),
-          state.boardUpdatedAt || Date.now()
-        );
-        if (!pushed.ok && 'unauthorized' in pushed && pushed.unauthorized) {
-          onUnauthorized?.();
-          return;
-        }
-        if (!pushed.ok && pushed.conflict) {
-          useAppStore.getState().applyRemoteBoard(pushed.board, pushed.board.updatedAt);
-          setStatus('ok');
-        } else if (!pushed.ok) {
-          setStatus('offline');
-        } else {
-          setStatus('ok');
-        }
-      } else {
-        setStatus('ok');
-      }
-      hydrated.current = true;
-    };
-
-    const pullRemote = async () => {
-      if (!hydrated.current || pulling.current || isApplyingRemoteBoard()) return;
-      if (pushTimer.current) return;
-      pulling.current = true;
-      try {
-        const remote = await fetchRemoteBoard();
-        if (!remote) return;
-        const localUpdatedAt = useAppStore.getState().boardUpdatedAt ?? 0;
-        if (remote.updatedAt <= localUpdatedAt) return;
-        clearPushTimer();
-        useAppStore.getState().applyRemoteBoard(remote, remote.updatedAt);
-        setStatus('ok');
-      } finally {
-        pulling.current = false;
-      }
-    };
-
-    const unsubHydrate = useAppStore.persist.onFinishHydration(() => {
-      void finishHydration();
-    });
-    if (useAppStore.persist.hasHydrated()) {
-      void finishHydration();
-    }
-
-    const unsub = useAppStore.subscribe((state, previous) => {
-      if (!hydrated.current || isApplyingRemoteBoard()) return;
-      // 명단 갱신으로 waitlist 참조만 바뀐 경우 push하지 않음 — boardUpdatedAt stamp만 신뢰
-      if (state.boardUpdatedAt === previous.boardUpdatedAt) return;
-      if (!boardChanged(state, previous)) return;
-      pushBoard(state.boardUpdatedAt || Date.now());
-    });
-
-    const pollTimer = window.setInterval(() => void pullRemote(), 5000);
-    const onFocus = () => void pullRemote();
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', onFocus);
-
-    return () => {
-      unsubHydrate();
-      unsub();
-      window.clearInterval(pollTimer);
-      window.removeEventListener('focus', onFocus);
-      document.removeEventListener('visibilitychange', onFocus);
-      clearPushTimer();
-    };
-  }, [onNotice, onUnauthorized]);
-
-  return status;
+import { RemoteBoard, fetchRemoteBoard, pushRemoteBoard, isBoardSyncConfigured, boardSnapshotFromState } from '../utils/boardSync';
+const adapter: SyncAdapter<RemoteBoard> = {
+  configured: isBoardSyncConfigured,
+  fetch: fetchRemoteBoard,
+  applying: isApplyingRemoteBoard,
+  timestamp: state => state.boardUpdatedAt,
+  changed: (state, previous) => state.boardUpdatedAt !== previous.boardUpdatedAt,
+  apply: remote => useAppStore.getState().applyRemoteBoard(remote, remote.updatedAt),
+  push: async (state, base) => {
+    const result = await pushRemoteBoard(boardSnapshotFromState(state), state.boardUpdatedAt, base);
+    if (result.ok) return result;
+    return { ok: false, ...('unauthorized' in result ? { unauthorized: result.unauthorized } : {}), ...(result.conflict ? { remote: result.board } : {}) };
+  },
+};
+export function useBoardSync(onNotice?: (message: string) => void, onUnauthorized?: () => void) {
+  return useSharedSync(adapter, onNotice, onUnauthorized);
 }

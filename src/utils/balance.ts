@@ -3,6 +3,7 @@ import { advantageSummary, getPlayerScore, rankScore, teamMaxScore, teamScore } 
 import { allyGroups, hasRivalConflict } from './relations';
 import { isBenched, isMatchLocked, normalizeLockedTeam } from './teamRules';
 
+import { prunePlayAts } from './playCount';
 import { MATCH_SIZE, TEAM_SIZE } from '../constants/game';
 /** 최적 대비 이 배수까지는 비슷한 밸런스로 보고 무작위로 고른다 */
 const COST_SLACK = 1.18;
@@ -138,7 +139,7 @@ function unitMustPlay(unit: Unit): boolean {
 
 function unitPlayCount(unit: Unit): number {
   if (unit.players.length === 0) return 0;
-  const total = unit.players.reduce((sum, player) => sum + (player.playCount ?? 0), 0);
+  const total = unit.players.reduce((sum, player) => sum + prunePlayAts(player.playAts).length, 0);
   return total / unit.players.length;
 }
 
@@ -427,7 +428,7 @@ function maybeSwapSides(candidate: Candidate): Candidate {
   };
 }
 
-export function autoBalanceTeams(
+function calculateBalance(
   team1: Player[],
   team2: Player[],
   waitlist: Player[],
@@ -508,4 +509,46 @@ export function autoBalanceTeams(
       ? `${mode} 밸런스 완료 · ${advantageSummary(best.team1, best.team2).text}`
       : `자동 밸런스 완료 · ${advantageSummary(best.team1, best.team2).text}`,
   };
+}
+
+/** Retry only failed draws; leave the weighted selection and score formula unchanged on success. */
+export function autoBalanceTeams(team1: Player[], team2: Player[], waitlist: Player[], focus: BalanceFocus = 'fair'): BalanceResult {
+  const first = calculateBalance(team1, team2, waitlist, focus);
+  if (first.ok) return first;
+  const all = [...team1, ...team2, ...waitlist];
+  const built = buildUnits(all);
+  if ('error' in built) return first;
+  const playable = built.filter(unit => !unitIsBenched(unit));
+  const units = [...playable.filter(unitMustPlay), ...playable.filter(unit => !unitMustPlay(unit))];
+  const target = Math.min(MATCH_SIZE, flatten(units).length);
+  const a: Player[] = [], b: Player[] = [];
+  const remaining = new Array<number>(units.length + 1).fill(0);
+  for (let i = units.length - 1; i >= 0; i--) remaining[i] = remaining[i + 1] + units[i].size;
+  let visits = 0;
+  const find = (at: number): boolean => {
+    if (++visits > 100000) return false;
+    const count = a.length + b.length;
+    if (count === target) return a.length > 0 && b.length > 0 && !units.slice(at).some(unitMustPlay);
+    if (at === units.length || count + remaining[at] < target) return false;
+    const unit = units[at];
+    for (const [team, side] of [[a, 'TEAM_1'], [b, 'TEAM_2']] as const) {
+      if (unit.forced && unit.forced !== side) continue;
+      if (team.length + unit.size > TEAM_SIZE || count + unit.size > target) continue;
+      if (hasRivalConflict([...team, ...unit.players])) continue;
+      team.push(...unit.players);
+      if (find(at + 1)) return true;
+      team.splice(team.length - unit.size);
+    }
+    return !unitMustPlay(unit) && find(at + 1);
+  };
+  if (!find(0)) return first;
+  const chosen = [...a, ...b];
+  const selected = new Set(chosen.map(player => player.id));
+  const result = calculateBalance([], [], chosen, focus);
+  if (!result.ok) return first;
+  const extras = all.filter(player => !selected.has(player.id));
+  return { ...result, waitlist: extras, details: [
+    ...(extras.length ? [namesOf(extras) + ' → 대기열 (한 판 10명 제한으로 제외)'] : []),
+    ...(result.details ?? []),
+  ] };
 }

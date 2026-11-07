@@ -31,7 +31,7 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
 
 export default function PlayerFormModal({ open, player, onClose, onNotice }: PlayerFormModalProps) {
   const {
-    formRef, name,
+    formRef, weaponRef, name,
     setName, riotId,
     setRiotId, currentTier,
     setCurrentTier, maxTier,
@@ -91,7 +91,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
         aria-labelledby="player-form-title"
         onSubmit={handleSubmit}
         onKeyDown={handleDialogKeyDown}
-        className="relative z-10 w-full max-w-lg overflow-visible rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
+        className="relative z-10 max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl border border-val-line bg-val-panel p-4 shadow-2xl sm:rounded-2xl sm:p-5"
       >
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 id="player-form-title" className="font-display text-xl font-bold text-val-cream">
@@ -145,6 +145,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               <p className={fieldLabel}>현재 티어</p>
               <SearchSelect
                 id="player-current-tier"
+                label="현재 티어"
                 options={RANK_OPTIONS}
                 value={ratingKey(currentTier)}
                 placeholder="티어 검색"
@@ -155,6 +156,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               <p className={fieldLabel}>최고 티어</p>
               <SearchSelect
                 id="player-max-tier"
+                label="최고 티어"
                 options={RANK_OPTIONS.filter((option) =>
                   isRatingAtLeast(parseRatingKey(option.value), currentTier)
                 )}
@@ -167,6 +169,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               <p className={fieldLabel}>내전 티어</p>
               <SearchSelect
                 id="player-internal-tier"
+                label="내전 티어"
                 options={RANK_OPTIONS}
                 value={internalTier ? ratingKey(internalTier) : null}
                 placeholder="강제 조정"
@@ -269,6 +272,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               <p className="mb-1.5 text-xs text-val-muted">같은 팀 불가</p>
               <SearchSelect
                 id="player-rivals"
+                label="라이벌"
                 options={otherPlayers
                   .filter((item) => !rivalIds.includes(item.id))
                   .map((item) => ({ value: item.id, label: item.name, searchText: item.name }))}
@@ -289,6 +293,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               <p className="mb-1.5 text-xs text-val-muted">같은 팀 묶기</p>
               <SearchSelect
                 id="player-allies"
+                label="고정 듀오"
                 options={otherPlayers
                   .filter((item) => !allyIds.includes(item.id))
                   .map((item) => ({ value: item.id, label: item.name, searchText: item.name }))}
@@ -333,6 +338,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             onClick={() => setWeaponPanelOpen(false)}
           />
           <div
+            ref={weaponRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="weapon-limit-title"

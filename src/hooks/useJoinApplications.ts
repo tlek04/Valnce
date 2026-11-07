@@ -7,11 +7,6 @@ import {
   fetchJoinQueue,
   rejectJoinApplication,
 } from '../utils/joinApi';
-import {
-  boardSnapshotFromState,
-  isBoardSyncConfigured,
-  pushRemoteBoard,
-} from '../utils/boardSync';
 import { normalizePlayer, toSavedPlayer, withAddNo } from '../utils/player';
 import { clearAllAuthTokens } from '../utils/streamerAuth';
 
@@ -101,38 +96,6 @@ function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>): numb
   return boardQueueNo(player.id);
 }
 
-async function flushBoardAfterJoin() {
-  if (!isBoardSyncConfigured()) return;
-  const state = useAppStore.getState();
-  const updatedAt = Math.max(state.boardUpdatedAt || 0, Date.now());
-  if (state.boardUpdatedAt !== updatedAt) {
-    state.setBoardUpdatedAt(updatedAt);
-  }
-  const result = await pushRemoteBoard(boardSnapshotFromState(useAppStore.getState()), updatedAt);
-  if (result.ok) return;
-  if (result.conflict) {
-    const local = boardSnapshotFromState(useAppStore.getState());
-    const remoteIds = new Set(
-      [...result.board.waitlist, ...result.board.team1, ...result.board.team2].map((row) => row.id)
-    );
-    const missing = [...local.waitlist, ...local.team1, ...local.team2].filter(
-      (row) => !remoteIds.has(row.id)
-    );
-    const merged = {
-      waitlist: [...result.board.waitlist, ...missing],
-      team1: result.board.team1,
-      team2: result.board.team2,
-      matchMapId: result.board.matchMapId,
-      attackSide: result.board.attackSide,
-      balanceNote: result.board.balanceNote,
-      balanceDetails: result.board.balanceDetails,
-    };
-    const nextAt = Math.max(result.board.updatedAt, updatedAt) + 1;
-    useAppStore.getState().applyRemoteBoard(merged, nextAt);
-    await pushRemoteBoard(merged, nextAt);
-  }
-}
-
 export function useJoinApplications(onNotice?: (message: string) => void, onUnauthorized?: () => void) {
   const applyRemoteRoster = useAppStore((state) => state.applyRemoteRoster);
   const [applications, setApplications] = useState<JoinApplication[]>([]);
@@ -193,7 +156,7 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
 
         const player = normalizePlayer(claimed.player);
         const boardNo = bringPlayerToWaitlist(player);
-        void flushBoardAfterJoin();
+
         onNotice?.(`${player.name} 기존 시청자 · 대기열 추가 (#${boardNo ?? '-'})`);
       } finally {
         claimingRef.current.delete(item.id);
@@ -235,7 +198,7 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
           result.roster.updatedAt
         );
       }
-      void flushBoardAfterJoin();
+
       onNotice?.(
         result.mmr === 'fallback'
           ? `${item.name} 승인 · 대기열 (#${boardNo ?? '-'}) · 티어 조회 실패(기본값)`

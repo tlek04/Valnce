@@ -22,7 +22,7 @@ export async function handleRoster(request: Request, env: RosterEnv): Promise<Re
     const denied = await requireStreamer(request, env);
     if (denied) return denied;
 
-    let body: Partial<RosterPayload>;
+    let body: Partial<RosterPayload> & { baseUpdatedAt?: number };
     try {
       body = (await request.json()) as Partial<RosterPayload>;
     } catch {
@@ -33,15 +33,16 @@ export async function handleRoster(request: Request, env: RosterEnv): Promise<Re
       return json({ error: 'players 배열이 필요합니다.' }, { status: 400 });
     }
 
-    const updatedAt = typeof body.updatedAt === 'number' ? body.updatedAt : Date.now();
+    let updatedAt = Date.now();
     const existing = (await env.ROSTER.get(ROSTER_KEY, 'json')) as RosterPayload | null;
-    if (existing && typeof existing.updatedAt === 'number' && existing.updatedAt > updatedAt) {
+    if ((body.baseUpdatedAt ?? 0) !== (existing?.updatedAt ?? 0)) {
       return json(
-        { ok: false, newer: true, updatedAt: existing.updatedAt, players: existing.players },
+        { ok: false, newer: true, updatedAt: existing?.updatedAt ?? 0, players: existing?.players ?? [] },
         { status: 409 }
       );
     }
 
+    updatedAt = Math.max(updatedAt, (existing?.updatedAt ?? 0) + 1);
     const payload: RosterPayload = {
       updatedAt,
       players: body.players,

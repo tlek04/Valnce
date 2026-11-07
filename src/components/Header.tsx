@@ -1,4 +1,4 @@
-import { PointerEvent, useRef, useState } from 'react';
+import { PointerEvent, useEffect, useRef, useState } from 'react';
 import { ClipboardCopy, HelpCircle, Map, RefreshCw, RotateCcw, Scale, Swords } from 'lucide-react';
 import { BalanceFocus } from '../types';
 import { useAppStore } from '../store/useAppStore';
@@ -50,6 +50,8 @@ export default function Header({
       holdTimerRef.current = null;
     }
   };
+
+  useEffect(() => () => clearHoldTimer(), []);
 
   const runTeamReset = () => {
     if (matchCount === 0) return;
