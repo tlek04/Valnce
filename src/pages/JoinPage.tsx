@@ -234,40 +234,58 @@ export default function JoinPage({ onBack }: JoinPageProps) {
     );
   }
 
+  const fieldLabel = 'mt-5 block text-sm font-semibold text-val-cream';
+  const fieldInput =
+    'mt-2 w-full rounded-lg border border-val-line bg-val-bg px-3.5 py-3 text-base text-val-cream placeholder:text-val-muted/50 outline-none transition focus:border-val-teal focus:ring-1 focus:ring-val-teal/40';
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-2xl border border-val-line bg-val-panel/80 p-6 shadow-xl"
+        className="w-full max-w-lg rounded-2xl border border-val-line bg-val-panel/90 p-6 shadow-xl sm:p-7"
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
-        <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청</h1>
-        <div className="mt-4 space-y-4 text-sm leading-relaxed text-val-muted">
-          <section aria-labelledby="join-requirements">
-            <h2 id="join-requirements" className="font-semibold text-val-cream">참가 전 확인</h2>
-            <p className="mt-1">성인(만 19세 이상)·마이크는 필수입니다. 함께 즐기는 내전인 만큼 독선적인 플레이나 태도는 피해 주세요.</p>
-          </section>
-          <section aria-labelledby="join-process" className="rounded-lg border border-val-line/80 bg-val-bg/60 px-3.5 py-3">
-            <h2 id="join-process" className="font-semibold text-val-cream">신청부터 참가까지</h2>
-            <ol className="mt-2 list-decimal space-y-2 pl-4">
-              <li>치지직 닉네임과 발로란트 닉네임#태그를 정확히 입력해 주세요. 오더 가능 여부도 선택할 수 있습니다.</li>
-              <li>처음 신청하거나 새 브라우저를 사용하면 스트리머 승인이 필요합니다. 이전에 승인받은 브라우저에서는 같은 계정으로 자동 합류할 수 있습니다.</li>
-              <li>신청 후 결과 화면에서 상태를 확인해 주세요. 티어는 API로 반영하며, 조회 실패나 보정이 필요하면 스트리머에게 알려 주세요.</li>
-            </ol>
-          </section>
-          <section aria-labelledby="join-selection">
-            <h2 id="join-selection" className="font-semibold text-val-cream">선발 안내</h2>
-            <ul className="mt-1.5 list-disc space-y-1.5 pl-4">
-              <li>승인은 이번 판 참가 확정이 아닙니다. 인원과 밸런스에 따라 대기할 수 있습니다.</li>
-              <li>추첨 때 치지직 채팅에 없으면 제외될 수 있습니다.</li>
-              <li>최근 24시간 참여 횟수가 적을수록 다음 판에 뽑힐 확률이 높아집니다.</li>
-              <li>2만 5천 치즈 후원 시 고정 멤버로 참가할 수 있습니다.</li>
-            </ul>
-          </section>
-          <p className="border-t border-val-line pt-3 text-xs">신청은 한 번만 눌러 주세요. 이미 신청했거나 참가 중이라는 안내가 나오면 반복 신청하지 말고 기존 상태를 확인하거나 스트리머에게 문의해 주세요. 연결 오류가 나면 잠시 후 다시 시도해 주세요.</p>
+        <h1 className="mt-2 font-display text-2xl font-bold text-val-cream sm:text-3xl">참가 신청</h1>
+        <p className="mt-3 text-sm leading-relaxed text-val-cream/80">
+          성인(만 19세 이상)·마이크 필수. 재미로 하는 내전이니 독선적인 플레이는 피해 주세요.
+        </p>
+
+        <div className="mt-5 rounded-xl border border-val-teal/25 bg-val-teal/[0.07] px-4 py-3.5">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-val-teal">안내</p>
+          <ul className="mt-2.5 space-y-2 text-sm leading-snug text-val-cream/90">
+            <li className="flex gap-2">
+              <span className="mt-0.5 shrink-0 text-val-teal" aria-hidden>
+                ·
+              </span>
+              <span>승인되어도 밸런스에 따라 이번 판에 못 들어갈 수 있습니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="mt-0.5 shrink-0 text-val-teal" aria-hidden>
+                ·
+              </span>
+              <span>밸런스 추첨 때 치지직 채팅에 없으면 제외될 수 있습니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="mt-0.5 shrink-0 text-val-teal" aria-hidden>
+                ·
+              </span>
+              <span>최근 24시간 참여가 적을수록 다음 판에 뽑힐 확률이 높아집니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="mt-0.5 shrink-0 text-val-teal" aria-hidden>
+                ·
+              </span>
+              <span>2만 5천 치즈 후원 시 고정 멤버로 참가할 수 있습니다.</span>
+            </li>
+          </ul>
         </div>
 
-        <label htmlFor="join-name" className="mt-6 block text-xs font-semibold text-val-muted">
+        <p className="mt-4 text-xs leading-relaxed text-val-muted">
+          닉네임#태그는 정확히 적어 주세요. 티어는 API로 자동 반영되며, 보정은 스트리머에게 말해 주세요. 신청은
+          한 번만 눌러 주세요.
+        </p>
+
+        <label htmlFor="join-name" className={fieldLabel}>
           치지직 닉네임
         </label>
         <input
@@ -275,10 +293,10 @@ export default function JoinPage({ onBack }: JoinPageProps) {
           value={name}
           onChange={(event) => setName(event.target.value)}
           required
-          className="mt-1.5 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none focus:border-val-teal"
+          className={fieldInput}
         />
 
-        <label htmlFor="join-riot-id" className="mt-4 block text-xs font-semibold text-val-muted">
+        <label htmlFor="join-riot-id" className={fieldLabel}>
           발로란트 닉네임#태그
         </label>
         <input
@@ -289,44 +307,47 @@ export default function JoinPage({ onBack }: JoinPageProps) {
           placeholder="닉네임#KR1"
           autoComplete="off"
           spellCheck={false}
-          className="mt-1.5 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none focus:border-val-teal"
+          className={fieldInput}
         />
 
-        <p className="mt-4 text-xs font-semibold text-val-muted">오더</p>
+        <p className={fieldLabel}>오더</p>
         <button
           type="button"
           aria-pressed={canOrder}
           onClick={() => setCanOrder((value) => !value)}
           className={
             canOrder
-              ? 'mt-1.5 rounded-md border border-val-teal/50 px-3 py-2 text-sm font-semibold text-val-cream transition-colors'
-              : 'mt-1.5 rounded-md border border-val-teal/15 px-3 py-2 text-sm text-val-teal/50 transition-colors'
+              ? 'mt-2 rounded-lg border border-val-teal/60 px-4 py-2.5 text-sm font-semibold text-val-cream transition-colors'
+              : 'mt-2 rounded-lg border border-val-line px-4 py-2.5 text-sm font-medium text-val-muted transition-colors hover:border-val-teal/40 hover:text-val-cream'
           }
           style={{
-            backgroundColor: canOrder ? 'rgba(15, 223, 195, 0.6)' : 'rgba(15, 223, 195, 0.08)',
+            backgroundColor: canOrder ? 'rgba(15, 223, 195, 0.55)' : 'rgba(15, 223, 195, 0.06)',
           }}
         >
           {canOrder ? '오더 가능' : '오더 불가능'}
         </button>
 
         {error && (
-          <p role="alert" className="mt-3 rounded-lg border border-val-warn/40 bg-val-warn/10 px-3 py-2 text-sm text-val-warn">
+          <p
+            role="alert"
+            className="mt-4 rounded-lg border border-val-warn/50 bg-val-warn/15 px-3.5 py-2.5 text-sm font-medium text-val-warn"
+          >
             신청 실패: {error}
           </p>
         )}
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-7 flex flex-wrap gap-2.5">
           <button
             type="submit"
             disabled={busy || !name.trim() || !hasCompleteRiotId(riotId)}
-            className="rounded-lg bg-val-teal/80 px-4 py-2.5 text-sm font-semibold text-val-bg hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg bg-val-teal px-5 py-3 text-sm font-bold text-val-bg hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {busy ? '신청 중…' : '신청하기'}
           </button>
           <button
             type="button"
             onClick={onBack}
-            className="rounded-lg border border-val-line px-4 py-2.5 text-sm font-semibold text-val-muted hover:text-val-cream"
+            className="rounded-lg border border-val-line px-5 py-3 text-sm font-semibold text-val-muted hover:border-val-cream/30 hover:text-val-cream"
           >
             뒤로
           </button>
