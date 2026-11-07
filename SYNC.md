@@ -38,7 +38,7 @@
 
 - KV `site-settings`: `showViewerCard`, `showStreamerCard`, `showMatchRecord`, `streamerAccessOpen`, `viewerAccessOpen` — 실패 시 표시는 캐시 유지, **세션 게이트는 닫힘(fail-closed)**
 - KV `auth:trusted-devices` + `X-Device-Id`: 세션 끊기·스트리머 OFF 예외. 상세는 [docs/AUTH.md](docs/AUTH.md)
-- Zustand persist `version` 5. `showMatchRecord`는 persist하지 않고 서버 설정만 사용
+- Zustand persist `version` 6. 명단만 저장(보드 로컬 캐시 없음). `showMatchRecord`는 persist하지 않고 서버 설정만 사용
 
 ## 로컬
 

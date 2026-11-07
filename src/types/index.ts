@@ -64,14 +64,21 @@ export interface SavedPlayer {
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
-  /** 보드 합류 시 복원 — 고정 시청자(MATCH) 등 */
-  lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | null;
+  /** 보드 합류 시 복원 — 고정 시청자(MATCH) 등. BENCH는 세션 전용이라 저장하지 않음 */
+  lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | 'BENCH' | null;
   /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
   wins: number;
   losses: number;
   /** 양수 연승, 음수 연패, 0 없음 */
   streak: number;
+  /**
+   * 최근 24시간 참여 시각(ms). 길이가 참여 횟수.
+   * `playCount`는 하위 호환용 파생값.
+   */
+  playAts?: number[];
+  /** @deprecated playAts 길이를 쓰세요. 구 데이터 호환 */
+  playCount?: number;
 }
 
 export interface Player {
@@ -82,8 +89,13 @@ export interface Player {
   internalTier?: RankRating;
   canOrder: boolean;
   restrictions: WeaponRestriction[];
-  /** TEAM_* = 해당 팀 고정, MATCH = 고정 시청자(1·2팀 중 무조건 배정). WAITLIST는 구 데이터→MATCH */
-  lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | null;
+  /**
+   * TEAM_* = 해당 팀 고정
+   * MATCH = 고정 시청자(1·2팀 중 무조건 배정)
+   * BENCH = 대기열 유지·이번 판 자동밸런스 제외
+   * WAITLIST = 구 데이터→MATCH
+   */
+  lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | 'BENCH' | null;
   rivalIds: string[];
   allyIds: string[];
   riotName?: string;
@@ -95,6 +107,10 @@ export interface Player {
   wins: number;
   losses: number;
   streak: number;
+  /** 최근 24시간 참여 시각(ms) */
+  playAts: number[];
+  /** 최근 24시간 참여 횟수(= playAts.length). 낮을수록 자동 밸런스 선발 확률↑ */
+  playCount: number;
 }
 
 /** 시청자 참가 신청 (승인 대기 또는 기존 명단 자동 대기열) */
@@ -132,7 +148,7 @@ export interface AppState {
   matchMapId: string | null;
   /** 공격 시작 팀. null이면 미추첨 */
   attackSide: 'TEAM_1' | 'TEAM_2' | null;
-  /** 오늘 보드를 마지막으로 저장한 시각. 2시간 안에 다시 열면 보드를 복구한다. */
+  /** @deprecated 보드 로컬 캐시 제거. 호환용으로만 남김 */
   sessionSavedAt: number | null;
   /** 기존 플레이어 명단이 마지막으로 바뀐 시각. 서버 동기화 비교용. */
   rosterUpdatedAt: number;
@@ -146,6 +162,9 @@ export interface AppState {
 
 export type ColumnId = 'waitlist' | 'team1' | 'team2';
 
+/** 자동 밸런스 선발·배정 편향 */
+export type BalanceFocus = 'fair' | 'high' | 'mid' | 'low';
+
 export interface AppActions {
   addPlayer: (player: Player) => string | undefined;
   updatePlayer: (id: string, updates: Partial<Player>) => string | undefined;
@@ -153,7 +172,7 @@ export interface AppActions {
   dismissPlayer: (id: string) => void;
   enlistPlayer: (id: string, to?: ColumnId, index?: number) => { ok: boolean; message?: string };
   movePlayer: (id: string, to: ColumnId, index?: number) => { ok: boolean; message?: string };
-  autoBalance: () => {
+  autoBalance: (focus?: BalanceFocus) => {
     ok: boolean;
     message: string;
     diff: number;

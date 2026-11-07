@@ -55,9 +55,9 @@ export const createBoardActions: ActionCreator<
     return { ok: true, message: result.message };
   },
 
-  autoBalance: () => {
+  autoBalance: (focus = 'fair') => {
     const { team1, team2, waitlist } = get();
-    const result = autoBalanceTeams(team1, team2, waitlist);
+    const result = autoBalanceTeams(team1, team2, waitlist, focus);
     if (result.ok) {
       const repaired = repairLocks(result);
       set(

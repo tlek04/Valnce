@@ -20,7 +20,9 @@
           "riotTag": "KR",
           "wins": 0,
           "losses": 0,
-          "streak": 0
+          "streak": 0,
+          "playAts": [],
+          "playCount": 0
         }
       ]
     },
@@ -141,7 +143,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -164,7 +166,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -194,7 +196,9 @@
             "riotTag": "KR",
             "wins": 0,
             "losses": 0,
-            "streak": 0
+            "streak": 0,
+            "playAts": [],
+            "playCount": 0
           }
         ]
       }
@@ -209,7 +213,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -231,7 +235,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -253,7 +257,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -275,7 +279,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -297,7 +301,7 @@
             "Authorization": "Bearer fake",
             "X-Device-Id": "test-device-id"
           },
-          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
+          "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}]}"
         }
       }
     ],
@@ -911,6 +915,8 @@
         "wins": 0,
         "losses": 0,
         "streak": 0,
+        "playAts": [],
+        "playCount": 0,
         "riotName": "seed",
         "riotTag": "KR"
       },

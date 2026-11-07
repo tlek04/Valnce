@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { JoinApplication } from '../types';
+import { JoinApplication, Player } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import {
   approveJoinApplication,
@@ -7,8 +7,12 @@ import {
   fetchJoinQueue,
   rejectJoinApplication,
 } from '../utils/joinApi';
-import { normalizePlayer, toSavedPlayer } from '../utils/player';
-import { withRemoteRosterApply } from '../utils/rosterApplyGuard';
+import {
+  boardSnapshotFromState,
+  isBoardSyncConfigured,
+  pushRemoteBoard,
+} from '../utils/boardSync';
+import { normalizePlayer, toSavedPlayer, withAddNo } from '../utils/player';
 import { clearAllAuthTokens } from '../utils/streamerAuth';
 
 function isAuthError(error?: string) {
@@ -27,21 +31,43 @@ function boardQueueNo(playerId: string): number | undefined {
   return found?.queueNo;
 }
 
+function isOnBoard(playerId: string): boolean {
+  const state = useAppStore.getState();
+  return [...state.waitlist, ...state.team1, ...state.team2].some((row) => row.id === playerId);
+}
+
+function forceAppendWaitlist(player: Player) {
+  useAppStore.setState((state) => {
+    const already = [...state.waitlist, ...state.team1, ...state.team2].some(
+      (row) => row.id === player.id
+    );
+    if (already) return state;
+    const { queueNo: _ticket, ...rest } = player;
+    const session = withAddNo(
+      { ...rest, canOrder: Boolean(player.canOrder) } as Player,
+      [state.waitlist, state.team1, state.team2]
+    );
+    const now = Date.now();
+    const hasSaved = state.players.some((item) => item.id === player.id);
+    return {
+      players: hasSaved ? state.players : [...state.players, toSavedPlayer(session)],
+      waitlist: [...state.waitlist, session],
+      boardUpdatedAt: now,
+      rosterUpdatedAt: hasSaved ? state.rosterUpdatedAt : now,
+    };
+  });
+}
+
 /** 신청 티켓 번호는 쓰지 않고, 오늘 보드에 올라가는 순서로 순번을 붙인다. */
 function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>): number | undefined {
   const state = useAppStore.getState();
-  const onBoard = [...state.waitlist, ...state.team1, ...state.team2].some(
-    (row) => row.id === player.id
-  );
-  const inRoster = state.players.some((row) => row.id === player.id);
   const { queueNo: _applicationTicket, ...withoutTicket } = player;
-  const profile = withoutTicket as typeof player;
+  const profile = { ...withoutTicket, canOrder: Boolean(player.canOrder) } as Player;
 
-  if (onBoard) {
-    // 이미 팀/대기열에 있으면 프로필만 갱신 — 기존 보드 순번·팀 위치 유지
+  if (isOnBoard(player.id)) {
     state.updatePlayer(player.id, {
       name: profile.name,
-      canOrder: Boolean(profile.canOrder),
+      canOrder: profile.canOrder,
       ...(profile.riotName ? { riotName: profile.riotName } : {}),
       ...(profile.riotTag ? { riotTag: profile.riotTag } : {}),
       currentTier: profile.currentTier,
@@ -49,6 +75,8 @@ function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>): numb
     });
     return boardQueueNo(player.id);
   }
+
+  const inRoster = state.players.some((row) => row.id === player.id);
   if (inRoster) {
     state.updatePlayer(player.id, {
       name: profile.name,
@@ -57,13 +85,52 @@ function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>): numb
       currentTier: profile.currentTier,
       maxTier: profile.maxTier,
     });
-    state.enlistPlayer(player.id, 'waitlist');
-    // enlist는 명단→세션 변환 시 canOrder가 빠지므로 보드에 올린 뒤 다시 붙인다
-    state.updatePlayer(player.id, { canOrder: Boolean(profile.canOrder) });
+    const enlisted = state.enlistPlayer(player.id, 'waitlist');
+    if (enlisted.ok && isOnBoard(player.id)) {
+      state.updatePlayer(player.id, { canOrder: profile.canOrder });
+    } else {
+      forceAppendWaitlist(profile);
+    }
     return boardQueueNo(player.id);
   }
-  state.addPlayer({ ...profile, canOrder: Boolean(profile.canOrder) });
+
+  state.addPlayer(profile);
+  if (!isOnBoard(player.id)) {
+    forceAppendWaitlist(profile);
+  }
   return boardQueueNo(player.id);
+}
+
+async function flushBoardAfterJoin() {
+  if (!isBoardSyncConfigured()) return;
+  const state = useAppStore.getState();
+  const updatedAt = Math.max(state.boardUpdatedAt || 0, Date.now());
+  if (state.boardUpdatedAt !== updatedAt) {
+    state.setBoardUpdatedAt(updatedAt);
+  }
+  const result = await pushRemoteBoard(boardSnapshotFromState(useAppStore.getState()), updatedAt);
+  if (result.ok) return;
+  if (result.conflict) {
+    const local = boardSnapshotFromState(useAppStore.getState());
+    const remoteIds = new Set(
+      [...result.board.waitlist, ...result.board.team1, ...result.board.team2].map((row) => row.id)
+    );
+    const missing = [...local.waitlist, ...local.team1, ...local.team2].filter(
+      (row) => !remoteIds.has(row.id)
+    );
+    const merged = {
+      waitlist: [...result.board.waitlist, ...missing],
+      team1: result.board.team1,
+      team2: result.board.team2,
+      matchMapId: result.board.matchMapId,
+      attackSide: result.board.attackSide,
+      balanceNote: result.board.balanceNote,
+      balanceDetails: result.board.balanceDetails,
+    };
+    const nextAt = Math.max(result.board.updatedAt, updatedAt) + 1;
+    useAppStore.getState().applyRemoteBoard(merged, nextAt);
+    await pushRemoteBoard(merged, nextAt);
+  }
 }
 
 export function useJoinApplications(onNotice?: (message: string) => void, onUnauthorized?: () => void) {
@@ -124,14 +191,10 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
           continue;
         }
 
-        let boardNo: number | undefined;
-        withRemoteRosterApply(() => {
-          const player = normalizePlayer(claimed.player);
-          boardNo = bringPlayerToWaitlist(player);
-        });
-        onNotice?.(
-          `${normalizePlayer(claimed.player).name} 기존 시청자 · 대기열 추가 (#${boardNo ?? '-'})`
-        );
+        const player = normalizePlayer(claimed.player);
+        const boardNo = bringPlayerToWaitlist(player);
+        void flushBoardAfterJoin();
+        onNotice?.(`${player.name} 기존 시청자 · 대기열 추가 (#${boardNo ?? '-'})`);
       } finally {
         claimingRef.current.delete(item.id);
       }
@@ -152,7 +215,6 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
     try {
       const result = await approveJoinApplication(item.id);
       if (!result.ok || !result.player) {
-        // 실패 시 목록 다시 맞춤
         void refreshApplications();
         if (isAccessClosedError(result.error)) return;
         if (isAuthError(result.error)) {
@@ -164,17 +226,16 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
       }
       if (result.items) applyQueueItems(result.items);
 
-      let boardNo: number | undefined;
-      withRemoteRosterApply(() => {
-        if (result.roster) {
-          applyRemoteRoster(
-            result.roster.players.map((row) => toSavedPlayer(row)),
-            result.roster.updatedAt
-          );
-        }
-        const player = normalizePlayer(result.player!);
-        boardNo = bringPlayerToWaitlist(player);
-      });
+      // 보드에 먼저 올린 뒤 명단을 맞춤 — 명단 반영이 대기열 추가를 막지 않게
+      const player = normalizePlayer(result.player);
+      const boardNo = bringPlayerToWaitlist(player);
+      if (result.roster) {
+        applyRemoteRoster(
+          result.roster.players.map((row) => toSavedPlayer(row)),
+          result.roster.updatedAt
+        );
+      }
+      void flushBoardAfterJoin();
       onNotice?.(
         result.mmr === 'fallback'
           ? `${item.name} 승인 · 대기열 (#${boardNo ?? '-'}) · 티어 조회 실패(기본값)`

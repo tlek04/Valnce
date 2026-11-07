@@ -1,6 +1,12 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { fetchJoinStatus, JoinStatus, submitJoinApplication } from '../utils/joinApi';
-import { loadJoinProfile, saveJoinProfile } from '../utils/joinProfile';
+import {
+  clearJoinSession,
+  loadJoinProfile,
+  loadJoinSession,
+  saveJoinProfile,
+  saveJoinSession,
+} from '../utils/joinProfile';
 import { fetchSiteSettings } from '../utils/siteSettings';
 import { formatRiotId, hasCompleteRiotId, parseRiotId } from '../utils/matchStats';
 
@@ -23,8 +29,9 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   const [canOrder, setCanOrder] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState<DoneState | null>(null);
+  const [done, setDone] = useState<DoneState | null>(() => loadJoinSession());
   const [joinOpen, setJoinOpen] = useState<boolean | null>(null);
+  const [restoring, setRestoring] = useState(() => Boolean(loadJoinSession()));
 
   useEffect(() => {
     let cancelled = false;
@@ -38,22 +45,55 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   }, []);
 
   useEffect(() => {
+    const session = loadJoinSession();
+    if (!session) {
+      setRestoring(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const result = await fetchJoinStatus(session.id);
+      if (cancelled) return;
+      if (!result.ok || !result.status) {
+        clearJoinSession();
+        setDone(null);
+        setRestoring(false);
+        return;
+      }
+      const next: DoneState = {
+        id: session.id,
+        queueNo: result.queueNo ?? session.queueNo,
+        name: result.name ?? session.name,
+        autoJoined: session.autoJoined,
+        status: result.status,
+      };
+      saveJoinSession(next);
+      setDone(next);
+      setRestoring(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!done || done.status !== 'pending') return;
     let cancelled = false;
     const tick = async () => {
       const result = await fetchJoinStatus(done.id);
       if (cancelled || !result.ok || !result.status) return;
       if (result.status === 'pending') return;
-      setDone((prev) =>
-        prev
-          ? {
-              ...prev,
-              status: result.status!,
-              queueNo: result.queueNo ?? prev.queueNo,
-              name: result.name ?? prev.name,
-            }
-          : prev
-      );
+      setDone((prev) => {
+        if (!prev) return prev;
+        const next = {
+          ...prev,
+          status: result.status!,
+          queueNo: result.queueNo ?? prev.queueNo,
+          name: result.name ?? prev.name,
+        };
+        saveJoinSession(next);
+        return next;
+      });
     };
     void tick();
     const timer = window.setInterval(() => void tick(), 3000);
@@ -65,6 +105,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (busy) return;
     setBusy(true);
     setError(null);
     const parsed = parseRiotId(riotId);
@@ -86,16 +127,24 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       return;
     }
     saveJoinProfile(profile);
-    setDone({
+    const next: DoneState = {
       id: result.application.id,
       queueNo: result.application.queueNo,
       name: result.application.name,
       autoJoined: Boolean(result.autoJoined),
       status: 'pending',
-    });
+    };
+    saveJoinSession(next);
+    setDone(next);
   };
 
-  if (joinOpen === null) {
+  const resetToForm = () => {
+    clearJoinSession();
+    setDone(null);
+    setError(null);
+  };
+
+  if (joinOpen === null || restoring) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
         <p className="text-sm text-val-muted">불러오는 중…</p>
@@ -143,7 +192,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
         ? '다른 닉네임으로 다시 신청하거나 스트리머에게 문의해 주세요.'
         : done.status === 'cancelled'
           ? '명단에서 찾을 수 없어 요청이 취소되었습니다.'
-          : '스트리머 보드 대기열을 확인해 주세요.';
+          : '이미 참가 중입니다. 보드에서 빠진 뒤에만 다시 신청할 수 있습니다.';
 
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
@@ -159,13 +208,24 @@ export default function JoinPage({ onBack }: JoinPageProps) {
           </p>
           <p className="mt-2 text-xs text-val-muted">{detail}</p>
           {waiting ? <p className="mt-3 text-xs text-val-teal/80">상태 확인 중…</p> : null}
-          <button
-            type="button"
-            onClick={onBack}
-            className="mt-6 rounded-lg border border-val-line px-4 py-2.5 text-sm font-semibold text-val-cream hover:bg-white/5"
-          >
-            처음으로
-          </button>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {!waiting ? (
+              <button
+                type="button"
+                onClick={resetToForm}
+                className="rounded-lg border border-val-line px-4 py-2.5 text-sm font-semibold text-val-cream hover:bg-white/5"
+              >
+                다시 신청
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={onBack}
+              className="rounded-lg border border-val-line px-4 py-2.5 text-sm font-semibold text-val-cream hover:bg-white/5"
+            >
+              처음으로
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -179,10 +239,22 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청</h1>
-        <p className="mt-2 text-sm leading-relaxed text-val-muted">
-          성인(만 19세 이상)만 참가할 수 있고, 마이크는 필수입니다. 치지직 닉네임·발로란트 닉네임#태그·오더 여부를
-          입력합니다. 티어는 API로 자동 설정되니, 추가 보정이 필요하면 스트리머에게 따로 말해 주세요.
-        </p>
+        <div className="mt-3 space-y-3 text-sm leading-relaxed text-val-muted">
+          <p>
+            재미로 하는 내전입니다. 독선적인 플레이·태도는 피해 주세요. 성인(만 19세 이상)·마이크는
+            필수입니다.
+          </p>
+          <p>
+            치지직 닉네임과 발로란트 닉네임#태그를 적어 주세요. 티어는 API로 자동 반영되며, 보정이
+            필요하면 스트리머에게 말해 주세요.
+          </p>
+          <ul className="space-y-1.5 rounded-lg border border-val-line/80 bg-val-bg/60 px-3.5 py-2.5 text-val-cream/85">
+            <li>승인되어도 밸런스에 따라 이번 판에 못 들어갈 수 있습니다.</li>
+            <li>밸런스 추첨 때 치지직 채팅에 없으면 제외될 수 있습니다.</li>
+            <li>최근 24시간 참여 횟수가 적을수록 다음 판에 뽑힐 확률이 높아집니다.</li>
+            <li>2만 5천 치즈 후원 시 고정 멤버로 참가할 수 있습니다.</li>
+          </ul>
+        </div>
 
         <label htmlFor="join-name" className="mt-6 block text-xs font-semibold text-val-muted">
           치지직 닉네임

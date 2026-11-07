@@ -1,9 +1,16 @@
 import { PointerEvent, useRef, useState } from 'react';
 import { ClipboardCopy, HelpCircle, Map, RefreshCw, RotateCcw, Scale, Swords } from 'lucide-react';
+import { BalanceFocus } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { copyText } from '../utils/copyText';
 import { formatMatchResultText } from '../utils/formatMatchResult';
 import AdminUnlockOverlay from './AdminUnlockOverlay';
+
+const FOCUS_BUTTONS: { focus: BalanceFocus; label: string; title: string }[] = [
+  { focus: 'high', label: '고티어', title: '고티어 위주 선발·고티어 분산 강화' },
+  { focus: 'mid', label: '중티어', title: '중티어 위주 선발·평균 맞춤 강화' },
+  { focus: 'low', label: '저티어', title: '저티어 위주 선발·분포 맞춤 강화' },
+];
 
 const ADMIN_HOLD_MS = 5000;
 
@@ -207,7 +214,7 @@ export default function Header({
               type="button"
               aria-label="자동 밸런스"
               onClick={() => {
-                const result = autoBalance();
+                const result = autoBalance('fair');
                 if (!result.ok) onNotice(result.message);
               }}
               disabled={!canBalance}
@@ -217,6 +224,24 @@ export default function Header({
               <Scale size={18} />
               자동 밸런스
             </button>
+            <div className="flex overflow-hidden rounded-lg border border-val-line/80">
+              {FOCUS_BUTTONS.map((item) => (
+                <button
+                  key={item.focus}
+                  type="button"
+                  title={item.title}
+                  aria-label={`${item.label} 위주 밸런스`}
+                  onClick={() => {
+                    const result = autoBalance(item.focus);
+                    if (!result.ok) onNotice(result.message);
+                  }}
+                  disabled={!canBalance}
+                  className="whitespace-nowrap border-r border-val-line/80 bg-val-panel/80 px-2.5 py-2.5 text-sm font-semibold text-val-cream last:border-r-0 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
             <div className="group relative">
               <button
                 type="button"
@@ -235,6 +260,7 @@ export default function Header({
                   <li className="whitespace-normal">2. 고티어일수록 점수 비중이 커집니다.</li>
                   <li className="whitespace-normal">3. 고티어는 양쪽에 나누고, 팀 점수 합을 맞춥니다.</li>
                   <li className="whitespace-normal">4. 최고 티어는 약한 가산만 합니다. 내전 티어가 있으면 무시합니다.</li>
+                  <li className="whitespace-normal">5. 고·중·저 티어 위주는 선발·배정 가중치만 바꿉니다.</li>
                 </ol>
               </div>
             </div>

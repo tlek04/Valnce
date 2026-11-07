@@ -1,6 +1,7 @@
 import { Env, BoardPayload } from './types';
 import { json } from './http';
 import { requireStreamer } from './auth';
+import { BOARD_TTL_MS, BOARD_TTL_SECONDS } from '../constants/game';
 
 export const BOARD_KEY = 'shared-board';
 export type BoardEnv = Pick<Env, 'ROSTER' | 'STREAMER_PASSWORD'>;
@@ -18,7 +19,7 @@ function emptyBoard(updatedAt = 0): BoardPayload {
   };
 }
 
-function normalizeStored(raw: BoardPayload | null): BoardPayload {
+function parseStored(raw: BoardPayload | null): BoardPayload {
   if (!raw || typeof raw !== 'object') return emptyBoard();
   return {
     updatedAt: typeof raw.updatedAt === 'number' ? raw.updatedAt : 0,
@@ -34,14 +35,37 @@ function normalizeStored(raw: BoardPayload | null): BoardPayload {
   };
 }
 
+function isBoardExpired(board: BoardPayload, now = Date.now()) {
+  return board.updatedAt > 0 && now - board.updatedAt > BOARD_TTL_MS;
+}
+
+function liveBoard(board: BoardPayload, now = Date.now()): BoardPayload {
+  return isBoardExpired(board, now) ? emptyBoard(0) : board;
+}
+
+/** 조인 중복 검사용 — 대기열·팀 전원 (24시간 만료 반영) */
+export async function readSharedBoard(env: Pick<Env, 'ROSTER'>): Promise<BoardPayload> {
+  if (!env.ROSTER) return emptyBoard();
+  const stored = (await env.ROSTER.get(BOARD_KEY, 'json')) as BoardPayload | null;
+  const parsed = parseStored(stored);
+  if (isBoardExpired(parsed) && typeof env.ROSTER.delete === 'function') {
+    await env.ROSTER.delete(BOARD_KEY);
+  }
+  return liveBoard(parsed);
+}
+
+export function boardSeats(board: BoardPayload) {
+  return [...board.waitlist, ...board.team1, ...board.team2];
+}
+
 export async function handleBoard(request: Request, env: BoardEnv): Promise<Response> {
   if (!env.ROSTER) {
     return json({ error: 'ROSTER KV가 연결되지 않았습니다.' }, { status: 503 });
   }
 
   if (request.method === 'GET') {
-    const stored = (await env.ROSTER.get(BOARD_KEY, 'json')) as BoardPayload | null;
-    return json(normalizeStored(stored));
+    const board = await readSharedBoard(env);
+    return json(board);
   }
 
   if (request.method === 'PUT') {
@@ -60,11 +84,10 @@ export async function handleBoard(request: Request, env: BoardEnv): Promise<Resp
     }
 
     const updatedAt = typeof body.updatedAt === 'number' ? body.updatedAt : Date.now();
-    const existing = normalizeStored(
-      (await env.ROSTER.get(BOARD_KEY, 'json')) as BoardPayload | null
-    );
-    if (existing.updatedAt > updatedAt) {
-      return json({ ok: false, newer: true, ...existing }, { status: 409 });
+    const raw = parseStored((await env.ROSTER.get(BOARD_KEY, 'json')) as BoardPayload | null);
+    // 만료된 보드는 빈 슬레이트로 보고 덮어쓴다. 살아 있는 보드만 LWW 409.
+    if (!isBoardExpired(raw) && raw.updatedAt > updatedAt) {
+      return json({ ok: false, newer: true, ...raw }, { status: 409 });
     }
 
     const payload: BoardPayload = {
@@ -80,7 +103,9 @@ export async function handleBoard(request: Request, env: BoardEnv): Promise<Resp
         ? body.balanceDetails.filter((item): item is string => typeof item === 'string')
         : [],
     };
-    await env.ROSTER.put(BOARD_KEY, JSON.stringify(payload));
+    await env.ROSTER.put(BOARD_KEY, JSON.stringify(payload), {
+      expirationTtl: BOARD_TTL_SECONDS,
+    });
     return json({ ok: true, updatedAt });
   }
 

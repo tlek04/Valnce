@@ -71,7 +71,23 @@ export function useBoardSync(
               pushBoard(localAt);
               return;
             }
-            useAppStore.getState().applyRemoteBoard(result.board, result.board.updatedAt);
+            // 원격이 앞서도 로컬에만 있는 인원(방금 승인 등)은 대기열에 합친다
+            const local = boardSnapshotFromState(useAppStore.getState());
+            const remoteIds = new Set(
+              [...result.board.waitlist, ...result.board.team1, ...result.board.team2].map(
+                (row) => row.id
+              )
+            );
+            const missing = [...local.waitlist, ...local.team1, ...local.team2].filter(
+              (row) => !remoteIds.has(row.id)
+            );
+            const merged = {
+              ...result.board,
+              waitlist: [...result.board.waitlist, ...missing],
+            };
+            const nextAt = Math.max(result.board.updatedAt, localAt) + 1;
+            useAppStore.getState().applyRemoteBoard(merged, nextAt);
+            pushBoard(nextAt);
             setStatus('ok');
             return;
           }
@@ -149,16 +165,10 @@ export function useBoardSync(
 
     const unsub = useAppStore.subscribe((state, previous) => {
       if (!hydrated.current || isApplyingRemoteBoard()) return;
+      // 명단 갱신으로 waitlist 참조만 바뀐 경우 push하지 않음 — boardUpdatedAt stamp만 신뢰
+      if (state.boardUpdatedAt === previous.boardUpdatedAt) return;
       if (!boardChanged(state, previous)) return;
-
-      const updatedAt =
-        state.boardUpdatedAt !== previous.boardUpdatedAt && state.boardUpdatedAt
-          ? state.boardUpdatedAt
-          : Date.now();
-      if (state.boardUpdatedAt === previous.boardUpdatedAt) {
-        useAppStore.getState().setBoardUpdatedAt(updatedAt);
-      }
-      pushBoard(updatedAt);
+      pushBoard(state.boardUpdatedAt || Date.now());
     });
 
     const pollTimer = window.setInterval(() => void pullRemote(), 5000);

@@ -107,12 +107,12 @@ export interface RestrictionOption {
   searchText: string;
 }
 
-const PRESET_RESTRICTIONS: RestrictionOption[] = [
+export const PRESET_RESTRICTIONS: RestrictionOption[] = [
   {
     value: 'PISTOL_ONLY',
     type: 'PISTOL_ONLY',
     label: '권총 전용',
-    short: '권총 전용',
+    short: '권총만',
     group: '세트',
     searchText: '권총 전용 pistol only 사이드암만',
   },
@@ -120,7 +120,7 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
     value: 'NO_RIFLE_OP',
     type: 'NO_RIFLE_OP',
     label: '밴달 / 팬텀 / 오퍼 금지',
-    short: '밴달 / 팬텀 / 오퍼 금지',
+    short: 'V/P/O',
     group: '세트',
     searchText: '밴달 팬텀 오퍼 라이플 vandal phantom operator',
   },
@@ -128,7 +128,7 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
     value: 'NO_SNIPER',
     type: 'NO_SNIPER',
     label: '오퍼 / 아웃로 금지',
-    short: '오퍼 / 아웃로 금지',
+    short: '저격',
     group: '세트',
     searchText: '오퍼 아웃로 마샬 저격 operator outlaw marshal sniper',
   },
@@ -136,7 +136,7 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
     value: 'NO_MACHINE',
     type: 'NO_MACHINE',
     label: '오딘 / 아레스 금지',
-    short: '기관총 금지',
+    short: 'LMG',
     group: '세트',
     searchText: '오딘 아레스 기관총 odin ares lmg',
   },
@@ -144,7 +144,7 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
     value: 'NO_JUDGE',
     type: 'NO_JUDGE',
     label: '저지 금지',
-    short: '저지 금지',
+    short: '저지',
     group: '세트',
     searchText: '저지 금지 judge 자동샷건',
   },
@@ -157,6 +157,9 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
     searchText: '직접 입력 커스텀 custom',
   },
 ];
+
+/** 카드·폼에서 바로 켜는 글로벌 밴 프리셋 (커스텀 제외) */
+export const QUICK_BAN_PRESETS = PRESET_RESTRICTIONS.filter((option) => option.type !== 'CUSTOM');
 
 export const WEAPON_RESTRICTION_OPTIONS: RestrictionOption[] = WEAPONS.map((weapon) => ({
   value: `weapon:${weapon.id}`,

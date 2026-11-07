@@ -10,6 +10,8 @@ import {
   groupLock,
   groupCanOccupy,
   groupConflictsWith,
+  canOccupy,
+  isBenched,
 } from './teamRules';
 
 export interface PlacementState {
@@ -160,6 +162,15 @@ function evictRivalsFromTeam(
 
 export function repairLocks(state: PlacementState): PlacementState {
   const next = cloneState(state);
+  // 벤치 인원은 팀 칸에 두지 않음
+  for (const column of ['team1', 'team2'] as const) {
+    const benched = next[column].filter((player) => !canOccupy(player, column));
+    for (const player of benched) {
+      const group = orderGroup(allyGroupOf(rosterOf(next), player.id), player.id);
+      const ids = new Set(group.map((item) => item.id));
+      takeAndInsert(next, ids, 'waitlist');
+    }
+  }
   for (const column of ['team1', 'team2'] as const) {
     const misplaced = next[column].filter((player) => {
       const lock = lockColumn(player);
@@ -228,6 +239,8 @@ function pickDestination(
 }
 
 function preferredColumn(state: PlacementState, group: Player[], player: Player): ColumnId {
+  if (group.some(isBenched)) return 'waitlist';
+
   const forced = groupLock(group);
   if (forced === 'conflict') return 'waitlist';
   if (forced) return forced;

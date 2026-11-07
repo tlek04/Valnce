@@ -131,6 +131,8 @@ export const createPlayerActions: ActionCreator<
                 wins: remote.wins,
                 losses: remote.losses,
                 streak: remote.streak,
+                playAts: remote.playAts ?? player.playAts ?? [],
+                playCount: remote.playCount ?? player.playCount ?? 0,
               };
             });
           return {

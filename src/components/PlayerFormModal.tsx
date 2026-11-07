@@ -1,6 +1,13 @@
 import { X } from 'lucide-react';
 import { Player } from '../types';
-import { RANK_OPTIONS, WEAPON_CATEGORY_STYLES, getRestrictionLabel, parseRatingKey, ratingKey } from '../constants/valorant';
+import {
+  QUICK_BAN_PRESETS,
+  RANK_OPTIONS,
+  WEAPON_CATEGORY_STYLES,
+  getRestrictionLabel,
+  parseRatingKey,
+  ratingKey,
+} from '../constants/valorant';
 import { isRatingAtLeast } from '../utils/rating';
 import { usePlayerForm } from '../hooks/usePlayerForm';
 import SearchSelect from './SearchSelect';
@@ -18,6 +25,7 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
   if (lockedTeam === 'TEAM_1') return '1팀에 추가';
   if (lockedTeam === 'TEAM_2') return '2팀에 추가';
   if (lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST') return '고정으로 추가';
+  if (lockedTeam === 'BENCH') return '벤치로 추가';
   return '대기열에 추가';
 }
 
@@ -44,7 +52,10 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
   if (!open) return null;
 
   const fieldLabel = 'mb-1.5 block text-base font-medium text-val-cream/90';
-  const toggleBtn = (active: boolean, tone: 'default' | 'sky' | 'red' | 'teal' = 'default') => {
+  const toggleBtn = (
+    active: boolean,
+    tone: 'default' | 'sky' | 'red' | 'teal' | 'warn' = 'default'
+  ) => {
     if (tone === 'sky') {
       return active
         ? 'rounded-md border border-sky-400/70 bg-sky-500/35 px-3 py-1.5 text-sm font-semibold text-sky-100 transition-colors'
@@ -59,6 +70,11 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
       return active
         ? 'rounded-md border border-val-red/70 bg-val-red/35 px-3 py-1.5 text-sm font-semibold text-red-100 transition-colors'
         : 'rounded-md border border-val-red/15 bg-val-red/[0.06] px-3 py-1.5 text-sm text-val-red/45 transition-colors hover:border-val-red/30 hover:bg-val-red/10 hover:text-val-red/70';
+    }
+    if (tone === 'warn') {
+      return active
+        ? 'rounded-md border border-val-warn/70 bg-val-warn/35 px-3 py-1.5 text-sm font-semibold text-amber-100 transition-colors'
+        : 'rounded-md border border-val-warn/20 bg-val-warn/[0.06] px-3 py-1.5 text-sm text-val-warn/50 transition-colors hover:border-val-warn/40 hover:bg-val-warn/10 hover:text-val-warn/80';
     }
     return active
       ? 'rounded-md border border-val-red bg-val-red/15 px-3 py-1.5 text-sm text-val-cream transition-colors'
@@ -204,19 +220,43 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             >
               고정
             </button>
+            <button
+              type="button"
+              aria-pressed={lockedTeam === 'BENCH'}
+              onClick={() => setLockedTeam((current) => (current === 'BENCH' ? null : 'BENCH'))}
+              className={toggleBtn(lockedTeam === 'BENCH', 'warn')}
+              title="대기열에 두고 이번 판 자동 밸런스에서 제외"
+            >
+              벤치
+            </button>
           </div>
 
           <div>
-            <p className={fieldLabel}>무기 제한</p>
-            <button
-              type="button"
-              onClick={() => setWeaponPanelOpen(true)}
-              className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-left text-sm text-val-cream hover:border-val-red/40"
-            >
-              {restrictions.length > 0
-                ? `선택 ${restrictions.length}개 · 제한 선택`
-                : '제한 선택'}
-            </button>
+            <p className={fieldLabel}>글로벌 밴</p>
+            <div className="flex flex-wrap gap-1.5">
+              {QUICK_BAN_PRESETS.map((option) => {
+                const active = selectedKeys.has(option.value);
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={active}
+                    title={option.label}
+                    onClick={() => toggleRestriction(option.value)}
+                    className={toggleBtn(active, 'warn')}
+                  >
+                    {option.short}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => setWeaponPanelOpen(true)}
+                className="rounded-md border border-val-line/60 bg-val-bg/50 px-3 py-1.5 text-sm text-val-muted transition-colors hover:border-val-line hover:text-val-cream"
+              >
+                무기 더보기
+              </button>
+            </div>
             <ChipList
               items={restrictions.map((item) => ({ id: item.id, label: getRestrictionLabel(item) }))}
               onRemove={(id) => setRestrictions((current) => current.filter((item) => item.id !== id))}
@@ -302,9 +342,9 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h3 id="weapon-limit-title" className="font-display text-lg font-bold text-val-cream">
-                  제한 선택
+                  글로벌 밴 · 무기
                 </h3>
-                <p className="mt-0.5 text-xs text-val-muted">버튼을 눌러 제한을 켜고 끕니다</p>
+                <p className="mt-0.5 text-xs text-val-muted">세트가 아니면 개별 무기를 골라 밴합니다</p>
               </div>
               <button
                 type="button"

@@ -1,6 +1,7 @@
 import { Env, JoinApplication, JoinQueuePayload, RosterPayload } from './types';
 import { json } from './http';
 import { requireStreamer } from './auth';
+import { boardSeats, readSharedBoard } from './board';
 import { ROSTER_KEY } from './roster';
 import { DEFAULT_RATING as DEFAULT_TIER } from '../constants/game';
 import { riotKey } from './identity';
@@ -153,6 +154,10 @@ function toSessionPlayer(saved: Record<string, unknown>, queueNo: number) {
     wins: typeof saved.wins === 'number' ? saved.wins : 0,
     losses: typeof saved.losses === 'number' ? saved.losses : 0,
     streak: typeof saved.streak === 'number' ? saved.streak : 0,
+    playAts: Array.isArray(saved.playAts)
+      ? saved.playAts.filter((item): item is number => typeof item === 'number')
+      : [],
+    playCount: typeof saved.playCount === 'number' && saved.playCount > 0 ? Math.floor(saved.playCount) : 0,
   };
 }
 
@@ -264,6 +269,36 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
       const queue = await readJoinQueue(env);
       const roster = (await env.ROSTER.get(ROSTER_KEY, 'json')) as RosterPayload | null;
       const rosterPlayers = asSavedPlayers(Array.isArray(roster?.players) ? roster!.players : []);
+      const seats = boardSeats(await readSharedBoard(env));
+
+      const onBoardAlready = (playerId?: string) =>
+        seats.some((raw) => {
+          if (!raw || typeof raw !== 'object') return false;
+          const seat = raw as {
+            id?: unknown;
+            name?: unknown;
+            riotName?: unknown;
+            riotTag?: unknown;
+          };
+          if (playerId && seat.id === playerId) return true;
+          if (
+            typeof seat.riotName === 'string' &&
+            typeof seat.riotTag === 'string' &&
+            riotKey(seat.riotName, seat.riotTag) === tagKey
+          ) {
+            return true;
+          }
+          return (
+            typeof seat.name === 'string' && seat.name.normalize('NFC').toLowerCase() === nameKey
+          );
+        });
+
+      const pendingSame = (playerId?: string) =>
+        queue.items.some((item) => {
+          if (playerId && item.playerId === playerId) return true;
+          if (riotKey(item.riotName, item.riotTag) === tagKey) return true;
+          return item.name.normalize('NFC').toLowerCase() === nameKey;
+        });
 
       const existingByRiot = rosterPlayers.find(
         (item) =>
@@ -273,12 +308,13 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
       );
 
       if (existingByRiot && typeof existingByRiot.id === 'string') {
-        const alreadyQueued = queue.items.some(
-          (item) =>
-            item.auto &&
-            (item.playerId === existingByRiot.id || riotKey(item.riotName, item.riotTag) === tagKey)
-        );
-        if (alreadyQueued) {
+        if (onBoardAlready(existingByRiot.id)) {
+          return json(
+            { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.' },
+            { status: 409 }
+          );
+        }
+        if (pendingSame(existingByRiot.id)) {
           return json({ ok: false, error: '이미 대기열 합류 요청이 있습니다.' }, { status: 409 });
         }
 
@@ -315,6 +351,13 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           updatedAt: Date.now(),
         });
         return json({ ok: true, application, autoJoined: true });
+      }
+
+      if (onBoardAlready()) {
+        return json(
+          { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.' },
+          { status: 409 }
+        );
       }
 
       const nameTaken =
@@ -414,6 +457,11 @@ async function buildApprovedResponse(
     wins: typeof found?.wins === 'number' ? found.wins : 0,
     losses: typeof found?.losses === 'number' ? found.losses : 0,
     streak: typeof found?.streak === 'number' ? found.streak : 0,
+    playAts: Array.isArray(found?.playAts)
+      ? found.playAts.filter((item): item is number => typeof item === 'number')
+      : [],
+    playCount:
+      typeof found?.playCount === 'number' && found.playCount > 0 ? Math.floor(found.playCount) : 0,
   };
   if (!found) {
     saved.currentTier = currentTier;

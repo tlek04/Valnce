@@ -16,7 +16,7 @@
 | `store/createBoardActions.ts` | 재등록·이동·자동 밸런스·팀 초기화 |
 | `store/createMatchActions.ts` | 승패 기록·수정·재계산 |
 | `store/playerState.ts` | 플레이어 조회, 명단 갱신, 보드 전체 갱신의 공통 처리 |
-| `store/persistence.ts` | 저장 데이터 복원, 중복 제거, 보드 유지 시간 처리 |
+| `store/persistence.ts` | 명단 로컬 복원·중복 제거 (보드는 persist하지 않음) |
 | `utils/balance.ts`, `placement.ts` | 자동 선발·배분과 수동 이동의 순수 계산 |
 | `utils/relations.ts`, `teamRules.ts` | 관계 그래프·라이벌·팀 고정·배치 가능 조건 |
 | `utils/player.ts`, `rating.ts`, `matchStats.ts` | 데이터 변환, 점수·표시 계산, 전적 계산 |
@@ -32,7 +32,7 @@
 - `players`는 재사용하는 저장 명단이고, `waitlist/team1/team2`는 오늘 보드다. 두 층을 무조건 한 객체로 합치지 않는다.
 - 보드의 최고·내전 티어, 관계, 무기 제한, 오더 여부, 순번은 세션 값이다.
 - 기존 명단에 대한 원격 응답은 명단에 반영한다. 공유 보드는 `/api/board` 폴링(last-write-wins)으로 기기 간 맞춘다.
-- 저장 키 `valorant-balancer-storage`, version 5, 보드 로컬 캐시 2시간 + 서버 `boardUpdatedAt` 우선. `showMatchRecord`는 persist 제외(서버 site-settings).
+- 저장 키 `valorant-balancer-storage`, version 6, 명단만 persist. 보드는 서버 `shared-board` 폴링. `showMatchRecord`는 persist 제외(서버 site-settings).
 - 자동 밸런스의 선발 순서, 동점 처리, 점수 가중치, 메시지 순서를 유지했다.
 - 명단·보드 동기화의 700ms 지연, 신청 목록의 5초 조회, 버튼으로만 실행하는 전적 조회를 유지했다.
 - `lastMatchSyncAt`은 현재 구현대로 실패한 조회 시도에서도 갱신된다. 성공 시각으로 의미를 바꾸지 않았다.
@@ -52,6 +52,6 @@ npm run check     # 테스트와 빌드를 순서대로 실행
 
 ## 기존 문서와의 관계
 
-`INTENT.md`는 현재 제품 의도(공유 보드 폴링·2시간 로컬 캐시·최고 티어 가산·site-settings·신뢰 기기)에 맞춰 갱신한다. `REVIEW.md`는 과거 리뷰 스냅샷이며 상단에 해결 상태를 표시한다.
+`INTENT.md`는 현재 제품 의도(공유 보드 폴링·명단 로컬 persist·최고 티어 가산·site-settings·신뢰 기기)에 맞춰 갱신한다. `REVIEW.md`는 과거 리뷰 스냅샷이며 상단에 해결 상태를 표시한다.
 
 추가 기능을 만들 때는 기존 동작을 확인한 뒤 해당 책임의 모듈에 추가하고, 대응 테스트를 함께 갱신한다. 단순 파일 길이를 줄이기 위한 분할이나 범용 추상화는 피한다.

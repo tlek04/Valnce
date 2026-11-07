@@ -6,13 +6,19 @@ export const fixedNow = 1793790000000;
 export function player(id, extra = {}) {
   return { id, name: id, currentTier: { tier: 'Gold', division: 2 },
     maxTier: { tier: 'Gold', division: 2 }, canOrder: false, restrictions: [],
-    lockedTeam: null, rivalIds: [], allyIds: [], wins: 0, losses: 0, streak: 0, ...extra };
+    lockedTeam: null, rivalIds: [], allyIds: [], wins: 0, losses: 0, streak: 0, playAts: [], playCount: 0, ...extra };
 }
 const clean = (value) => JSON.parse(JSON.stringify(value));
 const digest = (value) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
 export async function domainScenarios(root = 'src') {
-  const { autoBalanceTeams } = await loadSource(`${root}/utils/balance.ts`);
+  const balance = await loadSource(`${root}/utils/balance.ts`);
+  const { autoBalanceTeams, setBalanceRandom } = balance;
+  let balanceSeed = 42;
+  setBalanceRandom(() => {
+    balanceSeed = (balanceSeed * 1664525 + 1013904223) >>> 0;
+    return balanceSeed / 0x100000000;
+  });
   const { applyMove, applyRelationPlacement } = await loadSource(`${root}/utils/placement.ts`);
   const rating = await loadSource(`${root}/utils/rating.ts`);
   const data = await loadSource(`${root}/utils/player.ts`);
@@ -57,6 +63,7 @@ export async function domainScenarios(root = 'src') {
   const persisted = { players: [a, a, b], team1: [a], team2: [], waitlist: [b, a], sessionSavedAt: fixedNow,
     balanceNote: '기준', balanceDetails: ['상세'], rosterUpdatedAt: 100, lastMatchSyncAt: 50,
     showMatchRecord: true };
+  // 보드는 로컬 복구하지 않음 — 명단만
   output.restore = persistence.restorePersistedState(persisted);
   output.expired = persistence.restorePersistedState({ ...persisted, sessionSavedAt: fixedNow - 7200001 });
   output.legacy = data.toSavedPlayer({ id: 'legacy', name: ' 이름 ', currentTier: 'Gold-2', wins: 2.8, losses: -1 });
@@ -65,6 +72,12 @@ export async function domainScenarios(root = 'src') {
 
 export async function storeScenarios(root = 'src') {
   globalThis.localStorage = memoryStorage();
+  const { setBalanceRandom } = await loadSource(`${root}/utils/balance.ts`);
+  let balanceSeed = 99;
+  setBalanceRandom(() => {
+    balanceSeed = (balanceSeed * 1664525 + 1013904223) >>> 0;
+    return balanceSeed / 0x100000000;
+  });
   const { useAppStore: store } = await loadSource(`${root}/store/useAppStore.ts`);
   const output = [];
   const capture = (label, result) => output.push({ label, result, state: clean(store.getState()), storage: clean(JSON.parse(localStorage.getItem('valorant-balancer-storage'))) });
@@ -142,13 +155,13 @@ export async function serverScenarios(root = 'src') {
     attackSide: 'TEAM_1',
     balanceNote: null,
     balanceDetails: [],
-    updatedAt: 100,
+    updatedAt: fixedNow - 50,
   });
   await request('/api/board', 'PUT', {
     waitlist: [],
     team1: [],
     team2: [],
-    updatedAt: 99,
+    updatedAt: fixedNow - 100,
   });
   await request('/api/join', 'GET', undefined, false);
   await request('/api/join', 'POST', { name: '' }, false);
@@ -159,8 +172,31 @@ export async function serverScenarios(root = 'src') {
   await request('/api/join/missing/reject', 'POST');
   // existing roster riot → auto join (no approve)
   const autoJoined = await request('/api/join', 'POST', { name: 'viewer', riotName: 'nick', riotTag: 'KR' }, false);
+  // pending auto 중복 신청 거부
+  await request('/api/join', 'POST', { name: 'viewer', riotName: 'nick', riotTag: 'KR' }, false);
   await request(`/api/join/${autoJoined.application?.id}/claim`, 'POST');
   await request(`/api/join/${joined.application.id}/claim`, 'POST');
+  // 보드에 올린 뒤 재신청 거부
+  await request('/api/board', 'PUT', {
+    waitlist: [
+      {
+        id: autoJoined.application?.playerId || 'viewer-board',
+        name: 'viewer',
+        riotName: 'nick',
+        riotTag: 'KR',
+        currentTier: { tier: 'Gold', division: 2 },
+        maxTier: { tier: 'Gold', division: 2 },
+        wins: 0,
+        losses: 0,
+        streak: 0,
+        queueNo: 1,
+      },
+    ],
+    team1: [],
+    team2: [],
+    updatedAt: fixedNow + 10,
+  });
+  await request('/api/join', 'POST', { name: 'viewer', riotName: 'nick', riotTag: 'KR' }, false);
   const second = await request('/api/join', 'POST', { name: 'other', riotName: 'other', riotTag: 'KR' }, false);
   await request(`/api/join/${second.application.id}/reject`, 'POST');
   await request('/api/matches/import', 'POST', { seeds: [], roster: [] });

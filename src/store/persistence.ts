@@ -1,10 +1,7 @@
-import { AppState, Player, SavedPlayer } from '../types';
-import { toSavedPlayer, normalizePlayer, nextAddNo, readQueueNo } from '../utils/player';
-import { repairLocks } from '../utils/placement';
+import { AppState, SavedPlayer } from '../types';
+import { toSavedPlayer } from '../utils/player';
 
-/** 새로고침·창 종료 후 보드를 유지하는 시간. */
-export const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
-
+/** 명단만 로컬 복구. 보드는 서버 공유 보드 sync로만 채운다. */
 export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
   const seen = new Set<string>();
   const players: SavedPlayer[] = [];
@@ -24,7 +21,7 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     matchMapId: null,
     attackSide: null,
     sessionSavedAt: null,
-    rosterUpdatedAt: 0,
+    rosterUpdatedAt: typeof raw?.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
     boardUpdatedAt: 0,
     lastMatchSyncAt: typeof raw?.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
     // 서버 site-settings만 사용. persist 잔여 값은 무시하고 기본 켜짐(마운트 시 fetch로 덮음).
@@ -32,66 +29,7 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
   };
 }
 
-function readAttackSide(value: unknown): 'TEAM_1' | 'TEAM_2' | null {
-  return value === 'TEAM_1' || value === 'TEAM_2' ? value : null;
-}
-
-function readMatchMapId(value: unknown): string | null {
-  return typeof value === 'string' && value.trim() ? value : null;
-}
-
-
-function takeBoardColumn(list: unknown[] | undefined, used: Set<string>): Player[] {
-  const next: Player[] = [];
-  for (const item of list ?? []) {
-    const player = normalizePlayer(item);
-    if (used.has(player.id)) continue;
-    used.add(player.id);
-    next.push(player);
-  }
-  return next;
-}
-
-/** 기존 명단은 항상 복구하고, 보드는 2시간 안에 저장된 경우만 살린다. */
+/** @deprecated 보드 로컬 캐시 제거. hydrateLibrary와 동일. */
 export function restorePersistedState(raw: Partial<AppState> | undefined): AppState {
-  const library = hydrateLibrary(raw);
-  const savedAt = typeof raw?.sessionSavedAt === 'number' ? raw.sessionSavedAt : 0;
-  if (!raw || !savedAt || Date.now() - savedAt > SESSION_TTL_MS) {
-    return library;
-  }
-
-  const used = new Set<string>();
-  const repaired = repairLocks({
-    waitlist: takeBoardColumn(raw.waitlist as unknown[] | undefined, used),
-    team1: takeBoardColumn(raw.team1 as unknown[] | undefined, used),
-    team2: takeBoardColumn(raw.team2 as unknown[] | undefined, used),
-  });
-  const balanceDetails = Array.isArray(raw.balanceDetails)
-    ? raw.balanceDetails.filter((item): item is string => typeof item === 'string')
-    : [];
-
-  let next = nextAddNo([repaired.waitlist, repaired.team1, repaired.team2]);
-  const fillBoard = (list: Player[]): Player[] =>
-    list.map((player) => {
-      if (readQueueNo(player.queueNo)) return player;
-      const queueNo = next;
-      next += 1;
-      return { ...player, queueNo };
-    });
-
-  return {
-    players: library.players,
-    waitlist: fillBoard(repaired.waitlist),
-    team1: fillBoard(repaired.team1),
-    team2: fillBoard(repaired.team2),
-    balanceNote: typeof raw.balanceNote === 'string' ? raw.balanceNote : null,
-    balanceDetails,
-    matchMapId: readMatchMapId(raw.matchMapId),
-    attackSide: readAttackSide(raw.attackSide),
-    sessionSavedAt: savedAt,
-    rosterUpdatedAt: typeof raw.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
-    boardUpdatedAt: typeof raw.boardUpdatedAt === 'number' ? raw.boardUpdatedAt : 0,
-    lastMatchSyncAt: typeof raw.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
-    showMatchRecord: true,
-  };
+  return hydrateLibrary(raw);
 }

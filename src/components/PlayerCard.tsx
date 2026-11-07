@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
-import { Player } from '../types';
-import { TIER_STYLES, formatRating, getRestrictionLabel } from '../constants/valorant';
+import { Player, WeaponRestriction } from '../types';
+import { QUICK_BAN_PRESETS, TIER_STYLES, formatRating, restrictionKey } from '../constants/valorant';
 import { useAppStore } from '../store/useAppStore';
 import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
 import { playerScrimTier } from '../utils/rating';
@@ -39,6 +39,10 @@ function useEllipsisWhenOverflow<T extends HTMLElement>(text: string) {
   return { ref, overflow };
 }
 
+function stop(event: { stopPropagation: () => void }) {
+  event.stopPropagation();
+}
+
 export default function PlayerCard({
   player,
   onEdit,
@@ -49,6 +53,7 @@ export default function PlayerCard({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const inWaitlist = useAppStore((state) => state.waitlist.some((item) => item.id === player.id));
   const showMatchRecord = useAppStore((state) => state.showMatchRecord);
+  const updatePlayer = useAppStore((state) => state.updatePlayer);
   const roster = useAppStore((state) => [...state.waitlist, ...state.team1, ...state.team2]);
   const names = (ids: string[]) =>
     ids
@@ -57,27 +62,22 @@ export default function PlayerCard({
       .join(', ');
   const rivals = names(player.rivalIds ?? []);
   const allies = names(player.allyIds ?? []);
-  const restrictionLabels = (player.restrictions ?? []).map(getRestrictionLabel);
+  const selectedBanKeys = new Set((player.restrictions ?? []).map(restrictionKey));
   const scrimTier = playerScrimTier(player);
-  const lockLabel =
-    player.lockedTeam === 'TEAM_1'
-      ? '1팀 고정'
-      : player.lockedTeam === 'TEAM_2'
-        ? '2팀 고정'
-        : player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST'
-          ? '고정'
-          : null;
-  const lockTone =
+  const isMatch = player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST';
+  const isBench = player.lockedTeam === 'BENCH';
+  const teamLockLabel =
+    player.lockedTeam === 'TEAM_1' ? '1팀 고정' : player.lockedTeam === 'TEAM_2' ? '2팀 고정' : null;
+  const teamLockTone =
     player.lockedTeam === 'TEAM_1'
       ? 'border-sky-400/40 bg-sky-500/15 text-sky-300'
-      : player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST'
-        ? 'border-val-teal/40 bg-val-teal/15 text-val-teal'
-        : 'border-val-red/30 bg-val-red/10 text-val-red';
+      : 'border-val-red/30 bg-val-red/10 text-val-red';
   const streakLabel = formatStreak(player.streak);
   const hasRecord =
     showMatchRecord && (player.wins > 0 || player.losses > 0 || player.streak !== 0);
   const riotId = formatRiotId(player.riotName, player.riotTag);
   const queueNo = player.queueNo;
+  const playCount = player.playCount ?? 0;
   // 팀·대기열 동일. 대기열+내전만 뱃지 단독(현재·최고 숨김).
   const waitlistScrimOnly = inWaitlist && Boolean(scrimTier);
   const showCurrent = Boolean(scrimTier) && !inWaitlist;
@@ -85,6 +85,40 @@ export default function PlayerCard({
 
   const nameEllipsis = useEllipsisWhenOverflow<HTMLHeadingElement>(player.name);
   const riotEllipsis = useEllipsisWhenOverflow<HTMLParagraphElement>(riotId);
+
+  const setLock = (value: 'MATCH' | 'BENCH' | null) => {
+    updatePlayer(player.id, { lockedTeam: value });
+  };
+
+  const toggleQuickBan = (value: string) => {
+    const option = QUICK_BAN_PRESETS.find((item) => item.value === value);
+    if (!option) return;
+    const key = restrictionKey({ id: '', type: option.type, weaponId: option.weaponId });
+    const current = player.restrictions ?? [];
+    const existing = current.find((item) => restrictionKey(item) === key);
+    const next: WeaponRestriction[] = existing
+      ? current.filter((item) => item.id !== existing.id)
+      : [
+          ...current,
+          {
+            id: crypto.randomUUID(),
+            type: option.type,
+            weaponId: option.weaponId,
+          },
+        ];
+    updatePlayer(player.id, { restrictions: next });
+  };
+
+  const chipBtn = (active: boolean, tone: 'teal' | 'warn') => {
+    if (tone === 'teal') {
+      return active
+        ? 'rounded border border-val-teal/50 bg-val-teal/25 px-1.5 py-0.5 text-[11px] font-semibold text-val-teal'
+        : 'rounded border border-val-line/50 px-1.5 py-0.5 text-[11px] text-val-muted/70 hover:border-val-teal/40 hover:text-val-teal';
+    }
+    return active
+      ? 'rounded border border-val-warn/50 bg-val-warn/25 px-1.5 py-0.5 text-[11px] font-semibold text-val-warn'
+      : 'rounded border border-val-line/50 px-1.5 py-0.5 text-[11px] text-val-muted/70 hover:border-val-warn/40 hover:text-val-warn';
+  };
 
   return (
     <article
@@ -139,7 +173,7 @@ export default function PlayerCard({
                   <button
                     type="button"
                     className="rounded-md px-2 py-1 text-sm text-val-muted hover:bg-white/5"
-                    onPointerDown={(event) => event.stopPropagation()}
+                    onPointerDown={stop}
                     onClick={() => setConfirmDelete(false)}
                   >
                     취소
@@ -147,7 +181,7 @@ export default function PlayerCard({
                   <button
                     type="button"
                     className="rounded-md bg-val-red px-2 py-1 text-sm font-medium text-white hover:bg-val-red/90"
-                    onPointerDown={(event) => event.stopPropagation()}
+                    onPointerDown={stop}
                     onClick={() => onDelete(player.id)}
                   >
                     삭제
@@ -158,7 +192,7 @@ export default function PlayerCard({
                   type="button"
                   aria-label={`${player.name} 삭제`}
                   className="rounded-md p-1 text-val-muted hover:bg-val-red/10 hover:text-val-red"
-                  onPointerDown={(event) => event.stopPropagation()}
+                  onPointerDown={stop}
                   onClick={() => setConfirmDelete(true)}
                 >
                   <Trash2 size={16} />
@@ -174,7 +208,7 @@ export default function PlayerCard({
               type="button"
               aria-label={`${player.name} 수정`}
               className="rounded-md p-1 text-val-muted hover:bg-white/5 hover:text-val-cream"
-              onPointerDown={(event) => event.stopPropagation()}
+              onPointerDown={stop}
               onClick={() => onEdit(player)}
             >
               <Pencil size={18} />
@@ -195,11 +229,51 @@ export default function PlayerCard({
           ) : null}
         </div>
 
-        {(player.canOrder ||
-          lockLabel ||
-          restrictionLabels.length > 0 ||
-          rivals ||
-          allies) && (
+        {!overlay ? (
+          <>
+            <div aria-hidden />
+            <div className="col-span-2 flex flex-wrap items-center gap-1">
+              <button
+                type="button"
+                aria-pressed={isMatch}
+                title="이번 판 무조건 참가"
+                className={chipBtn(isMatch, 'teal')}
+                onPointerDown={stop}
+                onClick={() => setLock(isMatch ? null : 'MATCH')}
+              >
+                고정
+              </button>
+              <button
+                type="button"
+                aria-pressed={isBench}
+                title="대기열 유지 · 이번 판 제외"
+                className={chipBtn(isBench, 'warn')}
+                onPointerDown={stop}
+                onClick={() => setLock(isBench ? null : 'BENCH')}
+              >
+                벤치
+              </button>
+              {QUICK_BAN_PRESETS.map((option) => {
+                const active = selectedBanKeys.has(option.value);
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={active}
+                    title={option.label}
+                    className={chipBtn(active, 'warn')}
+                    onPointerDown={stop}
+                    onClick={() => toggleQuickBan(option.value)}
+                  >
+                    {option.short}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
+
+        {(player.canOrder || teamLockLabel || rivals || allies) && (
           <>
             <div aria-hidden />
             <div className="col-span-2 flex flex-wrap gap-1">
@@ -209,22 +283,14 @@ export default function PlayerCard({
                   오더
                 </span>
               )}
-              {lockLabel && (
+              {teamLockLabel ? (
                 <span
-                  className={`inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[11px] font-medium ${lockTone}`}
+                  className={`inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-[11px] font-medium ${teamLockTone}`}
                 >
                   <Lock size={11} />
-                  {lockLabel}
+                  {teamLockLabel}
                 </span>
-              )}
-              {restrictionLabels.map((label, index) => (
-                <span
-                  key={`${label}-${index}`}
-                  className="rounded border border-val-warn/35 bg-val-warn/10 px-1.5 py-0.5 text-[11px] font-medium text-val-warn"
-                >
-                  {label}
-                </span>
-              ))}
+              ) : null}
               {rivals && (
                 <span className="inline-flex items-center gap-0.5 rounded border border-val-red/35 bg-val-red/10 px-1.5 py-0.5 text-[11px] font-medium text-val-red">
                   <Swords size={11} />
@@ -240,6 +306,15 @@ export default function PlayerCard({
             </div>
           </>
         )}
+
+        <div className="col-span-3 flex justify-end">
+          <span
+            className="text-[11px] leading-none text-val-muted/80"
+            title="최근 24시간 내전 참여 횟수"
+          >
+            참여 {playCount}회
+          </span>
+        </div>
       </div>
     </article>
   );

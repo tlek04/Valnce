@@ -1,6 +1,7 @@
 import { Player, SavedPlayer, WeaponRestriction } from '../types';
 import { sameRating } from '../constants/valorant';
 import { normalizeMatchStats } from './matchStats';
+import { playCountFromAts, readPlayAts } from './playCount';
 import { cloneRating, ratingFromUnknown } from './rating';
 
 import { DEFAULT_RATING as FALLBACK } from '../constants/game';
@@ -60,7 +61,9 @@ export function normalizePlayer(raw: unknown): Player {
         ? data.lockedTeam
         : data.lockedTeam === 'MATCH' || data.lockedTeam === 'WAITLIST'
           ? 'MATCH'
-          : null,
+          : data.lockedTeam === 'BENCH'
+            ? 'BENCH'
+            : null,
     rivalIds: asStringArray(Array.isArray(data.rivalIds) && data.rivalIds.length > 0 ? data.rivalIds : data.rivalId),
     allyIds: asStringArray(data.allyIds),
     ...(riotName ? { riotName } : {}),
@@ -70,7 +73,13 @@ export function normalizePlayer(raw: unknown): Player {
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
+    ...playFields(data),
   };
+}
+
+function playFields(data: { playAts?: unknown; playCount?: unknown }) {
+  const playAts = readPlayAts(data);
+  return { playAts, playCount: playCountFromAts(playAts) };
 }
 
 export function readQueueNo(value: unknown): number | undefined {
@@ -106,6 +115,7 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
   const currentTier = ratingFromUnknown(data.currentTier, FALLBACK);
   const maxTier = ratingFromUnknown(data.maxTier, currentTier);
+  // BENCH는 오늘 판 전용 — 명단에는 저장하지 않음
   const lockedTeam =
     data.lockedTeam === 'TEAM_1' || data.lockedTeam === 'TEAM_2'
       ? data.lockedTeam
@@ -124,12 +134,14 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
+    ...playFields(data),
   };
 }
 
 export function toSessionPlayer(saved: SavedPlayer): Player {
   const currentTier = cloneRating(saved.currentTier);
   const maxTier = cloneRating(saved.maxTier ?? currentTier);
+  const play = playFields(saved);
   return {
     id: saved.id,
     name: saved.name,
@@ -146,5 +158,6 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     wins: saved.wins ?? 0,
     losses: saved.losses ?? 0,
     streak: saved.streak ?? 0,
+    ...play,
   };
 }

@@ -4,7 +4,8 @@ export type { JoinApplication, QualifyingMatch } from '../types';
 // Minimal binding contract used by this application (also implemented by API test doubles).
 export interface RosterStorage {
   get(key: string, type: 'json'): Promise<unknown>;
-  put(key: string, value: string): Promise<void>;
+  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+  delete?(key: string): Promise<void>;
 }
 
 export interface Env {

@@ -1,12 +1,19 @@
 import { Player, QualifyingMatch } from '../types';
 import { adjustMatchStat, applyMatchResult, recomputeStatsFromMatches } from '../utils/matchStats';
+import { appendPlayAt, playCountFromAts } from '../utils/playCount';
 import { toSavedPlayer } from '../utils/player';
 import { hasRiotIdentity } from '../utils/valorantMatch';
 import { resolvePlayer, replacePlayer, mapBoard } from './playerState';
 import { ActionCreator } from './actionTypes';
 
 function withResult(player: Player, result: 'win' | 'loss'): Player {
-  return { ...player, ...applyMatchResult(player, result) };
+  const playAts = appendPlayAt(player.playAts ?? []);
+  return {
+    ...player,
+    ...applyMatchResult(player, result),
+    playAts,
+    playCount: playCountFromAts(playAts),
+  };
 }
 
 export const createMatchActions: ActionCreator<

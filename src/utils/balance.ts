@@ -1,11 +1,28 @@
-import { Player } from '../types';
+import { BalanceFocus, Player } from '../types';
 import { advantageSummary, getPlayerScore, rankScore, teamMaxScore, teamScore } from './rating';
 import { allyGroups, hasRivalConflict } from './relations';
-import { isMatchLocked, normalizeLockedTeam } from './teamRules';
+import { isBenched, isMatchLocked, normalizeLockedTeam } from './teamRules';
 
 import { MATCH_SIZE, TEAM_SIZE } from '../constants/game';
-const MAX_WEIGHT = 0.55;
-const SPREAD_WEIGHT = 0.2;
+/** 최적 대비 이 배수까지는 비슷한 밸런스로 보고 무작위로 고른다 */
+const COST_SLACK = 1.18;
+const SUM_DIFF_SLACK = 120;
+
+type TierBand = 'high' | 'mid' | 'low';
+
+function costWeights(focus: BalanceFocus): { max: number; spread: number } {
+  if (focus === 'high') return { max: 0.95, spread: 0.15 };
+  if (focus === 'mid') return { max: 0.35, spread: 0.45 };
+  if (focus === 'low') return { max: 0.4, spread: 0.55 };
+  return { max: 0.55, spread: 0.2 };
+}
+
+function focusLabel(focus: BalanceFocus): string | null {
+  if (focus === 'high') return '고티어 위주';
+  if (focus === 'mid') return '중티어 위주';
+  if (focus === 'low') return '저티어 위주';
+  return null;
+}
 
 export interface BalanceResult {
   ok: boolean;
@@ -31,6 +48,21 @@ interface Candidate {
   sumDiff: number;
   maxDiff: number;
   spreadDiff: number;
+}
+
+/** 테스트에서 시드 고정용. 기본은 Math.random */
+let balanceRandom: () => number = Math.random;
+
+export function setBalanceRandom(fn: () => number) {
+  balanceRandom = fn;
+}
+
+export function resetBalanceRandom() {
+  balanceRandom = Math.random;
+}
+
+function rand() {
+  return balanceRandom();
 }
 
 function buildUnits(players: Player[]): Unit[] | { error: string } {
@@ -90,18 +122,41 @@ function isValidTeam(players: Player[], side: 'TEAM_1' | 'TEAM_2'): boolean {
   return players.every((player) => {
     const lock = normalizeLockedTeam(player.lockedTeam);
     if (!lock || lock === 'MATCH') return true;
+    if (lock === 'BENCH') return false;
     return lock === side;
   });
 }
 
+function unitIsBenched(unit: Unit): boolean {
+  return unit.players.some(isBenched);
+}
+
 function unitMustPlay(unit: Unit): boolean {
+  if (unitIsBenched(unit)) return false;
   return Boolean(unit.forced) || unit.players.some(isMatchLocked);
 }
 
-function unitPriority(unit: Unit, waitlistIds: Set<string>): number {
-  if (unitMustPlay(unit)) return 0;
-  if (unit.players.some((player) => waitlistIds.has(player.id))) return 1;
-  return 2;
+function unitPlayCount(unit: Unit): number {
+  if (unit.players.length === 0) return 0;
+  const total = unit.players.reduce((sum, player) => sum + (player.playCount ?? 0), 0);
+  return total / unit.players.length;
+}
+
+/** 참여 횟수가 낮을수록 가중치↑ */
+function playWeight(playCount: number): number {
+  return 1 / (1 + Math.max(0, playCount)) ** 2;
+}
+
+function pickWeighted<T>(items: T[], weightOf: (item: T) => number): T {
+  const weights = items.map(weightOf);
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  if (total <= 0) return items[Math.floor(rand() * items.length)]!;
+  let ticket = rand() * total;
+  for (let i = 0; i < items.length; i += 1) {
+    ticket -= weights[i];
+    if (ticket <= 0) return items[i]!;
+  }
+  return items[items.length - 1]!;
 }
 
 function teamSpread(players: Player[]): number {
@@ -113,8 +168,40 @@ function teamSpread(players: Player[]): number {
   return Math.sqrt(variance);
 }
 
-function candidateCost(candidate: Candidate): number {
-  return candidate.sumDiff + MAX_WEIGHT * candidate.maxDiff + SPREAD_WEIGHT * candidate.spreadDiff;
+function candidateCost(candidate: Candidate, focus: BalanceFocus = 'fair'): number {
+  const weights = costWeights(focus);
+  return candidate.sumDiff + weights.max * candidate.maxDiff + weights.spread * candidate.spreadDiff;
+}
+
+function buildTierBands(players: Player[]): Map<string, TierBand> {
+  const ranked = [...players].sort((a, b) => getPlayerScore(b) - getPlayerScore(a));
+  const bands = new Map<string, TierBand>();
+  if (ranked.length === 0) return bands;
+  const highCut = Math.max(1, Math.ceil(ranked.length / 3));
+  const lowStart = ranked.length - Math.max(1, Math.ceil(ranked.length / 3));
+  ranked.forEach((player, index) => {
+    if (index < highCut) bands.set(player.id, 'high');
+    else if (index >= lowStart) bands.set(player.id, 'low');
+    else bands.set(player.id, 'mid');
+  });
+  return bands;
+}
+
+function unitTierBand(unit: Unit, bands: Map<string, TierBand>): TierBand {
+  const counts = { high: 0, mid: 0, low: 0 };
+  for (const player of unit.players) {
+    counts[bands.get(player.id) ?? 'mid'] += 1;
+  }
+  if (counts.high >= counts.mid && counts.high >= counts.low) return 'high';
+  if (counts.low >= counts.mid && counts.low >= counts.high) return 'low';
+  return 'mid';
+}
+
+function focusSelectBoost(band: TierBand, focus: BalanceFocus): number {
+  if (focus === 'fair') return 1;
+  if (focus === 'high') return band === 'high' ? 3.2 : band === 'mid' ? 1 : 0.35;
+  if (focus === 'mid') return band === 'mid' ? 3.2 : 0.85;
+  return band === 'low' ? 3.2 : band === 'mid' ? 1 : 0.35;
 }
 
 function namesOf(players: Player[]): string {
@@ -133,7 +220,14 @@ function locateSide(player: Player, best: Candidate): 'TEAM_1' | 'TEAM_2' | null
   return null;
 }
 
-function explainBalance(best: Candidate, pool: Player[]): string {
+function hasTeamLock(players: Player[]): boolean {
+  return players.some((player) => {
+    const lock = normalizeLockedTeam(player.lockedTeam);
+    return lock === 'TEAM_1' || lock === 'TEAM_2';
+  });
+}
+
+function explainBalance(best: Candidate, pool: Player[], focus: BalanceFocus): string {
   const parts: string[] = [];
   const locked = pool.filter((player) => {
     const lock = normalizeLockedTeam(player.lockedTeam);
@@ -142,9 +236,12 @@ function explainBalance(best: Candidate, pool: Player[]): string {
   const matchLocked = pool.some(isMatchLocked);
   const allies = pool.some((player) => (player.allyIds ?? []).length > 0);
   const rivals = pool.some((player) => (player.rivalIds ?? []).length > 0);
+  const focusText = focusLabel(focus);
 
+  if (focusText) parts.push(focusText);
   if (locked.length > 0) parts.push('팀 고정 유지');
   if (matchLocked) parts.push('고정 포함');
+  if (pool.some(isBenched)) parts.push('벤치 제외');
   if (allies) parts.push('고정 듀오 유지');
   if (rivals) parts.push('라이벌 분리');
 
@@ -153,10 +250,16 @@ function explainBalance(best: Candidate, pool: Player[]): string {
 
   if (best.maxDiff <= 250) parts.push('고티어 분산');
   parts.push('점수 합 맞춤');
+  if (pool.some((player) => (player.playCount ?? 0) > 0)) parts.push('참여 횟수 반영');
   return parts.join(' · ');
 }
 
-function buildBalanceDetails(best: Candidate, selected: Player[], extras: Player[]): string[] {
+function buildBalanceDetails(
+  best: Candidate,
+  selected: Player[],
+  extras: Player[],
+  focus: BalanceFocus
+): string[] {
   const details: string[] = [];
   const onBoard = [...best.team1, ...best.team2];
   const byId = new Map(onBoard.map((player) => [player.id, player]));
@@ -222,13 +325,24 @@ function buildBalanceDetails(best: Candidate, selected: Player[], extras: Player
     details.push('최고 티어가 더 높은 인원은 약한 가산만 반영 (내전 티어가 있으면 무시)');
   }
 
+  const lowPlay = selected.filter((player) => (player.playCount ?? 0) === 0);
+  if (lowPlay.length > 0 && selected.some((player) => (player.playCount ?? 0) > 0)) {
+    details.push(`참여 적은 인원 우선 반영 (${namesOf(lowPlay.slice(0, 4))}${lowPlay.length > 4 ? '…' : ''})`);
+  }
+
+  const focusText = focusLabel(focus);
+  if (focusText) {
+    details.push(`${focusText}로 선발·배정 가중치를 조정`);
+  }
+
   return details;
 }
 
 function selectMatchPool(
   team1: Player[],
   team2: Player[],
-  waitlist: Player[]
+  waitlist: Player[],
+  focus: BalanceFocus
 ): { selected: Player[]; extras: Player[] } | { error: string } {
   const all = [...team1, ...team2, ...waitlist];
   if (all.length < 2) {
@@ -238,28 +352,40 @@ function selectMatchPool(
   const unitsOrError = buildUnits(all);
   if ('error' in unitsOrError) return unitsOrError;
 
-  const requiredUnits = unitsOrError.filter(unitMustPlay);
+  const benchedUnits = unitsOrError.filter(unitIsBenched);
+  const playableUnits = unitsOrError.filter((unit) => !unitIsBenched(unit));
+  const benchedPlayers = flatten(benchedUnits);
+
+  const requiredUnits = playableUnits.filter(unitMustPlay);
   const requiredSize = requiredUnits.reduce((sum, unit) => sum + unit.size, 0);
   if (requiredSize > MATCH_SIZE) {
     return { error: '팀 고정·고정 인원이 10명을 넘습니다.' };
   }
 
-  if (all.length <= MATCH_SIZE) {
-    return { selected: all, extras: [] };
+  const playablePlayers = flatten(playableUnits);
+  if (playablePlayers.length <= MATCH_SIZE) {
+    return { selected: playablePlayers, extras: benchedPlayers };
   }
 
-  const waitlistIds = new Set(waitlist.map((player) => player.id));
-  const optional = unitsOrError
-    .filter((unit) => !unitMustPlay(unit))
-    .sort((left, right) => unitPriority(left, waitlistIds) - unitPriority(right, waitlistIds));
-
+  const bands = buildTierBands(playablePlayers);
+  const optional = playableUnits.filter((unit) => !unitMustPlay(unit));
   const selectedUnits: Unit[] = [...requiredUnits];
   let count = requiredSize;
-  for (const unit of optional) {
-    if (count + unit.size > MATCH_SIZE) continue;
-    selectedUnits.push(unit);
-    count += unit.size;
-    if (count === MATCH_SIZE) break;
+  const remaining = [...optional];
+
+  while (count < MATCH_SIZE && remaining.length > 0) {
+    const slots = MATCH_SIZE - count;
+    const fitting = remaining.filter((unit) => unit.size <= slots);
+    if (fitting.length === 0) break;
+    const picked = pickWeighted(
+      fitting,
+      (unit) =>
+        playWeight(unitPlayCount(unit)) * focusSelectBoost(unitTierBand(unit, bands), focus)
+    );
+    selectedUnits.push(picked);
+    count += picked.size;
+    const at = remaining.findIndex((unit) => unit === picked);
+    if (at >= 0) remaining.splice(at, 1);
   }
 
   if (count !== MATCH_SIZE) {
@@ -276,13 +402,39 @@ function selectMatchPool(
   };
 }
 
+function pickNearBest(candidates: Candidate[], focus: BalanceFocus): Candidate {
+  const ranked = [...candidates].sort(
+    (a, b) => a.sizeDiff - b.sizeDiff || candidateCost(a, focus) - candidateCost(b, focus)
+  );
+  const best = ranked[0]!;
+  const bestCost = candidateCost(best, focus);
+  const near = ranked.filter(
+    (item) =>
+      item.sizeDiff === best.sizeDiff &&
+      candidateCost(item, focus) <= bestCost * COST_SLACK + 1e-6 &&
+      item.sumDiff <= best.sumDiff + SUM_DIFF_SLACK
+  );
+  return pickWeighted(near, () => 1);
+}
+
+function maybeSwapSides(candidate: Candidate): Candidate {
+  if (hasTeamLock(candidate.team1) || hasTeamLock(candidate.team2)) return candidate;
+  if (rand() >= 0.5) return candidate;
+  return {
+    ...candidate,
+    team1: candidate.team2,
+    team2: candidate.team1,
+  };
+}
+
 export function autoBalanceTeams(
   team1: Player[],
   team2: Player[],
-  waitlist: Player[]
+  waitlist: Player[],
+  focus: BalanceFocus = 'fair'
 ): BalanceResult {
   const empty = { team1, team2, waitlist };
-  const pool = selectMatchPool(team1, team2, waitlist);
+  const pool = selectMatchPool(team1, team2, waitlist, focus);
   if ('error' in pool) {
     return { ok: false, ...empty, diff: 0, message: pool.error };
   }
@@ -331,10 +483,7 @@ export function autoBalanceTeams(
     }
   }
 
-  const best = candidates.sort(
-    (a, b) => a.sizeDiff - b.sizeDiff || candidateCost(a) - candidateCost(b)
-  )[0];
-  if (!best) {
+  if (candidates.length === 0) {
     return {
       ok: false,
       ...empty,
@@ -343,8 +492,10 @@ export function autoBalanceTeams(
     };
   }
 
-  const reason = explainBalance(best, selected);
-  const details = buildBalanceDetails(best, selected, extras);
+  const best = maybeSwapSides(pickNearBest(candidates, focus));
+  const reason = explainBalance(best, selected, focus);
+  const details = buildBalanceDetails(best, selected, extras, focus);
+  const mode = focusLabel(focus);
   return {
     ok: true,
     team1: best.team1,
@@ -353,6 +504,8 @@ export function autoBalanceTeams(
     diff: best.sumDiff,
     reason,
     details,
-    message: `자동 밸런스 완료 · ${advantageSummary(best.team1, best.team2).text}`,
+    message: mode
+      ? `${mode} 밸런스 완료 · ${advantageSummary(best.team1, best.team2).text}`
+      : `자동 밸런스 완료 · ${advantageSummary(best.team1, best.team2).text}`,
   };
 }

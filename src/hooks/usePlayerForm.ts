@@ -166,6 +166,8 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
       wins: player?.wins ?? saved?.wins ?? 0,
       losses: player?.losses ?? saved?.losses ?? 0,
       streak: player?.streak ?? saved?.streak ?? 0,
+      playAts: player?.playAts ?? saved?.playAts ?? [],
+      playCount: player?.playCount ?? saved?.playCount ?? 0,
     };
     const message = player ? updatePlayer(player.id, payload) : addPlayer(payload);
     if (message) onNotice?.(message);
