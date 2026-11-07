@@ -55,7 +55,12 @@ export function normalizePlayer(raw: unknown): Player {
     ...(internalTier ? { internalTier } : {}),
     canOrder: Boolean(data.canOrder),
     restrictions: asRestrictions(data),
-    lockedTeam: data.lockedTeam === 'TEAM_1' || data.lockedTeam === 'TEAM_2' ? data.lockedTeam : null,
+    lockedTeam:
+      data.lockedTeam === 'TEAM_1' || data.lockedTeam === 'TEAM_2'
+        ? data.lockedTeam
+        : data.lockedTeam === 'MATCH' || data.lockedTeam === 'WAITLIST'
+          ? 'MATCH'
+          : null,
     rivalIds: asStringArray(Array.isArray(data.rivalIds) && data.rivalIds.length > 0 ? data.rivalIds : data.rivalId),
     allyIds: asStringArray(data.allyIds),
     ...(riotName ? { riotName } : {}),
@@ -101,6 +106,12 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
   const currentTier = ratingFromUnknown(data.currentTier, FALLBACK);
   const maxTier = ratingFromUnknown(data.maxTier, currentTier);
+  const lockedTeam =
+    data.lockedTeam === 'TEAM_1' || data.lockedTeam === 'TEAM_2'
+      ? data.lockedTeam
+      : data.lockedTeam === 'MATCH' || data.lockedTeam === 'WAITLIST'
+        ? 'MATCH'
+        : undefined;
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
     name: name || '플레이어',
@@ -108,6 +119,7 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     maxTier,
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
+    ...(lockedTeam ? { lockedTeam } : {}),
     ...(data.matchSeed ? { matchSeed: true } : {}),
     wins: stats.wins,
     losses: stats.losses,
@@ -125,7 +137,7 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     maxTier,
     canOrder: false,
     restrictions: [],
-    lockedTeam: null,
+    lockedTeam: saved.lockedTeam ?? null,
     rivalIds: [],
     allyIds: [],
     ...(saved.riotName ? { riotName: saved.riotName } : {}),

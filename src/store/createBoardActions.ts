@@ -1,3 +1,4 @@
+import { pickRandomAttackSide, pickRandomMap } from '../constants/maps';
 import { ColumnId } from '../types';
 import { autoBalanceTeams } from '../utils/balance';
 import { applyMove, repairLocks } from '../utils/placement';
@@ -6,7 +7,9 @@ import { sortPlayersByTier } from '../utils/rating';
 import { findPlayer } from './playerState';
 import { ActionCreator } from './actionTypes';
 
-export const createBoardActions: ActionCreator<'enlistPlayer' | 'movePlayer' | 'autoBalance' | 'resetTeams'> = (set, get) => ({
+export const createBoardActions: ActionCreator<
+  'enlistPlayer' | 'movePlayer' | 'autoBalance' | 'resetTeams' | 'drawRandomMap' | 'drawAttackSide'
+> = (set, get) => ({
   enlistPlayer: (id, to: ColumnId = 'waitlist', index) => {
     const state = get();
     const saved = state.players.find((item) => item.id === id);
@@ -69,7 +72,22 @@ export const createBoardActions: ActionCreator<'enlistPlayer' | 'movePlayer' | '
       team2: [],
       balanceNote: null,
       balanceDetails: [],
+      matchMapId: null,
+      attackSide: null,
       sessionSavedAt: Date.now(),
     })),
+
+  drawRandomMap: () => {
+    const picked = pickRandomMap(get().matchMapId);
+    set({ matchMapId: picked.id });
+    return { mapId: picked.id, label: picked.nameKo };
+  },
+
+  drawAttackSide: () => {
+    const attackSide = pickRandomAttackSide();
+    set({ attackSide });
+    const label = attackSide === 'TEAM_1' ? '1팀 공격 · 2팀 수비' : '2팀 공격 · 1팀 수비';
+    return { attackSide, label };
+  },
 
 });

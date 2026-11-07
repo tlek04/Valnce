@@ -2,7 +2,15 @@ import { ColumnId, Player } from '../types';
 import { allyGroupOf, areRivals, hasRivalConflict, orderGroup } from './relations';
 
 import { TEAM_SIZE as TEAM_LIMIT } from '../constants/game';
-import { isTeam, opposite, teamLabel, lockColumn, groupLock, groupCanOccupy, groupConflictsWith } from './teamRules';
+import {
+  isTeam,
+  opposite,
+  teamLabel,
+  lockColumn,
+  groupLock,
+  groupCanOccupy,
+  groupConflictsWith,
+} from './teamRules';
 
 export interface PlacementState {
   waitlist: Player[];

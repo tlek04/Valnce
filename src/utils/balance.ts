@@ -1,6 +1,7 @@
 import { Player } from '../types';
 import { advantageSummary, getPlayerScore, rankScore, teamMaxScore, teamScore } from './rating';
 import { allyGroups, hasRivalConflict } from './relations';
+import { isMatchLocked, normalizeLockedTeam } from './teamRules';
 
 import { MATCH_SIZE, TEAM_SIZE } from '../constants/game';
 const MAX_WEIGHT = 0.55;
@@ -41,16 +42,20 @@ function buildUnits(players: Player[]): Unit[] | { error: string } {
     if (hasRivalConflict(group)) {
       return { error: '고정 듀오와 라이벌이 충돌합니다.' };
     }
-    const locks = [...new Set(group.map((player) => player.lockedTeam).filter(Boolean))] as Array<
-      'TEAM_1' | 'TEAM_2'
-    >;
-    if (locks.length > 1) {
+    const teamLocks = [
+      ...new Set(
+        group
+          .map((player) => normalizeLockedTeam(player.lockedTeam))
+          .filter((lock): lock is 'TEAM_1' | 'TEAM_2' => lock === 'TEAM_1' || lock === 'TEAM_2')
+      ),
+    ];
+    if (teamLocks.length > 1) {
       return { error: '고정 듀오 플레이어의 팀 고정이 서로 다릅니다.' };
     }
     units.push({
       players: group,
       size: group.length,
-      forced: locks[0],
+      forced: teamLocks[0],
     });
   }
   return units;
@@ -82,11 +87,19 @@ function flatten(units: Unit[]): Player[] {
 function isValidTeam(players: Player[], side: 'TEAM_1' | 'TEAM_2'): boolean {
   if (players.length === 0 || players.length > TEAM_SIZE) return false;
   if (hasRivalConflict(players)) return false;
-  return players.every((player) => !player.lockedTeam || player.lockedTeam === side);
+  return players.every((player) => {
+    const lock = normalizeLockedTeam(player.lockedTeam);
+    if (!lock || lock === 'MATCH') return true;
+    return lock === side;
+  });
+}
+
+function unitMustPlay(unit: Unit): boolean {
+  return Boolean(unit.forced) || unit.players.some(isMatchLocked);
 }
 
 function unitPriority(unit: Unit, waitlistIds: Set<string>): number {
-  if (unit.forced) return 0;
+  if (unitMustPlay(unit)) return 0;
   if (unit.players.some((player) => waitlistIds.has(player.id))) return 1;
   return 2;
 }
@@ -122,11 +135,16 @@ function locateSide(player: Player, best: Candidate): 'TEAM_1' | 'TEAM_2' | null
 
 function explainBalance(best: Candidate, pool: Player[]): string {
   const parts: string[] = [];
-  const locked = pool.filter((player) => player.lockedTeam === 'TEAM_1' || player.lockedTeam === 'TEAM_2');
+  const locked = pool.filter((player) => {
+    const lock = normalizeLockedTeam(player.lockedTeam);
+    return lock === 'TEAM_1' || lock === 'TEAM_2';
+  });
+  const matchLocked = pool.some(isMatchLocked);
   const allies = pool.some((player) => (player.allyIds ?? []).length > 0);
   const rivals = pool.some((player) => (player.rivalIds ?? []).length > 0);
 
   if (locked.length > 0) parts.push('팀 고정 유지');
+  if (matchLocked) parts.push('고정 시청자 포함');
   if (allies) parts.push('고정 듀오 유지');
   if (rivals) parts.push('라이벌 분리');
 
@@ -148,10 +166,14 @@ function buildBalanceDetails(best: Candidate, selected: Player[], extras: Player
   }
 
   for (const player of selected) {
-    if (player.lockedTeam !== 'TEAM_1' && player.lockedTeam !== 'TEAM_2') continue;
+    const lock = normalizeLockedTeam(player.lockedTeam);
     const side = locateSide(player, best);
     if (!side) continue;
-    details.push(`${player.name} → ${sideLabel(side)} (팀 고정)`);
+    if (lock === 'TEAM_1' || lock === 'TEAM_2') {
+      details.push(`${player.name} → ${sideLabel(side)} (팀 고정)`);
+    } else if (lock === 'MATCH') {
+      details.push(`${player.name} → ${sideLabel(side)} (고정 시청자)`);
+    }
   }
 
   for (const group of allyGroups(selected)) {
@@ -216,9 +238,10 @@ function selectMatchPool(
   const unitsOrError = buildUnits(all);
   if ('error' in unitsOrError) return unitsOrError;
 
-  const lockedPlayers = all.filter((player) => player.lockedTeam === 'TEAM_1' || player.lockedTeam === 'TEAM_2');
-  if (lockedPlayers.length > MATCH_SIZE) {
-    return { error: '고정된 인원이 10명을 넘습니다.' };
+  const requiredUnits = unitsOrError.filter(unitMustPlay);
+  const requiredSize = requiredUnits.reduce((sum, unit) => sum + unit.size, 0);
+  if (requiredSize > MATCH_SIZE) {
+    return { error: '팀 고정·고정 시청자 인원이 10명을 넘습니다.' };
   }
 
   if (all.length <= MATCH_SIZE) {
@@ -226,13 +249,13 @@ function selectMatchPool(
   }
 
   const waitlistIds = new Set(waitlist.map((player) => player.id));
-  const ordered = [...unitsOrError].sort(
-    (left, right) => unitPriority(left, waitlistIds) - unitPriority(right, waitlistIds)
-  );
+  const optional = unitsOrError
+    .filter((unit) => !unitMustPlay(unit))
+    .sort((left, right) => unitPriority(left, waitlistIds) - unitPriority(right, waitlistIds));
 
-  const selectedUnits: Unit[] = [];
-  let count = 0;
-  for (const unit of ordered) {
+  const selectedUnits: Unit[] = [...requiredUnits];
+  let count = requiredSize;
+  for (const unit of optional) {
     if (count + unit.size > MATCH_SIZE) continue;
     selectedUnits.push(unit);
     count += unit.size;
@@ -241,7 +264,7 @@ function selectMatchPool(
 
   if (count !== MATCH_SIZE) {
     return {
-      error: '고정 듀오 때문에 10명을 고를 수 없습니다. 묶기를 조정한 뒤 다시 시도하세요.',
+      error: '고정 듀오·고정 시청자 때문에 10명을 고를 수 없습니다. 묶기를 조정한 뒤 다시 시도하세요.',
     };
   }
 

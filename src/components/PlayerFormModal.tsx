@@ -17,6 +17,7 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
   if (player) return '수정 저장';
   if (lockedTeam === 'TEAM_1') return '1팀에 추가';
   if (lockedTeam === 'TEAM_2') return '2팀에 추가';
+  if (lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST') return '고정 시청자로 추가';
   return '대기열에 추가';
 }
 
@@ -190,6 +191,18 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               className={toggleBtn(lockedTeam === 'TEAM_2', 'red')}
             >
               2팀 고정
+            </button>
+            <button
+              type="button"
+              aria-pressed={lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST'}
+              onClick={() =>
+                setLockedTeam((current) =>
+                  current === 'MATCH' || current === 'WAITLIST' ? null : 'MATCH'
+                )
+              }
+              className={toggleBtn(lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST', 'teal')}
+            >
+              고정 시청자
             </button>
           </div>
 

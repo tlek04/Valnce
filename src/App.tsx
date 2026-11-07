@@ -18,7 +18,8 @@ type Route = 'landing' | 'gate' | 'manage' | 'admin' | 'join';
 function pathToRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/manage') {
-    if (!getStreamerToken()) return 'gate';
+    // 스트리머 또는 관리자 토큰이면 매니지 진입(staff API는 admin Bearer도 허용)
+    if (!getStreamerToken() && !getAdminToken()) return 'gate';
     return 'manage';
   }
   if (path === '/admin') {

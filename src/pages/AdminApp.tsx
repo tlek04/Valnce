@@ -53,7 +53,9 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const [clearConfirm, setClearConfirm] = useState('');
   const [syncBusy, setSyncBusy] = useState(false);
   const [showViewerCard, setShowViewerCard] = useState(true);
+  const [showStreamerCard, setShowStreamerCard] = useState(true);
   const [streamerAccessOpen, setStreamerAccessOpen] = useState(true);
+  const [viewerAccessOpen, setViewerAccessOpen] = useState(true);
   const [settingsBusy, setSettingsBusy] = useState(false);
   const [thisPcTrusted, setThisPcTrusted] = useState(false);
   const [trustBusy, setTrustBusy] = useState(false);
@@ -88,8 +90,10 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
       if (cancelled) return;
       setShowViewerCard(settings.showViewerCard);
+      setShowStreamerCard(settings.showStreamerCard);
       setShowMatchRecord(settings.showMatchRecord);
       setStreamerAccessOpen(settings.streamerAccessOpen);
+      setViewerAccessOpen(settings.viewerAccessOpen);
       let isTrusted = trusted;
       if (!trusted) {
         const registered = await trustThisDevice('이 PC');
@@ -299,7 +303,13 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   };
 
   const saveSiteSetting = async (
-    patch: Partial<{ showViewerCard: boolean; showMatchRecord: boolean; streamerAccessOpen: boolean }>,
+    patch: Partial<{
+      showViewerCard: boolean;
+      showStreamerCard: boolean;
+      showMatchRecord: boolean;
+      streamerAccessOpen: boolean;
+      viewerAccessOpen: boolean;
+    }>,
     revert: () => void,
     successMessage: string
   ) => {
@@ -319,8 +329,10 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     }
     if (result.settings) {
       setShowViewerCard(result.settings.showViewerCard);
+      setShowStreamerCard(result.settings.showStreamerCard);
       setShowMatchRecord(result.settings.showMatchRecord);
       setStreamerAccessOpen(result.settings.streamerAccessOpen);
+      setViewerAccessOpen(result.settings.viewerAccessOpen);
     }
     showNotice(successMessage);
   };
@@ -335,6 +347,28 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     );
   };
 
+  const handleStreamerAccessToggle = (checked: boolean) => {
+    const previous = streamerAccessOpen;
+    setStreamerAccessOpen(checked);
+    void saveSiteSetting(
+      { streamerAccessOpen: checked },
+      () => setStreamerAccessOpen(previous),
+      checked
+        ? '스트리머 세션을 열었습니다. 기존 토큰으로 바로 사용할 수 있습니다.'
+        : '스트리머 세션을 닫았습니다. 다른 기기는 막히고, 이 PC(예외)는 그대로입니다.'
+    );
+  };
+
+  const handleViewerAccessToggle = (checked: boolean) => {
+    const previous = viewerAccessOpen;
+    setViewerAccessOpen(checked);
+    void saveSiteSetting(
+      { viewerAccessOpen: checked },
+      () => setViewerAccessOpen(previous),
+      checked ? '시청자 참가 신청을 열었습니다.' : '시청자 참가 신청을 닫았습니다.'
+    );
+  };
+
   const handleViewerCardToggle = (checked: boolean) => {
     const previous = showViewerCard;
     setShowViewerCard(checked);
@@ -345,15 +379,13 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     );
   };
 
-  const handleStreamerAccessToggle = (checked: boolean) => {
-    const previous = streamerAccessOpen;
-    setStreamerAccessOpen(checked);
+  const handleStreamerCardToggle = (checked: boolean) => {
+    const previous = showStreamerCard;
+    setShowStreamerCard(checked);
     void saveSiteSetting(
-      { streamerAccessOpen: checked },
-      () => setStreamerAccessOpen(previous),
-      checked
-        ? '스트리머 입장을 열었습니다. 기존 토큰으로 바로 사용할 수 있습니다.'
-        : '스트리머 입장을 닫았습니다. 다른 기기는 막히고, 이 PC(예외)는 그대로입니다.'
+      { showStreamerCard: checked },
+      () => setShowStreamerCard(previous),
+      checked ? '대문에 스트리머 카드를 표시합니다.' : '대문에서 스트리머 카드를 숨깁니다.'
     );
   };
 
@@ -462,29 +494,6 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
             </div>
           </div>
 
-          <div className="mt-4 border-t border-val-line pt-4">
-            <p className="text-xs text-val-muted">
-              다른 기기 스트리머 입장만 막습니다. OFF여도 토큰은 남고, 이 PC(예외)는 계속 쓸 수 있습니다.
-            </p>
-            <label
-              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
-                settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={streamerAccessOpen}
-                disabled={settingsBusy}
-                onChange={(event) => handleStreamerAccessToggle(event.target.checked)}
-                className="h-4 w-4 accent-val-teal"
-              />
-              스트리머 입장
-              <span className="text-xs font-medium text-val-muted">
-                {streamerAccessOpen ? '열림' : '닫힘'}
-              </span>
-            </label>
-          </div>
-
           <form onSubmit={handleRevoke} className="mt-4 border-t border-val-line pt-4">
             <p className="text-xs text-val-muted">
               다른 기기 세션을 끊습니다. 신뢰된 이 PC는 제외됩니다. 관리자 비밀번호로 확인합니다.
@@ -513,12 +522,69 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
 
         <section className="rounded-2xl border border-val-line bg-val-panel/70 p-4 sm:p-5">
           <div>
-            <h2 className="text-lg font-semibold">표시 설정</h2>
+            <h2 className="text-lg font-semibold">세션 · 카드</h2>
             <p className="mt-1 text-xs text-val-muted">
-              서버에 저장됩니다. 매니지·랜딩 등 모든 기기에 같이 적용됩니다
+              서버에 저장됩니다. 세션은 입장/신청, 카드는 대문 표시입니다
             </p>
           </div>
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="mt-4 flex flex-nowrap items-stretch gap-2 overflow-x-auto pb-1">
+            {(
+              [
+                {
+                  key: 'streamer-session',
+                  label: '스트리머 세션',
+                  checked: streamerAccessOpen,
+                  onChange: handleStreamerAccessToggle,
+                  onText: '열림',
+                  offText: '닫힘',
+                },
+                {
+                  key: 'viewer-session',
+                  label: '시청자 세션',
+                  checked: viewerAccessOpen,
+                  onChange: handleViewerAccessToggle,
+                  onText: '열림',
+                  offText: '닫힘',
+                },
+                {
+                  key: 'viewer-card',
+                  label: '시청자 카드',
+                  checked: showViewerCard,
+                  onChange: handleViewerCardToggle,
+                  onText: '켜짐',
+                  offText: '꺼짐',
+                },
+                {
+                  key: 'streamer-card',
+                  label: '스트리머 카드',
+                  checked: showStreamerCard,
+                  onChange: handleStreamerCardToggle,
+                  onText: '켜짐',
+                  offText: '꺼짐',
+                },
+              ] as const
+            ).map((item) => (
+              <label
+                key={item.key}
+                className={`inline-flex shrink-0 items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
+                  settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={item.checked}
+                  disabled={settingsBusy}
+                  onChange={(event) => item.onChange(event.target.checked)}
+                  className="h-4 w-4 accent-val-teal"
+                />
+                {item.label}
+                <span className="text-xs font-medium text-val-muted">
+                  {item.checked ? item.onText : item.offText}
+                </span>
+              </label>
+            ))}
+          </div>
+          <div className="mt-3">
             <label
               className={`inline-flex items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
                 settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
@@ -533,21 +599,6 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
               />
               승패 표시
               <span className="text-xs font-medium text-val-muted">{showMatchRecord ? '켜짐' : '꺼짐'}</span>
-            </label>
-            <label
-              className={`inline-flex items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
-                settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={showViewerCard}
-                disabled={settingsBusy}
-                onChange={(event) => handleViewerCardToggle(event.target.checked)}
-                className="h-4 w-4 accent-val-teal"
-              />
-              시청자 카드
-              <span className="text-xs font-medium text-val-muted">{showViewerCard ? '켜짐' : '꺼짐'}</span>
             </label>
           </div>
         </section>

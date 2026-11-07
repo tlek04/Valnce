@@ -60,11 +60,19 @@ export default function PlayerCard({
   const restrictionLabels = (player.restrictions ?? []).map(getRestrictionLabel);
   const scrimTier = playerScrimTier(player);
   const lockLabel =
-    player.lockedTeam === 'TEAM_1' ? '1팀 고정' : player.lockedTeam === 'TEAM_2' ? '2팀 고정' : null;
+    player.lockedTeam === 'TEAM_1'
+      ? '1팀 고정'
+      : player.lockedTeam === 'TEAM_2'
+        ? '2팀 고정'
+        : player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST'
+          ? '고정 시청자'
+          : null;
   const lockTone =
     player.lockedTeam === 'TEAM_1'
       ? 'border-sky-400/40 bg-sky-500/15 text-sky-300'
-      : 'border-val-red/30 bg-val-red/10 text-val-red';
+      : player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST'
+        ? 'border-val-teal/40 bg-val-teal/15 text-val-teal'
+        : 'border-val-red/30 bg-val-red/10 text-val-red';
   const streakLabel = formatStreak(player.streak);
   const hasRecord =
     showMatchRecord && (player.wins > 0 || player.losses > 0 || player.streak !== 0);

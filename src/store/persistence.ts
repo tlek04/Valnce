@@ -21,6 +21,8 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     team2: [],
     balanceNote: null,
     balanceDetails: [],
+    matchMapId: null,
+    attackSide: null,
     sessionSavedAt: null,
     rosterUpdatedAt: 0,
     lastMatchSyncAt: typeof raw?.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
@@ -28,6 +30,15 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     showMatchRecord: true,
   };
 }
+
+function readAttackSide(value: unknown): 'TEAM_1' | 'TEAM_2' | null {
+  return value === 'TEAM_1' || value === 'TEAM_2' ? value : null;
+}
+
+function readMatchMapId(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() ? value : null;
+}
+
 
 function takeBoardColumn(list: unknown[] | undefined, used: Set<string>): Player[] {
   const next: Player[] = [];
@@ -74,6 +85,8 @@ export function restorePersistedState(raw: Partial<AppState> | undefined): AppSt
     team2: fillBoard(repaired.team2),
     balanceNote: typeof raw.balanceNote === 'string' ? raw.balanceNote : null,
     balanceDetails,
+    matchMapId: readMatchMapId(raw.matchMapId),
+    attackSide: readAttackSide(raw.attackSide),
     sessionSavedAt: savedAt,
     rosterUpdatedAt: typeof raw.rosterUpdatedAt === 'number' ? raw.rosterUpdatedAt : 0,
     lastMatchSyncAt: typeof raw.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,

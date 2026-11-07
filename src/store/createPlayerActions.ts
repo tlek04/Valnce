@@ -69,7 +69,10 @@ export const createPlayerActions: ActionCreator<
       waitlist: [],
       balanceNote: null,
       balanceDetails: [],
+      matchMapId: null,
+      attackSide: null,
       sessionSavedAt: Date.now(),
+      rosterUpdatedAt: Date.now(),
     })),
 
   importSavedPlayers: (incoming) => {
@@ -82,9 +85,33 @@ export const createPlayerActions: ActionCreator<
 
   applyRemoteRoster: (incoming, updatedAt) =>
     withRemoteRosterApply(() =>
-      set({
-        players: incoming.map(toSavedPlayer),
-        rosterUpdatedAt: updatedAt,
+      set((state) => {
+        const players = incoming.map(toSavedPlayer);
+        const byId = new Map(players.map((player) => [player.id, player]));
+        const patchBoard = (list: typeof state.waitlist) =>
+          list.map((player) => {
+            const remote = byId.get(player.id);
+            if (!remote) return player;
+            return {
+              ...player,
+              name: remote.name,
+              currentTier: remote.currentTier,
+              maxTier: remote.maxTier ?? player.maxTier,
+              ...(remote.riotName ? { riotName: remote.riotName } : {}),
+              ...(remote.riotTag ? { riotTag: remote.riotTag } : {}),
+              ...(remote.lockedTeam !== undefined ? { lockedTeam: remote.lockedTeam } : {}),
+              wins: remote.wins,
+              losses: remote.losses,
+              streak: remote.streak,
+            };
+          });
+        return {
+          players,
+          rosterUpdatedAt: updatedAt,
+          waitlist: patchBoard(state.waitlist),
+          team1: patchBoard(state.team1),
+          team2: patchBoard(state.team2),
+        };
       })
     ),
   setRosterUpdatedAt: (updatedAt) => set({ rosterUpdatedAt: updatedAt }),

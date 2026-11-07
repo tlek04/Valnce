@@ -29,18 +29,54 @@ function isAccessClosedError(error?: string) {
   return Boolean(error && error.includes('닫혀'));
 }
 
+function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>, queueNo?: number) {
+  const state = useAppStore.getState();
+  const onBoard = [...state.waitlist, ...state.team1, ...state.team2].some(
+    (row) => row.id === player.id
+  );
+  const inRoster = state.players.some((row) => row.id === player.id);
+
+  if (onBoard) {
+    // 이미 팀/대기열에 있으면 프로필만 갱신 — 팀에서 강제 대기열로 끌어내지 않음
+    state.updatePlayer(player.id, {
+      name: player.name,
+      ...(queueNo ? { queueNo } : {}),
+      ...(player.riotName ? { riotName: player.riotName } : {}),
+      ...(player.riotTag ? { riotTag: player.riotTag } : {}),
+      currentTier: player.currentTier,
+      maxTier: player.maxTier,
+    });
+    if (queueNo) patchBoardQueueNo(player.id, queueNo);
+    return;
+  }
+  if (inRoster) {
+    state.updatePlayer(player.id, {
+      name: player.name,
+      ...(queueNo ? { queueNo } : {}),
+      ...(player.riotName ? { riotName: player.riotName } : {}),
+      ...(player.riotTag ? { riotTag: player.riotTag } : {}),
+      currentTier: player.currentTier,
+      maxTier: player.maxTier,
+    });
+    state.enlistPlayer(player.id, 'waitlist');
+    if (queueNo) patchBoardQueueNo(player.id, queueNo);
+    return;
+  }
+  state.addPlayer({ ...player, ...(queueNo ? { queueNo } : {}) });
+}
+
 export function useJoinApplications(onNotice?: (message: string) => void, onUnauthorized?: () => void) {
   const applyRemoteRoster = useAppStore((state) => state.applyRemoteRoster);
-  const addPlayer = useAppStore((state) => state.addPlayer);
-  const updatePlayer = useAppStore((state) => state.updatePlayer);
-  const enlistPlayer = useAppStore((state) => state.enlistPlayer);
   const [applications, setApplications] = useState<JoinApplication[]>([]);
   const [actingId, setActingId] = useState<string | null>(null);
   const claimingRef = useRef(new Set<string>());
+  const actingRef = useRef(new Set<string>());
   const pausedRef = useRef(false);
+  const pollGeneration = useRef(0);
 
-  const applyQueueItems = useCallback((items: JoinApplication[] | undefined) => {
+  const applyQueueItems = useCallback((items: JoinApplication[] | undefined, generation?: number) => {
     if (!items) return;
+    if (generation !== undefined && generation !== pollGeneration.current) return;
     setApplications(items.filter((item) => !item.auto));
   }, []);
 
@@ -51,7 +87,9 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
 
   const refreshApplications = useCallback(async () => {
     if (pausedRef.current) return;
+    const generation = ++pollGeneration.current;
     const result = await fetchJoinQueue();
+    if (generation !== pollGeneration.current) return;
     if (!result.ok) {
       if (isAccessClosedError(result.error)) {
         pausedRef.current = true;
@@ -65,7 +103,7 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
       return;
     }
     const items = result.items ?? [];
-    applyQueueItems(items);
+    applyQueueItems(items, generation);
 
     for (const item of items.filter((row) => row.auto && row.playerId)) {
       if (claimingRef.current.has(item.id)) continue;
@@ -88,22 +126,7 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
         withRemoteRosterApply(() => {
           const player = normalizePlayer(claimed.player);
           const queueNo = item.queueNo || player.queueNo;
-          const state = useAppStore.getState();
-          const onBoard = [...state.waitlist, ...state.team1, ...state.team2].some(
-            (row) => row.id === player.id
-          );
-          const inRoster = state.players.some((row) => row.id === player.id);
-
-          if (onBoard || inRoster) {
-            updatePlayer(player.id, {
-              name: player.name,
-              ...(queueNo ? { queueNo } : {}),
-            });
-            enlistPlayer(player.id, 'waitlist');
-            if (queueNo) patchBoardQueueNo(player.id, queueNo);
-          } else {
-            addPlayer({ ...player, ...(queueNo ? { queueNo } : {}) });
-          }
+          bringPlayerToWaitlist(player, queueNo);
         });
         const queueNo = item.queueNo || normalizePlayer(claimed.player).queueNo;
         onNotice?.(
@@ -113,14 +136,7 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
         claimingRef.current.delete(item.id);
       }
     }
-  }, [
-    addPlayer,
-    applyQueueItems,
-    enlistPlayer,
-    handleStaffAuthFailure,
-    onNotice,
-    updatePlayer,
-  ]);
+  }, [applyQueueItems, handleStaffAuthFailure, onNotice]);
 
   useEffect(() => {
     void refreshApplications();
@@ -129,56 +145,71 @@ export function useJoinApplications(onNotice?: (message: string) => void, onUnau
   }, [refreshApplications]);
 
   const handleApprove = async (item: JoinApplication) => {
+    if (actingRef.current.has(item.id)) return;
+    actingRef.current.add(item.id);
     setActingId(item.id);
-    const result = await approveJoinApplication(item.id);
-    setActingId(null);
-    if (!result.ok || !result.player) {
-      if (isAccessClosedError(result.error)) return;
-      if (isAuthError(result.error)) {
-        handleStaffAuthFailure();
+    setApplications((prev) => prev.filter((row) => row.id !== item.id));
+    try {
+      const result = await approveJoinApplication(item.id);
+      if (!result.ok || !result.player) {
+        // 실패 시 목록 다시 맞춤
+        void refreshApplications();
+        if (isAccessClosedError(result.error)) return;
+        if (isAuthError(result.error)) {
+          handleStaffAuthFailure();
+          return;
+        }
+        onNotice?.(result.error || '승인에 실패했습니다.');
         return;
       }
-      onNotice?.(result.error || '승인에 실패했습니다.');
-      return;
-    }
-    if (result.items) applyQueueItems(result.items);
-    else setApplications((prev) => prev.filter((row) => row.id !== item.id));
+      if (result.items) applyQueueItems(result.items);
 
-    withRemoteRosterApply(() => {
-      if (result.roster) {
-        applyRemoteRoster(
-          result.roster.players.map((row) => toSavedPlayer(row)),
-          result.roster.updatedAt
-        );
-      }
-      const player = normalizePlayer(result.player!);
-      const queueNo = player.queueNo || item.queueNo;
-      addPlayer({ ...player, ...(queueNo ? { queueNo } : {}) });
-    });
-    const queueNo = normalizePlayer(result.player).queueNo || item.queueNo;
-    onNotice?.(
-      result.mmr === 'fallback'
-        ? `${item.name} 승인 · 대기열 (#${queueNo ?? '-'}) · 티어 조회 실패(기본값)`
-        : `${item.name} 승인 · 대기열에 추가됨 (#${queueNo ?? '-'})`
-    );
+      withRemoteRosterApply(() => {
+        if (result.roster) {
+          applyRemoteRoster(
+            result.roster.players.map((row) => toSavedPlayer(row)),
+            result.roster.updatedAt
+          );
+        }
+        const player = normalizePlayer(result.player!);
+        const queueNo = player.queueNo || item.queueNo;
+        bringPlayerToWaitlist(player, queueNo);
+      });
+      const queueNo = normalizePlayer(result.player).queueNo || item.queueNo;
+      onNotice?.(
+        result.mmr === 'fallback'
+          ? `${item.name} 승인 · 대기열 (#${queueNo ?? '-'}) · 티어 조회 실패(기본값)`
+          : `${item.name} 승인 · 대기열에 추가됨 (#${queueNo ?? '-'})`
+      );
+    } finally {
+      actingRef.current.delete(item.id);
+      setActingId(null);
+    }
   };
 
   const handleReject = async (item: JoinApplication) => {
+    if (actingRef.current.has(item.id)) return;
+    actingRef.current.add(item.id);
     setActingId(item.id);
-    const result = await rejectJoinApplication(item.id);
-    setActingId(null);
-    if (!result.ok) {
-      if (isAccessClosedError(result.error)) return;
-      if (isAuthError(result.error)) {
-        handleStaffAuthFailure();
+    setApplications((prev) => prev.filter((row) => row.id !== item.id));
+    try {
+      const result = await rejectJoinApplication(item.id);
+      if (!result.ok) {
+        void refreshApplications();
+        if (isAccessClosedError(result.error)) return;
+        if (isAuthError(result.error)) {
+          handleStaffAuthFailure();
+          return;
+        }
+        onNotice?.(result.error || '거절에 실패했습니다.');
         return;
       }
-      onNotice?.(result.error || '거절에 실패했습니다.');
-      return;
+      if (result.items) applyQueueItems(result.items);
+      onNotice?.(`${item.name} 신청을 거절했습니다.`);
+    } finally {
+      actingRef.current.delete(item.id);
+      setActingId(null);
     }
-    if (result.items) applyQueueItems(result.items);
-    else setApplications((prev) => prev.filter((row) => row.id !== item.id));
-    onNotice?.(`${item.name} 신청을 거절했습니다.`);
   };
 
   return { applications, actingId, handleApprove, handleReject };

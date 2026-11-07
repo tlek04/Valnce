@@ -134,6 +134,28 @@ export function streamerAuthHeaders(extra?: HeadersInit): HeadersInit {
   return bearerHeaders(getAdminToken() || getStreamerToken(), extra);
 }
 
+/**
+ * staff API fetch. admin Bearer가 401이면 해당 슬롯만 지우고 streamer 토큰으로 한 번 재시도.
+ * (만료된 admin이 유효한 streamer 세션까지 끊지 않도록)
+ */
+export async function staffFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const admin = getAdminToken();
+  const streamer = getStreamerToken();
+  const primary = admin || streamer;
+  const response = await fetch(input, {
+    ...init,
+    headers: bearerHeaders(primary, init?.headers),
+  });
+  if (response.status !== 401 || !admin || !streamer || primary !== admin) {
+    return response;
+  }
+  clearAdminToken();
+  return fetch(input, {
+    ...init,
+    headers: bearerHeaders(streamer, init?.headers),
+  });
+}
+
 /** access-log 등 관리자 전용 API */
 export function adminAuthHeaders(extra?: HeadersInit): HeadersInit {
   return bearerHeaders(getAdminToken(), extra);

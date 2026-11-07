@@ -2,15 +2,19 @@ import { adminAuthHeaders } from './streamerAuth';
 
 export interface SiteSettings {
   showViewerCard: boolean;
+  showStreamerCard: boolean;
   showMatchRecord: boolean;
   streamerAccessOpen: boolean;
+  viewerAccessOpen: boolean;
 }
 
 /** 캐시·응답 실패 시 접근 게이트는 닫힘(fail-closed). 표시 설정은 캐시가 있으면 유지. */
 const CLOSED_SETTINGS: SiteSettings = {
   showViewerCard: false,
+  showStreamerCard: false,
   showMatchRecord: false,
   streamerAccessOpen: false,
+  viewerAccessOpen: false,
 };
 
 const SITE_SETTINGS_CACHE_KEY = 'valnce-site-settings-cache';
@@ -23,13 +27,19 @@ function apiUrl() {
 
 function normalize(data: {
   showViewerCard?: unknown;
+  showStreamerCard?: unknown;
   showMatchRecord?: unknown;
   streamerAccessOpen?: unknown;
+  viewerAccessOpen?: unknown;
 }): SiteSettings {
+  const showViewerCard = data.showViewerCard !== false;
   return {
-    showViewerCard: data.showViewerCard !== false,
+    showViewerCard,
+    showStreamerCard: data.showStreamerCard !== false,
     showMatchRecord: data.showMatchRecord !== false,
     streamerAccessOpen: data.streamerAccessOpen !== false,
+    viewerAccessOpen:
+      data.viewerAccessOpen !== undefined ? data.viewerAccessOpen !== false : showViewerCard,
   };
 }
 
@@ -55,8 +65,15 @@ function writeCache(settings: SiteSettings): void {
   }
 }
 
+/** 실패 시 표시는 캐시 유지, 세션 게이트는 닫음 */
 function fallbackSettings(): SiteSettings {
-  return readCache() ?? { ...CLOSED_SETTINGS };
+  const cached = readCache();
+  if (!cached) return { ...CLOSED_SETTINGS };
+  return {
+    ...cached,
+    streamerAccessOpen: false,
+    viewerAccessOpen: false,
+  };
 }
 
 export async function fetchSiteSettings(): Promise<SiteSettings> {

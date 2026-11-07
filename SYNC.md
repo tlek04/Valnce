@@ -36,7 +36,7 @@
 
 ## 사이트 설정 · 신뢰 기기
 
-- KV `site-settings`: `showViewerCard`, `showMatchRecord`, `streamerAccessOpen` — 클라이언트는 실패 시 **이전 캐시 유지**, 캐시 없으면 접근 게이트는 **닫힘(fail-closed)**
+- KV `site-settings`: `showViewerCard`, `showStreamerCard`, `showMatchRecord`, `streamerAccessOpen`, `viewerAccessOpen` — 실패 시 표시는 캐시 유지, **세션 게이트는 닫힘(fail-closed)**
 - KV `auth:trusted-devices` + `X-Device-Id`: 세션 끊기·스트리머 OFF 예외. 상세는 [docs/AUTH.md](docs/AUTH.md)
 - Zustand persist `version` 5. `showMatchRecord`는 persist하지 않고 서버 설정만 사용
 

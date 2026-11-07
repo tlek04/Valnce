@@ -29,7 +29,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
     let cancelled = false;
     (async () => {
       const settings = await fetchSiteSettings();
-      if (!cancelled) setJoinOpen(settings.showViewerCard);
+      if (!cancelled) setJoinOpen(settings.viewerAccessOpen);
     })();
     return () => {
       cancelled = true;
@@ -92,6 +92,14 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       status: 'pending',
     });
   };
+
+  if (joinOpen === null) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+        <p className="text-sm text-val-muted">불러오는 중…</p>
+      </div>
+    );
+  }
 
   if (joinOpen === false) {
     return (

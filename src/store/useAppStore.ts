@@ -16,6 +16,8 @@ export const useAppStore = create<AppStore>()(
       waitlist: [],
       balanceNote: null,
       balanceDetails: [],
+      matchMapId: null,
+      attackSide: null,
       sessionSavedAt: null,
       rosterUpdatedAt: 0,
       lastMatchSyncAt: null,
@@ -35,15 +37,22 @@ export const useAppStore = create<AppStore>()(
         team2: state.team2,
         balanceNote: state.balanceNote,
         balanceDetails: state.balanceDetails,
+        matchMapId: state.matchMapId,
+        attackSide: state.attackSide,
         sessionSavedAt: Date.now(),
         rosterUpdatedAt: state.rosterUpdatedAt,
         lastMatchSyncAt: state.lastMatchSyncAt,
       }),
       migrate: (persisted) => restorePersistedState(persisted as Partial<AppState>) as never,
-      merge: (persisted, current) => ({
-        ...current,
-        ...restorePersistedState(persisted as Partial<AppState>),
-      }),
+      merge: (persisted, current) => {
+        const restored = restorePersistedState(persisted as Partial<AppState>);
+        return {
+          ...current,
+          ...restored,
+          // 서버 site-settings가 이미 반영됐으면 persist 기본값(true)으로 덮지 않음
+          showMatchRecord: current.showMatchRecord,
+        };
+      },
     }
   )
 );

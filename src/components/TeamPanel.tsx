@@ -24,6 +24,7 @@ export default function TeamPanel({
   activeId,
 }: TeamPanelProps) {
   const team = useAppStore((state) => (side === 'TEAM_1' ? state.team1 : state.team2));
+  const attackSide = useAppStore((state) => state.attackSide);
   const dismissPlayer = useAppStore((state) => state.dismissPlayer);
   const title = side === 'TEAM_1' ? '1팀' : '2팀';
   const winLabel = side === 'TEAM_1' ? '1팀 승' : '2팀 승';
@@ -33,6 +34,8 @@ export default function TeamPanel({
   const columnId = side === 'TEAM_1' ? 'team1' : 'team2';
   const emptyCount = Math.max(0, 5 - team.length);
   const average = teamAverageRating(team);
+  const sideRole =
+    attackSide == null ? null : attackSide === side ? '공격' : '수비';
 
   return (
     <DroppableColumn
@@ -43,6 +46,17 @@ export default function TeamPanel({
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <h2 className={`whitespace-nowrap font-display text-2xl font-bold ${accent}`}>{title}</h2>
+          {sideRole && (
+            <span
+              className={`rounded-md border px-2 py-0.5 text-sm font-semibold leading-none ${
+                sideRole === '공격'
+                  ? 'border-amber-400/50 bg-amber-400/15 text-amber-200'
+                  : 'border-val-line bg-val-bg/80 text-val-muted'
+              }`}
+            >
+              {sideRole}
+            </span>
+          )}
           {average ? (
             <span
               className={`rounded-md border px-2.5 py-1 text-base font-semibold leading-none ${

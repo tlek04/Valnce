@@ -1,7 +1,7 @@
 import { readJsonText } from './apiResponse';
 import { QualifyingMatch, SavedPlayer } from '../types';
 import { isRosterSyncConfigured } from './rosterSync';
-import { streamerAuthHeaders } from './streamerAuth';
+import { staffFetch } from './streamerAuth';
 import { listMatchSeeds, listTaggedRoster } from './valorantMatch';
 
 export interface MatchImportResponse {
@@ -38,9 +38,9 @@ export async function importQualifyingMatches(players: SavedPlayer[]): Promise<M
   }
 
   try {
-    const response = await fetch(apiUrl(), {
+    const response = await staffFetch(apiUrl(), {
       method: 'POST',
-      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ seeds, roster }),
     });
     const parsed = await readJsonText<{ ok?: boolean; matches?: QualifyingMatch[]; error?: string }>(response);

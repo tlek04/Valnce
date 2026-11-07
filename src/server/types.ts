@@ -35,5 +35,7 @@ export interface SeedIdentity {
 export interface JoinQueuePayload {
   nextNo: number;
   items: JoinApplication[];
+  /** 낙관적 동시성 — 쓸 때마다 +1 */
+  revision?: number;
 }
 

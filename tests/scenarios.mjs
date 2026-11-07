@@ -186,11 +186,16 @@ export async function serverScenarios(root = 'src') {
   await request('/api/auth/login', 'POST', { password: 'test-only' }, false);
   await request('/api/auth/trust-device', 'DELETE', { deviceId: 'trusted-pc-1' });
   await request('/api/auth/trust-status', 'GET', undefined, false);
-  // site-settings GET + 시청자 카드 OFF → join 403
+  // site-settings GET + 시청자 세션 OFF → join 403
   await request('/api/site-settings', 'GET', undefined, false);
-  await request('/api/site-settings', 'PUT', { showViewerCard: false });
+  await request('/api/site-settings', 'PUT', { viewerAccessOpen: false });
   await request('/api/join', 'POST', { name: 'blocked', riotName: 'blocked', riotTag: 'KR' }, false);
-  await request('/api/site-settings', 'PUT', { showViewerCard: true, streamerAccessOpen: true });
+  await request('/api/site-settings', 'PUT', {
+    showViewerCard: true,
+    showStreamerCard: true,
+    viewerAccessOpen: true,
+    streamerAccessOpen: true,
+  });
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => Response.json({ data: [{
     metadata: { match_id: 'm1', started_at: new Date(fixedNow).toISOString(), is_completed: true, queue: { id: 'custom' }, map: { name: 'Ascent' } },

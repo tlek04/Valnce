@@ -92,8 +92,8 @@
 | `POST /api/auth/revoke-all` | **ADMIN_PASSWORD** | epoch 증가 (신뢰 기기는 예외) |
 | `GET /api/auth/trust-status` | `X-Device-Id` | `{ trusted }` |
 | `GET/POST/DELETE /api/auth/trust-device` | Bearer **admin** | 신뢰 기기 목록·등록·해제 |
-| `GET /api/site-settings` | 없음 | `{ showViewerCard, showMatchRecord, streamerAccessOpen }` |
-| `PUT /api/site-settings` | Bearer **admin** 토큰 | 표시·입장 설정 부분 갱신(merge) |
+| `GET /api/site-settings` | 없음 | `{ showViewerCard, showStreamerCard, showMatchRecord, streamerAccessOpen, viewerAccessOpen }` |
+| `PUT /api/site-settings` | Bearer **admin** 토큰 | 표시·세션 설정 부분 갱신(merge) |
 
 ## 로컬
 

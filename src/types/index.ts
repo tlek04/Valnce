@@ -43,6 +43,7 @@ export type WeaponRestrictionType =
   | 'NO_RIFLE_OP'
   | 'NO_SNIPER'
   | 'NO_MACHINE'
+  | 'NO_JUDGE'
   | 'PISTOL_ONLY'
   | 'WEAPON'
   | 'CUSTOM';
@@ -63,6 +64,8 @@ export interface SavedPlayer {
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
+  /** 보드 합류 시 복원 — 고정 시청자(MATCH) 등 */
+  lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | null;
   /** @deprecated 시드는 FIXED_MATCH_SEED_NAMES 고정. 구 데이터 호환용 */
   matchSeed?: boolean;
   wins: number;
@@ -79,7 +82,8 @@ export interface Player {
   internalTier?: RankRating;
   canOrder: boolean;
   restrictions: WeaponRestriction[];
-  lockedTeam?: 'TEAM_1' | 'TEAM_2' | null;
+  /** TEAM_* = 해당 팀 고정, MATCH = 고정 시청자(1·2팀 중 무조건 배정). WAITLIST는 구 데이터→MATCH */
+  lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | null;
   rivalIds: string[];
   allyIds: string[];
   riotName?: string;
@@ -122,6 +126,10 @@ export interface AppState {
   waitlist: Player[];
   balanceNote: string | null;
   balanceDetails: string[];
+  /** 랜덤 맵 추첨 결과 (맵 id). 결과 이미지·보드에 표시 */
+  matchMapId: string | null;
+  /** 공격 시작 팀. null이면 미추첨 */
+  attackSide: 'TEAM_1' | 'TEAM_2' | null;
   /** 오늘 보드를 마지막으로 저장한 시각. 2시간 안에 다시 열면 보드를 복구한다. */
   sessionSavedAt: number | null;
   /** 기존 플레이어 명단이 마지막으로 바뀐 시각. 서버 동기화 비교용. */
@@ -149,6 +157,10 @@ export interface AppActions {
     details?: string[];
   };
   resetTeams: () => void;
+  /** 커스텀 맵 풀에서 하나 추첨. 직전에 뽑힌 맵은 가능하면 제외 */
+  drawRandomMap: () => { mapId: string; label: string };
+  /** 1·2팀 중 공격 시작 팀 추첨 */
+  drawAttackSide: () => { attackSide: 'TEAM_1' | 'TEAM_2'; label: string };
   clearRoster: () => void;
   importSavedPlayers: (incoming: SavedPlayer[]) => number;
   applyRemoteRoster: (incoming: SavedPlayer[], updatedAt: number) => void;

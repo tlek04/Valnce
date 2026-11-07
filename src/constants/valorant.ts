@@ -141,6 +141,14 @@ const PRESET_RESTRICTIONS: RestrictionOption[] = [
     searchText: '오딘 아레스 기관총 odin ares lmg',
   },
   {
+    value: 'NO_JUDGE',
+    type: 'NO_JUDGE',
+    label: '저지 금지',
+    short: '저지 금지',
+    group: '세트',
+    searchText: '저지 금지 judge 자동샷건',
+  },
+  {
     value: 'CUSTOM',
     type: 'CUSTOM',
     label: '직접 입력',

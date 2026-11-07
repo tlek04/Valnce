@@ -43,12 +43,20 @@ export async function handleSiteSettings(request: Request, env: SiteEnv): Promis
     const next = normalizeSiteSettings({
       showViewerCard:
         body.showViewerCard !== undefined ? body.showViewerCard !== false : existing.showViewerCard,
+      showStreamerCard:
+        body.showStreamerCard !== undefined
+          ? body.showStreamerCard !== false
+          : existing.showStreamerCard,
       showMatchRecord:
         body.showMatchRecord !== undefined ? body.showMatchRecord !== false : existing.showMatchRecord,
       streamerAccessOpen:
         body.streamerAccessOpen !== undefined
           ? body.streamerAccessOpen !== false
           : existing.streamerAccessOpen,
+      viewerAccessOpen:
+        body.viewerAccessOpen !== undefined
+          ? body.viewerAccessOpen !== false
+          : existing.viewerAccessOpen,
     });
     await env.ROSTER.put(SITE_SETTINGS_KEY, JSON.stringify(next));
     return json({ ok: true, ...next });

@@ -1,6 +1,6 @@
 import { readJsonOrEmpty, readJsonText } from './apiResponse';
 import { JoinApplication, Player } from '../types';
-import { streamerAuthHeaders } from './streamerAuth';
+import { staffFetch } from './streamerAuth';
 
 function joinUrl(path = '') {
   return `/api/join${path}`;
@@ -90,10 +90,9 @@ export async function fetchJoinStatus(id: string): Promise<{
 
 export async function fetchJoinQueue(): Promise<{ ok: boolean; items?: JoinApplication[]; error?: string }> {
   try {
-    const response = await fetch(joinUrl(), {
+    const response = await staffFetch(joinUrl(), {
       method: 'GET',
       cache: 'no-store',
-      headers: streamerAuthHeaders(),
     });
     const data = await readJsonOrEmpty<{
       items?: JoinApplication[];
@@ -119,9 +118,9 @@ export async function approveJoinApplication(
   error?: string;
 }> {
   try {
-    const response = await fetch(joinUrl(`/${encodeURIComponent(id)}/approve`), {
+    const response = await staffFetch(joinUrl(`/${encodeURIComponent(id)}/approve`), {
       method: 'POST',
-      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
+      headers: { 'content-type': 'application/json' },
     });
     const data = await readJsonOrEmpty<{
       ok?: boolean;
@@ -150,9 +149,9 @@ export async function rejectJoinApplication(
   id: string
 ): Promise<{ ok: boolean; items?: JoinApplication[]; error?: string }> {
   try {
-    const response = await fetch(joinUrl(`/${encodeURIComponent(id)}/reject`), {
+    const response = await staffFetch(joinUrl(`/${encodeURIComponent(id)}/reject`), {
       method: 'POST',
-      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
+      headers: { 'content-type': 'application/json' },
     });
     const data = await readJsonOrEmpty<{ ok?: boolean; items?: JoinApplication[]; error?: string }>(
       response
@@ -170,9 +169,9 @@ export async function claimAutoJoinApplication(
   id: string
 ): Promise<{ ok: boolean; player?: Player; items?: JoinApplication[]; error?: string }> {
   try {
-    const response = await fetch(joinUrl(`/${encodeURIComponent(id)}/claim`), {
+    const response = await staffFetch(joinUrl(`/${encodeURIComponent(id)}/claim`), {
       method: 'POST',
-      headers: streamerAuthHeaders({ 'content-type': 'application/json' }),
+      headers: { 'content-type': 'application/json' },
     });
     const data = await readJsonOrEmpty<{
       ok?: boolean;

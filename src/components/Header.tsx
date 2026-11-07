@@ -1,7 +1,9 @@
 import { PointerEvent, useRef, useState } from 'react';
-import { Camera, HelpCircle, RefreshCw, RotateCcw, Scale } from 'lucide-react';
+import { Camera, HelpCircle, Map, RefreshCw, RotateCcw, Scale, Swords } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { useAppStore } from '../store/useAppStore';
+import { copyText } from '../utils/copyText';
+import { formatDrawSummary, formatMatchResultText } from '../utils/formatMatchResult';
 import { saveResultImage } from '../utils/saveResultImage';
 import AdminUnlockOverlay from './AdminUnlockOverlay';
 
@@ -26,6 +28,8 @@ export default function Header({
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
   const resetTeams = useAppStore((state) => state.resetTeams);
   const autoBalance = useAppStore((state) => state.autoBalance);
+  const drawRandomMap = useAppStore((state) => state.drawRandomMap);
+  const drawAttackSide = useAppStore((state) => state.drawAttackSide);
   const canBalance = matchCount >= 2;
 
   const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
@@ -63,9 +67,21 @@ export default function Header({
     runTeamReset();
   };
 
+  const matchSnapshot = () => {
+    const state = useAppStore.getState();
+    return {
+      team1: state.team1,
+      team2: state.team2,
+      matchMapId: state.matchMapId,
+      attackSide: state.attackSide,
+    };
+  };
+
   const handleExportImage = async () => {
     const node = document.getElementById('match-board');
     if (!node) return;
+    const text = formatMatchResultText(matchSnapshot());
+    const copied = await copyText(text);
     try {
       const dataUrl = await toPng(node, {
         cacheBust: true,
@@ -73,10 +89,32 @@ export default function Header({
         pixelRatio: 2,
       });
       const { fileName } = await saveResultImage(dataUrl);
-      window.alert(`${fileName.replace(/\.png$/i, '')}\n다운로드 폴더에 저장되었습니다.`);
+      window.alert(
+        `${fileName.replace(/\.png$/i, '')}\n다운로드 폴더에 저장되었습니다.${
+          copied ? '\n팀 구성 텍스트도 복사했습니다.' : ''
+        }`
+      );
     } catch {
-      window.alert('이미지 저장에 실패했습니다.');
+      if (copied) {
+        window.alert('이미지 저장에 실패했습니다.\n팀 구성 텍스트는 복사했습니다.');
+      } else {
+        window.alert('이미지 저장에 실패했습니다.');
+      }
     }
+  };
+
+  const handleDrawMap = async () => {
+    const result = drawRandomMap();
+    const text = formatDrawSummary(matchSnapshot()) || `맵 · ${result.label}`;
+    const copied = await copyText(text);
+    onNotice(copied ? `맵 · ${result.label} (복사됨)` : `맵 · ${result.label}`);
+  };
+
+  const handleDrawAttack = async () => {
+    const result = drawAttackSide();
+    const text = formatDrawSummary(matchSnapshot()) || `공수 · ${result.label}`;
+    const copied = await copyText(text);
+    onNotice(copied ? `공수 · ${result.label} (복사됨)` : `공수 · ${result.label}`);
   };
 
   return (
@@ -153,6 +191,30 @@ export default function Header({
             <Camera size={17} />
             결과 저장
           </button>
+          <button
+            type="button"
+            aria-label="랜덤 맵"
+            onClick={() => {
+              void handleDrawMap();
+            }}
+            style={{ backgroundColor: 'rgba(56, 189, 248, 0.55)' }}
+            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110"
+          >
+            <Map size={17} />
+            랜덤 맵
+          </button>
+          <button
+            type="button"
+            aria-label="공수 추첨"
+            onClick={() => {
+              void handleDrawAttack();
+            }}
+            style={{ backgroundColor: 'rgba(251, 113, 133, 0.55)' }}
+            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110"
+          >
+            <Swords size={17} />
+            공수 추첨
+          </button>
           <div className="flex shrink-0 items-center gap-1.5">
             <button
               type="button"
@@ -182,7 +244,7 @@ export default function Header({
               >
                 <p className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-val-red">밸런스 규칙</p>
                 <ol className="mt-2 space-y-1.5 text-xs leading-relaxed text-val-cream/90 break-keep">
-                  <li className="whitespace-normal">1. 팀 고정 · 고정 듀오 · 라이벌을 먼저 지킵니다.</li>
+                  <li className="whitespace-normal">1. 팀 고정 · 고정 시청자 · 고정 듀오 · 라이벌을 먼저 지킵니다.</li>
                   <li className="whitespace-normal">2. 고티어일수록 점수 비중이 커집니다.</li>
                   <li className="whitespace-normal">3. 고티어는 양쪽에 나누고, 팀 점수 합을 맞춥니다.</li>
                   <li className="whitespace-normal">4. 최고 티어는 약한 가산만 합니다. 내전 티어가 있으면 무시합니다.</li>
