@@ -33,7 +33,6 @@ export default function Header({
 }: HeaderProps) {
   const matchCount = useAppStore((state) => state.waitlist.length + state.team1.length + state.team2.length);
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
-  const showMatchRecord = useAppStore((state) => state.showMatchRecord);
   const resetTeams = useAppStore((state) => state.resetTeams);
   const autoBalance = useAppStore((state) => state.autoBalance);
   const drawRandomMap = useAppStore((state) => state.drawRandomMap);
@@ -136,19 +135,17 @@ export default function Header({
                   : '보드 오프라인'}
             </span>
           )}
-          {showMatchRecord && (
-            <button
-              type="button"
-              aria-label="전적 동기화"
-              disabled={matchSyncing}
-              onClick={() => onMatchSync?.({ force: true })}
-              style={{ backgroundColor: 'rgba(168, 85, 247, 0.6)' }}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <RefreshCw size={17} className={matchSyncing ? 'animate-spin' : undefined} />
-              {matchSyncing ? '동기화 중' : '전적 동기화'}
-            </button>
-          )}
+          <button
+            type="button"
+            aria-label="전적 동기화"
+            disabled={matchSyncing}
+            onClick={() => onMatchSync?.({ force: true })}
+            style={{ backgroundColor: 'rgba(168, 85, 247, 0.6)' }}
+            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <RefreshCw size={17} className={matchSyncing ? 'animate-spin' : undefined} />
+            {matchSyncing ? '동기화 중' : '전적 동기화'}
+          </button>
           <button
             type="button"
             aria-label="팀 초기화"
