@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
-import { Player, WeaponRestriction } from '../types';
-import { QUICK_BAN_PRESETS, TIER_STYLES, formatRating, restrictionKey } from '../constants/valorant';
+import { Player } from '../types';
+import { TIER_STYLES, formatRating } from '../constants/valorant';
 import { useAppStore } from '../store/useAppStore';
 import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
 import { playerScrimTier } from '../utils/rating';
@@ -62,7 +62,6 @@ export default function PlayerCard({
       .join(', ');
   const rivals = names(player.rivalIds ?? []);
   const allies = names(player.allyIds ?? []);
-  const selectedBanKeys = new Set((player.restrictions ?? []).map(restrictionKey));
   const scrimTier = playerScrimTier(player);
   const isMatch = player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST';
   const isBench = player.lockedTeam === 'BENCH';
@@ -88,25 +87,6 @@ export default function PlayerCard({
 
   const setLock = (value: 'MATCH' | 'BENCH' | null) => {
     updatePlayer(player.id, { lockedTeam: value });
-  };
-
-  const toggleQuickBan = (value: string) => {
-    const option = QUICK_BAN_PRESETS.find((item) => item.value === value);
-    if (!option) return;
-    const key = restrictionKey({ id: '', type: option.type, weaponId: option.weaponId });
-    const current = player.restrictions ?? [];
-    const existing = current.find((item) => restrictionKey(item) === key);
-    const next: WeaponRestriction[] = existing
-      ? current.filter((item) => item.id !== existing.id)
-      : [
-          ...current,
-          {
-            id: crypto.randomUUID(),
-            type: option.type,
-            weaponId: option.weaponId,
-          },
-        ];
-    updatePlayer(player.id, { restrictions: next });
   };
 
   const chipBtn = (active: boolean, tone: 'teal' | 'warn') => {
@@ -253,22 +233,6 @@ export default function PlayerCard({
               >
                 벤치
               </button>
-              {QUICK_BAN_PRESETS.map((option) => {
-                const active = selectedBanKeys.has(option.value);
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    aria-pressed={active}
-                    title={option.label}
-                    className={chipBtn(active, 'warn')}
-                    onPointerDown={stop}
-                    onClick={() => toggleQuickBan(option.value)}
-                  >
-                    {option.short}
-                  </button>
-                );
-              })}
             </div>
           </>
         ) : null}

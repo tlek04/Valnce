@@ -235,31 +235,14 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
           </div>
 
           <div>
-            <p className={fieldLabel}>글로벌 밴</p>
-            <div className="flex flex-wrap gap-1.5">
-              {QUICK_BAN_PRESETS.map((option) => {
-                const active = selectedKeys.has(option.value);
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    aria-pressed={active}
-                    title={option.label}
-                    onClick={() => toggleRestriction(option.value)}
-                    className={toggleBtn(active, 'warn')}
-                  >
-                    {option.short}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onClick={() => setWeaponPanelOpen(true)}
-                className="rounded-md border border-val-line/60 bg-val-bg/50 px-3 py-1.5 text-sm text-val-muted transition-colors hover:border-val-line hover:text-val-cream"
-              >
-                무기 더보기
-              </button>
-            </div>
+            <p className={fieldLabel}>글로벌 밴 · 무기</p>
+            <button
+              type="button"
+              onClick={() => setWeaponPanelOpen(true)}
+              className="rounded-md border border-val-line/60 bg-val-bg/50 px-3 py-1.5 text-sm text-val-muted transition-colors hover:border-val-line hover:text-val-cream"
+            >
+              {restrictions.length > 0 ? `제한 ${restrictions.length}개 · 수정` : '제한 선택'}
+            </button>
             <ChipList
               items={restrictions.map((item) => ({ id: item.id, label: getRestrictionLabel(item) }))}
               onRemove={(id) => setRestrictions((current) => current.filter((item) => item.id !== id))}
@@ -350,7 +333,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
                 <h3 id="weapon-limit-title" className="font-display text-lg font-bold text-val-cream">
                   글로벌 밴 · 무기
                 </h3>
-                <p className="mt-0.5 text-xs text-val-muted">세트가 아니면 개별 무기를 골라 밴합니다</p>
+                <p className="mt-0.5 text-xs text-val-muted">세트 밴을 고르거나 개별 무기를 골라 밴합니다</p>
               </div>
               <button
                 type="button"
@@ -362,7 +345,29 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               </button>
             </div>
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
-              {restrictionGroups.map((group) => (
+              <div>
+                <p className="mb-1.5 text-[11px] font-semibold text-val-warn">글로벌 밴</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {QUICK_BAN_PRESETS.map((option) => {
+                    const active = selectedKeys.has(option.value);
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        aria-pressed={active}
+                        title={option.label}
+                        onClick={() => toggleRestriction(option.value)}
+                        className={toggleBtn(active, 'warn')}
+                      >
+                        {option.short}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {restrictionGroups
+                .filter((group) => group.name !== '세트')
+                .map((group) => (
                 <div key={group.name}>
                   <p
                     className={`mb-1.5 text-[11px] font-semibold ${

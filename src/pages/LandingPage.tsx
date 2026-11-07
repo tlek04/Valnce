@@ -38,8 +38,8 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
       : 'max-w-md grid-cols-1';
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-      <div className="mb-10 text-center">
+    <div className="flex min-h-screen flex-col items-center px-4 pb-8 pt-16 sm:pt-20">
+      <div className="mb-8 text-center">
         <img
           src="/valorant-logo.webp"
           alt="VALORANT"
@@ -50,11 +50,6 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
           Valnce
         </h1>
         <p className="mt-3 text-sm text-val-muted">내전 참가 방식을 선택하세요</p>
-        <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-val-muted/90">
-          빠른 내전 진행을 위해 스트리머의 팬심으로 만든 페이지입니다.
-          <br />
-          재미로 하는 내전이니 독선적인 행동은 피해 주세요.
-        </p>
       </div>
 
       {!ready ? (
@@ -115,6 +110,12 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
           ) : null}
         </div>
       )}
+
+      <p className="mx-auto mt-auto max-w-lg pt-10 text-center text-sm leading-relaxed text-val-muted/90">
+        빠른 내전 진행을 위해 스트리머의 팬심으로 만든 페이지입니다.
+        <br />
+        재미로 하는 내전이니 독선적인 행동은 피해 주세요.
+      </p>
     </div>
   );
 }

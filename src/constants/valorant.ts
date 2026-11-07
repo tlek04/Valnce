@@ -158,7 +158,7 @@ export const PRESET_RESTRICTIONS: RestrictionOption[] = [
   },
 ];
 
-/** 카드·폼에서 바로 켜는 글로벌 밴 프리셋 (커스텀 제외) */
+/** 무기창에서 고르는 글로벌 밴 프리셋 (커스텀 제외) */
 export const QUICK_BAN_PRESETS = PRESET_RESTRICTIONS.filter((option) => option.type !== 'CUSTOM');
 
 export const WEAPON_RESTRICTION_OPTIONS: RestrictionOption[] = WEAPONS.map((weapon) => ({
