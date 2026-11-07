@@ -179,7 +179,10 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청</h1>
-        <p className="mt-2 text-sm text-val-muted">치지직 닉네임·발로란트 닉네임#태그·오더 여부를 입력합니다.</p>
+        <p className="mt-2 text-sm leading-relaxed text-val-muted">
+          성인(만 19세 이상)만 참가할 수 있고, 마이크는 필수입니다. 치지직 닉네임·발로란트 닉네임#태그·오더 여부를
+          입력합니다. 티어는 API로 자동 설정되니, 추가 보정이 필요하면 스트리머에게 따로 말해 주세요.
+        </p>
 
         <label htmlFor="join-name" className="mt-6 block text-xs font-semibold text-val-muted">
           치지직 닉네임

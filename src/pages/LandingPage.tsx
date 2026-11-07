@@ -101,9 +101,9 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
               >
                 시청자
               </span>
-              <span className="mt-4 max-w-[14rem] text-sm leading-relaxed text-val-muted">
+              <span className="mt-4 max-w-[16rem] text-sm leading-relaxed text-val-muted">
                 {viewerEntryOpen
-                  ? '치지직 닉네임 · 발로란트 닉네임으로 참가 신청'
+                  ? '성인만 · 마이크 필수 · 닉네임·태그·오더 신청 · 티어는 API 자동 · 보정은 스트리머에게'
                   : '지금은 참가 신청을 받지 않습니다'}
               </span>
             </button>

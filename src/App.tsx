@@ -98,21 +98,15 @@ export default function App() {
     <LandingPage
       onSelectStreamer={() => {
         void (async () => {
-          if (getAdminToken()) {
-            navigate('admin');
-            return;
-          }
           const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
           const streamerOpen = settings.streamerAccessOpen || trusted;
+          // 스트리머 입장이 닫혀 카드가「관리자」일 때만 관리자 토큰으로 직행
           if (!streamerOpen) {
-            navigate('gate');
+            navigate(getAdminToken() ? 'admin' : 'gate');
             return;
           }
-          if (!getStreamerToken()) {
-            navigate('gate');
-            return;
-          }
-          navigate('manage');
+          // 스트리머 입장이 열려 있으면 관리자 토큰이 있어도 매니지/게이트로
+          navigate(getStreamerToken() ? 'manage' : 'gate');
         })();
       }}
       onSelectViewer={() => navigate('join')}
