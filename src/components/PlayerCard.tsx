@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Lock, Megaphone, Pencil, Swords, Trash2, Users } from 'lucide-react';
 import { Player } from '../types';
-import { TIER_STYLES, formatRating } from '../constants/valorant';
+import { TIER_STYLES, formatRating, getRestrictionLabel } from '../constants/valorant';
 import { useAppStore } from '../store/useAppStore';
 import { formatRecord, formatRiotId, formatStreak } from '../utils/matchStats';
 import { playerScrimTier } from '../utils/rating';
@@ -62,6 +62,7 @@ export default function PlayerCard({
       .join(', ');
   const rivals = names(player.rivalIds ?? []);
   const allies = names(player.allyIds ?? []);
+  const restrictionLabels = (player.restrictions ?? []).map(getRestrictionLabel);
   const scrimTier = playerScrimTier(player);
   const isMatch = player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST';
   const isBench = player.lockedTeam === 'BENCH';
@@ -237,7 +238,7 @@ export default function PlayerCard({
           </>
         ) : null}
 
-        {(player.canOrder || teamLockLabel || rivals || allies) && (
+        {(player.canOrder || teamLockLabel || restrictionLabels.length > 0 || rivals || allies) && (
           <>
             <div aria-hidden />
             <div className="col-span-2 flex flex-wrap gap-1">
@@ -255,6 +256,14 @@ export default function PlayerCard({
                   {teamLockLabel}
                 </span>
               ) : null}
+              {restrictionLabels.map((label, index) => (
+                <span
+                  key={`${label}-${index}`}
+                  className="rounded border border-val-warn/35 bg-val-warn/10 px-1.5 py-0.5 text-[11px] font-medium text-val-warn"
+                >
+                  {label}
+                </span>
+              ))}
               {rivals && (
                 <span className="inline-flex items-center gap-0.5 rounded border border-val-red/35 bg-val-red/10 px-1.5 py-0.5 text-[11px] font-medium text-val-red">
                   <Swords size={11} />
