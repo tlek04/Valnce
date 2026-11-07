@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { fetchJoinStatus, JoinStatus, submitJoinApplication } from '../utils/joinApi';
 import { loadJoinProfile, saveJoinProfile } from '../utils/joinProfile';
 import { fetchSiteSettings } from '../utils/siteSettings';
+import { formatRiotId, hasCompleteRiotId, parseRiotId } from '../utils/matchStats';
 
 interface JoinPageProps {
   onBack: () => void;
@@ -18,8 +19,7 @@ type DoneState = {
 export default function JoinPage({ onBack }: JoinPageProps) {
   const saved = loadJoinProfile();
   const [name, setName] = useState(saved.name);
-  const [riotName, setRiotName] = useState(saved.riotName);
-  const [riotTag, setRiotTag] = useState(saved.riotTag);
+  const [riotId, setRiotId] = useState(formatRiotId(saved.riotName, saved.riotTag));
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<DoneState | null>(null);
@@ -66,10 +66,16 @@ export default function JoinPage({ onBack }: JoinPageProps) {
     event.preventDefault();
     setBusy(true);
     setError(null);
+    const parsed = parseRiotId(riotId);
+    if (!parsed.riotName || !parsed.riotTag) {
+      setBusy(false);
+      setError('발로란트 닉네임#태그 형식으로 입력하세요.');
+      return;
+    }
     const profile = {
       name: name.trim(),
-      riotName: riotName.trim(),
-      riotTag: riotTag.trim().replace(/^#+/, ''),
+      riotName: parsed.riotName,
+      riotTag: parsed.riotTag,
     };
     const result = await submitJoinApplication(profile);
     setBusy(false);
@@ -124,7 +130,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
         ? '스트리머 매니지 화면이 켜져 있으면 곧 대기열에 추가됩니다.'
         : '스트리머 승인 후 대기열에 들어갑니다. 이 화면을 유지하면 결과가 갱신됩니다.'
       : done.status === 'rejected'
-        ? '다른 닉으로 다시 신청하거나 스트리머에게 문의해 주세요.'
+        ? '다른 닉네임으로 다시 신청하거나 스트리머에게 문의해 주세요.'
         : done.status === 'cancelled'
           ? '명단에서 찾을 수 없어 요청이 취소되었습니다.'
           : '스트리머 보드 대기열을 확인해 주세요.';
@@ -163,7 +169,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청</h1>
-        <p className="mt-2 text-sm text-val-muted">치지직 닉과 발로란트 닉만 입력하면 됩니다.</p>
+        <p className="mt-2 text-sm text-val-muted">치지직 닉네임과 발로란트 닉네임#태그만 입력하면 됩니다.</p>
 
         <label htmlFor="join-name" className="mt-6 block text-xs font-semibold text-val-muted">
           치지직 닉네임
@@ -176,26 +182,17 @@ export default function JoinPage({ onBack }: JoinPageProps) {
           className="mt-1.5 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none focus:border-val-teal"
         />
 
-        <label htmlFor="join-riot-name" className="mt-4 block text-xs font-semibold text-val-muted">
-          발로란트 닉네임
+        <label htmlFor="join-riot-id" className="mt-4 block text-xs font-semibold text-val-muted">
+          발로란트 닉네임#태그
         </label>
         <input
-          id="join-riot-name"
-          value={riotName}
-          onChange={(event) => setRiotName(event.target.value)}
+          id="join-riot-id"
+          value={riotId}
+          onChange={(event) => setRiotId(event.target.value)}
           required
-          className="mt-1.5 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none focus:border-val-teal"
-        />
-
-        <label htmlFor="join-riot-tag" className="mt-4 block text-xs font-semibold text-val-muted">
-          태그 (# 없이)
-        </label>
-        <input
-          id="join-riot-tag"
-          value={riotTag}
-          onChange={(event) => setRiotTag(event.target.value.replace(/^#+/, ''))}
-          required
-          placeholder="KR1"
+          placeholder="닉네임#KR1"
+          autoComplete="off"
+          spellCheck={false}
           className="mt-1.5 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none focus:border-val-teal"
         />
 
@@ -208,7 +205,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
         <div className="mt-6 flex flex-wrap gap-2">
           <button
             type="submit"
-            disabled={busy || !name.trim() || !riotName.trim() || !riotTag.trim()}
+            disabled={busy || !name.trim() || !hasCompleteRiotId(riotId)}
             className="rounded-lg bg-val-teal/80 px-4 py-2.5 text-sm font-semibold text-val-bg hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {busy ? '신청 중…' : '신청하기'}

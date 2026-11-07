@@ -23,9 +23,8 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
 export default function PlayerFormModal({ open, player, onClose, onNotice }: PlayerFormModalProps) {
   const {
     formRef, name,
-    setName, riotName,
-    setRiotName, riotTag,
-    setRiotTag, currentTier,
+    setName, riotId,
+    setRiotId, currentTier,
     setCurrentTier, maxTier,
     setMaxTier, internalTier,
     setInternalTier, restrictions,
@@ -109,36 +108,19 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
             )}
           </div>
 
-          <div className="grid grid-cols-[1fr_6.5rem] gap-3">
-            <div>
-              <label htmlFor="player-riot-name" className={fieldLabel}>
-                발로란트 닉네임
-              </label>
-              <input
-                id="player-riot-name"
-                value={riotName}
-                onChange={(event) => setRiotName(event.target.value)}
-                placeholder="게임 닉네임"
-                className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
-              />
-            </div>
-            <div>
-              <label htmlFor="player-riot-tag" className={fieldLabel}>
-                태그
-              </label>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-val-muted">
-                  #
-                </span>
-                <input
-                  id="player-riot-tag"
-                  value={riotTag}
-                  onChange={(event) => setRiotTag(event.target.value)}
-                  placeholder="KR1"
-                  className="w-full rounded-lg border border-val-line bg-val-bg py-2 pl-7 pr-3 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
-                />
-              </div>
-            </div>
+          <div>
+            <label htmlFor="player-riot-id" className={fieldLabel}>
+              발로란트 닉네임#태그
+            </label>
+            <input
+              id="player-riot-id"
+              value={riotId}
+              onChange={(event) => setRiotId(event.target.value)}
+              placeholder="닉네임#KR1"
+              autoComplete="off"
+              spellCheck={false}
+              className="w-full rounded-lg border border-val-line bg-val-bg px-3 py-2 text-val-cream outline-none ring-val-red/40 placeholder:text-val-muted/60 focus:border-val-red/60 focus:ring-2"
+            />
           </div>
 
           <div className="grid grid-cols-3 gap-3">

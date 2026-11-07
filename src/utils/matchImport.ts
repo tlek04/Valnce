@@ -30,11 +30,11 @@ export async function importQualifyingMatches(players: SavedPlayer[]): Promise<M
     return {
       ok: false,
       matches: [],
-      error: '고정 시드(포뇨, 게임은이게맞어)에 닉#태그를 등록하세요.',
+      error: '고정 시드(포뇨, 게임은이게맞어)에 닉네임#태그를 등록하세요.',
     };
   }
   if (roster.length === 0) {
-    return { ok: false, matches: [], error: '승패를 맞출 명단에 닉#태그를 등록하세요.' };
+    return { ok: false, matches: [], error: '승패를 맞출 명단에 닉네임#태그를 등록하세요.' };
   }
 
   try {

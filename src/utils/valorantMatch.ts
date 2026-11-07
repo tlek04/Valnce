@@ -3,7 +3,7 @@ import { riotIdentityKey } from './matchStats';
 
 export const MAX_MATCH_SEEDS = 2;
 
-/** 커스텀 전적 API 조회 고정 시드 (명단 닉 또는 발로란트 닉) */
+/** 커스텀 전적 API 조회 고정 시드 (명단 닉네임 또는 발로란트 닉네임) */
 export const FIXED_MATCH_SEED_NAMES = ['포뇨', '게임은이게맞어'] as const;
 
 export function hasRiotIdentity(player: { riotName?: string; riotTag?: string }) {

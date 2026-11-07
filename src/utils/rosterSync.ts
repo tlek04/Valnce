@@ -9,7 +9,7 @@ export interface RemoteRoster {
 
 export type PushRosterResult =
   | { ok: true }
-  | { ok: false; conflict?: false }
+  | { ok: false; conflict?: false; unauthorized?: boolean }
   | { ok: false; conflict: true; roster: RemoteRoster };
 
 function apiUrl() {
@@ -50,6 +50,9 @@ export async function pushRemoteRoster(players: SavedPlayer[], updatedAt: number
         conflict: true,
         roster: normalizeRemoteRoster(data),
       };
+    }
+    if (response.status === 401) {
+      return { ok: false, unauthorized: true };
     }
     return response.ok ? { ok: true } : { ok: false };
   } catch {

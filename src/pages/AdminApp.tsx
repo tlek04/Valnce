@@ -9,11 +9,16 @@ import {
   AccessLogEntry,
   clearAccessLog,
   fetchAccessLog,
+  fetchTrustStatus,
   revokeAllStreamerSessions,
+  clearAllAuthTokens,
+  trustThisDevice,
+  untrustThisDevice,
 } from '../utils/streamerAuth';
 import { fetchRemoteRoster, pushRemoteRoster } from '../utils/rosterSync';
 import { downloadRosterFile, readRosterFromFile } from '../utils/rosterShare';
 import { fetchSiteSettings, pushSiteSettings } from '../utils/siteSettings';
+import { getOrCreateDeviceId } from '../utils/deviceId';
 
 interface AdminAppProps {
   onLogout: () => void;
@@ -48,9 +53,14 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const [clearConfirm, setClearConfirm] = useState('');
   const [syncBusy, setSyncBusy] = useState(false);
   const [showViewerCard, setShowViewerCard] = useState(true);
+  const [streamerAccessOpen, setStreamerAccessOpen] = useState(true);
   const [settingsBusy, setSettingsBusy] = useState(false);
+  const [thisPcTrusted, setThisPcTrusted] = useState(false);
+  const [trustBusy, setTrustBusy] = useState(false);
+  const [trustReady, setTrustReady] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const pulledRef = useRef(false);
+  const deviceId = useMemo(() => getOrCreateDeviceId(), []);
 
   const loadAccessLog = useCallback(async () => {
     setAccessLoading(true);
@@ -75,10 +85,19 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const settings = await fetchSiteSettings();
+      const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
       if (cancelled) return;
       setShowViewerCard(settings.showViewerCard);
       setShowMatchRecord(settings.showMatchRecord);
+      setStreamerAccessOpen(settings.streamerAccessOpen);
+      let isTrusted = trusted;
+      if (!trusted) {
+        const registered = await trustThisDevice('이 PC');
+        if (cancelled) return;
+        isTrusted = Boolean(registered.ok);
+      }
+      setThisPcTrusted(isTrusted);
+      setTrustReady(true);
     })();
     return () => {
       cancelled = true;
@@ -98,8 +117,15 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
         showNotice('서버 명단을 불러오지 못했습니다.');
         return;
       }
-      applyRemoteRoster(remote.players, remote.updatedAt);
-      showNotice(`서버 명단 ${remote.players.length}명을 불러왔습니다.`);
+      const localUpdatedAt = useAppStore.getState().rosterUpdatedAt ?? 0;
+      if (remote.updatedAt >= localUpdatedAt) {
+        applyRemoteRoster(remote.players, remote.updatedAt);
+        showNotice(`서버 명단 ${remote.players.length}명을 불러왔습니다.`);
+        return;
+      }
+      showNotice(
+        `로컬 명단이 더 최신입니다(로컬 ${localUpdatedAt} · 서버 ${remote.updatedAt}). 필요하면 서버에 올리세요.`
+      );
     })();
     return () => {
       cancelled = true;
@@ -121,7 +147,12 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     const result = await pushRemoteRoster(state.players, state.rosterUpdatedAt || Date.now());
     setSyncBusy(false);
     if (!result.ok) {
-      showNotice(result.conflict ? '서버 명단과 충돌했습니다. 다시 불러오세요.' : '명단 업로드에 실패했습니다.');
+      if (result.conflict) {
+        applyRemoteRoster(result.roster.players, result.roster.updatedAt);
+        showNotice('서버 명단이 더 최신입니다. 서버 내용으로 맞췄습니다.');
+        return;
+      }
+      showNotice('명단 업로드에 실패했습니다.');
       return;
     }
     showNotice('서버 명단에 반영했습니다.');
@@ -162,6 +193,16 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       showNotice('서버 명단을 불러오지 못했습니다.');
       return;
     }
+    const localUpdatedAt = useAppStore.getState().rosterUpdatedAt ?? 0;
+    if (remote.updatedAt < localUpdatedAt) {
+      if (
+        !window.confirm(
+          `로컬 명단이 더 최신입니다. 그래도 서버 명단(${remote.players.length}명)으로 덮을까요?`
+        )
+      ) {
+        return;
+      }
+    }
     applyRemoteRoster(remote.players, remote.updatedAt);
     showNotice(`서버 명단 ${remote.players.length}명을 불러왔습니다.`);
   };
@@ -198,19 +239,67 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const handleRevoke = async (event: FormEvent) => {
     event.preventDefault();
     if (!revokePassword.trim()) return;
+    if (!trustReady) {
+      showNotice('이 PC 예외 상태를 확인하는 중입니다. 잠시 후 다시 시도하세요.');
+      return;
+    }
     setRevokeBusy(true);
+    const trustedNow = await fetchTrustStatus();
+    setThisPcTrusted(trustedNow);
     const result = await revokeAllStreamerSessions(revokePassword);
     setRevokeBusy(false);
     if (!result.ok) {
       showNotice(result.error || '세션 회수에 실패했습니다.');
       return;
     }
-    showNotice('모든 세션을 끊었습니다.');
-    onLogout();
+    setRevokePassword('');
+    showNotice(
+      trustedNow
+        ? '다른 기기 세션을 끊었습니다. 이 PC는 예외로 그대로 유지됩니다.'
+        : '세션을 끊었습니다. 이 PC가 예외 등록되어 있지 않아 다시 로그인하세요.'
+    );
+    if (!trustedNow) {
+      clearAllAuthTokens();
+      onLogout();
+    }
+  };
+
+  const handleTrustThisPc = async () => {
+    setTrustBusy(true);
+    const result = await trustThisDevice('이 PC');
+    setTrustBusy(false);
+    if (result.unauthorized) {
+      showNotice(result.error || '관리자 인증이 필요합니다.');
+      onLogout();
+      return;
+    }
+    if (!result.ok) {
+      showNotice(result.error || '이 PC 등록에 실패했습니다.');
+      return;
+    }
+    setThisPcTrusted(true);
+    showNotice('이 PC를 예외로 등록했습니다.');
+  };
+
+  const handleUntrustThisPc = async () => {
+    setTrustBusy(true);
+    const result = await untrustThisDevice();
+    setTrustBusy(false);
+    if (result.unauthorized) {
+      showNotice(result.error || '관리자 인증이 필요합니다.');
+      onLogout();
+      return;
+    }
+    if (!result.ok) {
+      showNotice(result.error || '이 PC 해제에 실패했습니다.');
+      return;
+    }
+    setThisPcTrusted(false);
+    showNotice('이 PC 예외를 해제했습니다.');
   };
 
   const saveSiteSetting = async (
-    patch: { showViewerCard?: boolean; showMatchRecord?: boolean },
+    patch: Partial<{ showViewerCard: boolean; showMatchRecord: boolean; streamerAccessOpen: boolean }>,
     revert: () => void,
     successMessage: string
   ) => {
@@ -231,6 +320,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
     if (result.settings) {
       setShowViewerCard(result.settings.showViewerCard);
       setShowMatchRecord(result.settings.showMatchRecord);
+      setStreamerAccessOpen(result.settings.streamerAccessOpen);
     }
     showNotice(successMessage);
   };
@@ -252,6 +342,18 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       { showViewerCard: checked },
       () => setShowViewerCard(previous),
       checked ? '대문에 시청자 카드를 표시합니다.' : '대문에서 시청자 카드를 숨깁니다.'
+    );
+  };
+
+  const handleStreamerAccessToggle = (checked: boolean) => {
+    const previous = streamerAccessOpen;
+    setStreamerAccessOpen(checked);
+    void saveSiteSetting(
+      { streamerAccessOpen: checked },
+      () => setStreamerAccessOpen(previous),
+      checked
+        ? '스트리머 입장을 열었습니다. 기존 토큰으로 바로 사용할 수 있습니다.'
+        : '스트리머 입장을 닫았습니다. 다른 기기는 막히고, 이 PC(예외)는 그대로입니다.'
     );
   };
 
@@ -323,9 +425,69 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
             )}
           </ul>
 
+          <div className="mt-4 border-t border-val-line pt-4">
+            <p className="text-xs text-val-muted">
+              이 PC 예외 — 세션 끊기·스트리머 OFF가 이 브라우저에는 적용되지 않습니다. (기기 ID{' '}
+              <span className="font-mono">{deviceId.slice(0, 8)}…</span>)
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span
+                className={`rounded-lg border px-3 py-2 text-sm font-semibold ${
+                  thisPcTrusted
+                    ? 'border-val-teal/40 bg-val-teal/10 text-val-teal'
+                    : 'border-val-line bg-val-bg/50 text-val-muted'
+                }`}
+              >
+                {thisPcTrusted ? '예외 등록됨' : '예외 아님'}
+              </span>
+              {thisPcTrusted ? (
+                <button
+                  type="button"
+                  disabled={trustBusy}
+                  onClick={() => void handleUntrustThisPc()}
+                  className="rounded-lg border border-val-line px-3 py-2 text-sm font-semibold text-val-muted hover:text-val-cream disabled:opacity-40"
+                >
+                  {trustBusy ? '처리 중…' : '이 PC 예외 해제'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled={trustBusy}
+                  onClick={() => void handleTrustThisPc()}
+                  className="rounded-lg border border-val-line px-3 py-2 text-sm font-semibold text-val-muted hover:text-val-cream disabled:opacity-40"
+                >
+                  {trustBusy ? '처리 중…' : '이 PC 예외 등록'}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-4 border-t border-val-line pt-4">
+            <p className="text-xs text-val-muted">
+              다른 기기 스트리머 입장만 막습니다. OFF여도 토큰은 남고, 이 PC(예외)는 계속 쓸 수 있습니다.
+            </p>
+            <label
+              className={`mt-2 inline-flex items-center gap-2 rounded-lg border border-val-line bg-val-bg/50 px-3 py-2.5 text-sm font-semibold text-val-cream ${
+                settingsBusy ? 'cursor-wait opacity-60' : 'cursor-pointer'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={streamerAccessOpen}
+                disabled={settingsBusy}
+                onChange={(event) => handleStreamerAccessToggle(event.target.checked)}
+                className="h-4 w-4 accent-val-teal"
+              />
+              스트리머 입장
+              <span className="text-xs font-medium text-val-muted">
+                {streamerAccessOpen ? '열림' : '닫힘'}
+              </span>
+            </label>
+          </div>
+
           <form onSubmit={handleRevoke} className="mt-4 border-t border-val-line pt-4">
             <p className="text-xs text-val-muted">
-              모든 기기 세션을 끊습니다. 관리자 비밀번호로만 확인할 수 있습니다.
+              다른 기기 세션을 끊습니다. 신뢰된 이 PC는 제외됩니다. 관리자 비밀번호로 확인합니다.
             </p>
             <div className="mt-2 flex flex-wrap items-end gap-2">
               <label className="min-w-[12rem] flex-1 text-xs font-semibold text-val-muted">
@@ -447,7 +609,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="닉 · 발로닉 검색"
+            placeholder="닉네임 · 발로란트 닉네임 검색"
             className="mt-4 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2 text-sm outline-none focus:border-val-red"
           />
 
@@ -465,7 +627,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
                     <div className="min-w-0">
                       <p className="truncate font-semibold">{player.name}</p>
                       <p className="truncate text-xs text-val-muted">
-                        {formatRiotId(player.riotName, player.riotTag) || '발로닉 없음'} ·{' '}
+                        {formatRiotId(player.riotName, player.riotTag) || '발로란트 닉네임 없음'} ·{' '}
                         {formatRating(player.currentTier)}
                       </p>
                       <p className="mt-1 text-sm text-val-muted">

@@ -5,6 +5,7 @@ import { stripPlayerLinks } from '../utils/relations';
 import { mergeSavedPlayers } from '../utils/rosterShare';
 import { resolvePlayer, withRelations } from './playerState';
 import { ActionCreator } from './actionTypes';
+import { withRemoteRosterApply } from '../utils/rosterApplyGuard';
 
 export const createPlayerActions: ActionCreator<
   'addPlayer' | 'updatePlayer' | 'removePlayer' | 'dismissPlayer' |
@@ -80,10 +81,12 @@ export const createPlayerActions: ActionCreator<
   },
 
   applyRemoteRoster: (incoming, updatedAt) =>
-    set({
-      players: incoming.map(toSavedPlayer),
-      rosterUpdatedAt: updatedAt,
-    }),
+    withRemoteRosterApply(() =>
+      set({
+        players: incoming.map(toSavedPlayer),
+        rosterUpdatedAt: updatedAt,
+      })
+    ),
   setRosterUpdatedAt: (updatedAt) => set({ rosterUpdatedAt: updatedAt }),
   setShowMatchRecord: (value) => set({ showMatchRecord: Boolean(value) }),
 });

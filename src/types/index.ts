@@ -59,7 +59,7 @@ export interface SavedPlayer {
   name: string;
   currentTier: RankRating;
   maxTier?: RankRating;
-  /** 발로란트 게임 닉 (내전용 별명과 달라도 됨) */
+  /** 발로란트 게임 닉네임 (내전용 별명과 달라도 됨) */
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
@@ -84,7 +84,7 @@ export interface Player {
   allyIds: string[];
   riotName?: string;
   riotTag?: string;
-  /** @deprecated 시드는 고정 닉 기준 */
+  /** @deprecated 시드는 고정 닉네임 기준 */
   matchSeed?: boolean;
   /** 현재 보드(대기열·팀)에 올라와 있을 때의 추가 순번 */
   queueNo?: number;

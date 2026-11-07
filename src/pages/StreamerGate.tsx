@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
-import { AuthRole, verifyStreamerPassword } from '../utils/streamerAuth';
+import { FormEvent, useEffect, useState } from 'react';
+import { AuthRole, fetchTrustStatus, verifyStreamerPassword } from '../utils/streamerAuth';
+import { fetchSiteSettings } from '../utils/siteSettings';
 
 interface StreamerGateProps {
   onSuccess: (role: AuthRole) => void;
@@ -10,6 +11,18 @@ export default function StreamerGate({ onSuccess, onBack }: StreamerGateProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [streamerEntryOpen, setStreamerEntryOpen] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
+      if (!cancelled) setStreamerEntryOpen(settings.streamerAccessOpen || trusted);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -32,7 +45,11 @@ export default function StreamerGate({ onSuccess, onBack }: StreamerGateProps) {
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-red">Streamer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">스트리머 입장</h1>
-        <p className="mt-2 text-sm text-val-muted">매니저 화면으로 가려면 비밀번호를 입력하세요.</p>
+        <p className="mt-2 text-sm text-val-muted">
+          {streamerEntryOpen
+            ? '매니저 화면으로 가려면 비밀번호를 입력하세요.'
+            : '스트리머 입장이 닫혀 있습니다. 관리자 비밀번호로는 계속 입장할 수 있습니다.'}
+        </p>
 
         <label htmlFor="streamer-password" className="mt-6 block text-xs font-semibold text-val-muted">
           비밀번호

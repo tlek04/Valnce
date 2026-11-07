@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { isApplyingRemoteRoster } from '../utils/rosterApplyGuard';
 import { fetchRemoteRoster, isRosterSyncConfigured, pushRemoteRoster } from '../utils/rosterSync';
 
 type SyncStatus = 'idle' | 'syncing' | 'ok' | 'offline';
 
 /** 기존 플레이어 명단만 서버(KV)와 맞춘다. 방 코드 없음. */
-export function useRosterSync(onNotice?: (message: string) => void) {
+export function useRosterSync(
+  onNotice?: (message: string) => void,
+  onUnauthorized?: () => void
+) {
   const [status, setStatus] = useState<SyncStatus>('idle');
-  const applyingRemote = useRef(false);
   const pushTimer = useRef<number | null>(null);
   const hydrated = useRef(false);
 
@@ -28,17 +31,17 @@ export function useRosterSync(onNotice?: (message: string) => void) {
 
       const localUpdatedAt = useAppStore.getState().rosterUpdatedAt ?? 0;
       if (remote.updatedAt > localUpdatedAt) {
-        applyingRemote.current = true;
         useAppStore.getState().applyRemoteRoster(remote.players, remote.updatedAt);
-        applyingRemote.current = false;
         onNotice?.(`서버 명단 ${remote.players.length}명을 불러왔습니다.`);
       } else if (localUpdatedAt > remote.updatedAt) {
         const { players, rosterUpdatedAt } = useAppStore.getState();
         const pushed = await pushRemoteRoster(players, rosterUpdatedAt || Date.now());
+        if (!pushed.ok && 'unauthorized' in pushed && pushed.unauthorized) {
+          onUnauthorized?.();
+          return;
+        }
         if (!pushed.ok && pushed.conflict) {
-          applyingRemote.current = true;
           useAppStore.getState().applyRemoteRoster(pushed.roster.players, pushed.roster.updatedAt);
-          applyingRemote.current = false;
         }
       }
       setStatus('ok');
@@ -53,8 +56,10 @@ export function useRosterSync(onNotice?: (message: string) => void) {
     }
 
     const unsub = useAppStore.subscribe((state, previous) => {
-      if (!hydrated.current || applyingRemote.current) return;
+      if (!hydrated.current || isApplyingRemoteRoster()) return;
       if (state.players === previous.players) return;
+      // 원격 반영·수동 stamp로 rosterUpdatedAt이 이미 바뀐 경우 Date.now()로 덮어 push하지 않음
+      if (state.rosterUpdatedAt !== previous.rosterUpdatedAt) return;
 
       const updatedAt = Date.now();
       useAppStore.getState().setRosterUpdatedAt(updatedAt);
@@ -67,10 +72,12 @@ export function useRosterSync(onNotice?: (message: string) => void) {
             setStatus('ok');
             return;
           }
+          if ('unauthorized' in result && result.unauthorized) {
+            onUnauthorized?.();
+            return;
+          }
           if (result.conflict) {
-            applyingRemote.current = true;
             useAppStore.getState().applyRemoteRoster(result.roster.players, result.roster.updatedAt);
-            applyingRemote.current = false;
             setStatus('ok');
             return;
           }
@@ -84,7 +91,7 @@ export function useRosterSync(onNotice?: (message: string) => void) {
       unsub();
       if (pushTimer.current) window.clearTimeout(pushTimer.current);
     };
-  }, [onNotice]);
+  }, [onNotice, onUnauthorized]);
 
   return status;
 }

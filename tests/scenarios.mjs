@@ -107,9 +107,12 @@ export async function serverScenarios(root = 'src') {
   };
   const output = [];
   let authToken = '';
+  let deviceId = '';
   async function request(path, method = 'GET', body, authenticated = true) {
     const headers = {};
     if (authenticated && authToken) headers.Authorization = `Bearer ${authToken}`;
+    if (deviceId) headers['X-Device-Id'] = deviceId;
+    if (body !== undefined && typeof body !== 'string') headers['content-type'] = 'application/json';
     const response = await worker.fetch(new Request(`https://example.test${path}`, { method,
       headers,
       ...(body === undefined ? {} : { body: typeof body === 'string' ? body : JSON.stringify(body) }),
@@ -161,6 +164,33 @@ export async function serverScenarios(root = 'src') {
   await request('/api/auth/access-log');
   await request('/api/auth/access-log', 'DELETE');
   await request('/api/auth/access-log');
+  // 이 PC 예외: 신뢰 기기 + 세션 끊기 / 스트리머 OFF
+  deviceId = 'trusted-pc-1';
+  await request('/api/auth/trust-status', 'GET', undefined, false);
+  await request('/api/auth/trust-device', 'POST', { deviceId: 'trusted-pc-1', label: 'home' });
+  await request('/api/auth/trust-device');
+  const trustedStreamer = await request('/api/auth/login', 'POST', { password: 'test-only' }, false);
+  const trustedStreamerToken = typeof trustedStreamer?.token === 'string' ? trustedStreamer.token : '';
+  await request('/api/auth/revoke-all', 'POST', { password: 'admin-only' }, false);
+  authToken = trustedStreamerToken;
+  await request('/api/roster', 'PUT', { players: [player('trusted')], updatedAt: fixedNow + 50 });
+  deviceId = 'other-pc';
+  await request('/api/roster', 'PUT', { players: [], updatedAt: fixedNow + 51 });
+  deviceId = 'trusted-pc-1';
+  const adminAgain = await request('/api/auth/login', 'POST', { password: 'admin-only' }, false);
+  authToken = typeof adminAgain?.token === 'string' ? adminAgain.token : '';
+  await request('/api/site-settings', 'PUT', { streamerAccessOpen: false });
+  deviceId = 'other-pc';
+  await request('/api/auth/login', 'POST', { password: 'test-only' }, false);
+  deviceId = 'trusted-pc-1';
+  await request('/api/auth/login', 'POST', { password: 'test-only' }, false);
+  await request('/api/auth/trust-device', 'DELETE', { deviceId: 'trusted-pc-1' });
+  await request('/api/auth/trust-status', 'GET', undefined, false);
+  // site-settings GET + 시청자 카드 OFF → join 403
+  await request('/api/site-settings', 'GET', undefined, false);
+  await request('/api/site-settings', 'PUT', { showViewerCard: false });
+  await request('/api/join', 'POST', { name: 'blocked', riotName: 'blocked', riotTag: 'KR' }, false);
+  await request('/api/site-settings', 'PUT', { showViewerCard: true, streamerAccessOpen: true });
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => Response.json({ data: [{
     metadata: { match_id: 'm1', started_at: new Date(fixedNow).toISOString(), is_completed: true, queue: { id: 'custom' }, map: { name: 'Ascent' } },

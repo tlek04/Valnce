@@ -5,7 +5,7 @@ import { ROSTER_KEY } from './roster';
 import { DEFAULT_RATING as DEFAULT_TIER } from '../constants/game';
 import { riotKey } from './identity';
 import { fetchRiotRatings } from './mmr';
-import { isViewerJoinOpen } from './siteSettings';
+import { isViewerJoinOpen } from './siteSettingsStore';
 
 const JOIN_KEY = 'join-queue';
 const JOIN_STATUS_PREFIX = 'join-status:';
@@ -184,7 +184,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
   const riotTag = (body.riotTag ?? '').trim().replace(/^#+/, '');
   if (!name) return json({ ok: false, error: '치지직 닉네임을 입력하세요.' }, { status: 400 });
   if (!riotName || !riotTag) {
-    return json({ ok: false, error: '발로란트 닉과 태그를 입력하세요.' }, { status: 400 });
+    return json({ ok: false, error: '발로란트 닉네임과 태그를 입력하세요.' }, { status: 400 });
   }
 
   const nameKey = name.normalize('NFC').toLowerCase();
@@ -210,7 +210,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
       return json({ ok: false, error: '이미 대기열 합류 요청이 있습니다.' }, { status: 409 });
     }
 
-    // 치지직 닉이 바뀌었으면 명단에 반영
+    // 치지직 닉네임이 바뀌었으면 명단에 반영
     const prevName = typeof existingByRiot.name === 'string' ? existingByRiot.name : '';
     if (prevName.normalize('NFC').toLowerCase() !== nameKey) {
       const updatedAt = Date.now();
@@ -262,7 +262,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
         riotKey(item.riotName, item.riotTag) === tagKey
     );
   if (riotTaken) {
-    return json({ ok: false, error: '같은 발로란트 닉#태그가 이미 있습니다.' }, { status: 409 });
+    return json({ ok: false, error: '같은 발로란트 닉네임#태그가 이미 있습니다.' }, { status: 409 });
   }
 
   const application: JoinApplication = {
@@ -328,7 +328,6 @@ async function approveJoin(env: Env, id: string): Promise<Response> {
     maxTier,
     riotName: application.riotName,
     riotTag: application.riotTag,
-    queueNo: application.queueNo,
     wins: 0,
     losses: 0,
     streak: 0,
@@ -342,7 +341,7 @@ async function approveJoin(env: Env, id: string): Promise<Response> {
     return json({ ok: false, error: '명단 저장에 실패했습니다.' }, { status: 500 });
   }
 
-  // 승인 시 대기열 순번은 재정렬하지 않음(신청 시 받은 번호 유지). 거절 때만 재번호.
+  // 승인·거절 모두 대기열 순번은 재정렬하지 않음(신청 시 받은 번호 유지, nextNo 단조 증가).
   const remaining = queue.items.filter((item) => item.id !== id);
   await writeJoinQueue(env, { nextNo: queue.nextNo, items: remaining });
   await writeJoinStatus(env, application.id, {

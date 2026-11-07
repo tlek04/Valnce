@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fetchTrustStatus } from '../utils/streamerAuth';
 import { fetchSiteSettings } from '../utils/siteSettings';
 
 interface LandingPageProps {
@@ -8,12 +9,16 @@ interface LandingPageProps {
 
 export default function LandingPage({ onSelectStreamer, onSelectViewer }: LandingPageProps) {
   const [showViewerCard, setShowViewerCard] = useState(true);
+  /** 서버 OFF여도 이 PC(신뢰)면 true */
+  const [streamerEntryOpen, setStreamerEntryOpen] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const settings = await fetchSiteSettings();
-      if (!cancelled) setShowViewerCard(settings.showViewerCard);
+      const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
+      if (cancelled) return;
+      setShowViewerCard(settings.showViewerCard);
+      setStreamerEntryOpen(settings.streamerAccessOpen || trusted);
     })();
     return () => {
       cancelled = true;
@@ -43,13 +48,23 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
         <button
           type="button"
           onClick={onSelectStreamer}
-          className="group flex aspect-square flex-col items-center justify-center rounded-3xl border-2 border-val-line bg-val-panel/70 p-8 text-center transition hover:border-val-red hover:bg-val-panel"
+          className={`group flex aspect-square flex-col items-center justify-center rounded-3xl border-2 bg-val-panel/70 p-8 text-center transition hover:bg-val-panel ${
+            streamerEntryOpen
+              ? 'border-val-line hover:border-val-red'
+              : 'border-val-warn/50 hover:border-val-warn'
+          }`}
         >
-          <span className="font-display text-4xl font-bold tracking-wide text-val-cream transition group-hover:text-val-red sm:text-5xl">
-            스트리머
+          <span
+            className={`font-display text-4xl font-bold tracking-wide text-val-cream transition sm:text-5xl ${
+              streamerEntryOpen ? 'group-hover:text-val-red' : 'group-hover:text-val-warn'
+            }`}
+          >
+            {streamerEntryOpen ? '스트리머' : '관리자'}
           </span>
           <span className="mt-4 max-w-[14rem] text-sm leading-relaxed text-val-muted">
-            비밀번호로 입장 · 팀 구성 · 신청 승인
+            {streamerEntryOpen
+              ? '비밀번호로 입장 · 팀 구성 · 신청 승인'
+              : '스트리머 입장 닫힘 · 관리자 비밀번호로 입장'}
           </span>
         </button>
 
@@ -63,7 +78,7 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
               시청자
             </span>
             <span className="mt-4 max-w-[14rem] text-sm leading-relaxed text-val-muted">
-              치지직 닉 · 발로란트 닉으로 참가 신청
+              치지직 닉네임 · 발로란트 닉네임으로 참가 신청
             </span>
           </button>
         ) : null}

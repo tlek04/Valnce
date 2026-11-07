@@ -184,7 +184,7 @@ export async function handleMatchImport(request: Request, env: Env): Promise<Res
     return json({ ok: false, error: '시드가 필요합니다.', matches: [] }, { status: 400 });
   }
   if (roster.length === 0) {
-    return json({ ok: false, error: '닉#태그가 등록된 명단이 필요합니다.', matches: [] }, { status: 400 });
+    return json({ ok: false, error: '닉네임#태그가 등록된 명단이 필요합니다.', matches: [] }, { status: 400 });
   }
 
   const cutoff = matchHistoryCutoff();

@@ -61,6 +61,25 @@ export function formatRiotId(riotName?: string, riotTag?: string): string {
   return tag ? `${name}#${tag}` : name;
 }
 
+/** `닉네임#태그` 한 줄을 분리. 마지막 `#` 기준. */
+export function parseRiotId(raw: string): { riotName: string; riotTag: string } {
+  const trimmed = (raw ?? '').trim();
+  if (!trimmed) return { riotName: '', riotTag: '' };
+  const hash = trimmed.lastIndexOf('#');
+  if (hash <= 0) {
+    return { riotName: trimmed.replace(/^#+/, ''), riotTag: '' };
+  }
+  return {
+    riotName: trimmed.slice(0, hash).trim(),
+    riotTag: trimmed.slice(hash + 1).trim().replace(/^#+/, ''),
+  };
+}
+
+export function hasCompleteRiotId(raw: string): boolean {
+  const { riotName, riotTag } = parseRiotId(raw);
+  return Boolean(riotName && riotTag);
+}
+
 export function normalizeRiotPart(value?: string): string {
   return (value ?? '')
     .trim()

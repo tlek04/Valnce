@@ -34,6 +34,7 @@ export async function clientScenarios(root = 'src') {
         localStorage.clear();
         sessionStorage.clear();
         localStorage.setItem('valnce-streamer-token', 'fake');
+        localStorage.setItem('valnce-device-id', 'test-device-id');
         const requests = [];
         globalThis.fetch = async (url, options) => {
           requests.push({ url, options });

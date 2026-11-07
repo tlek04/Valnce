@@ -1,5 +1,13 @@
 import { Env } from './types';
 import { json } from './http';
+import { isStreamerAccessOpen } from './siteSettingsStore';
+import {
+  deviceIdFromRequest,
+  isTrustedDevice,
+  readTrustedDevices,
+  trustDevice,
+  untrustDevice,
+} from './trustedDevices';
 
 type AuthEnv = Pick<Env, 'STREAMER_PASSWORD' | 'ADMIN_PASSWORD' | 'ROSTER'>;
 export type AuthRole = 'streamer' | 'admin';
@@ -125,7 +133,8 @@ export async function verifyAuthToken(
   secret: string,
   epoch: number,
   expectedRole: AuthRole,
-  now = Date.now()
+  now = Date.now(),
+  options?: { skipEpoch?: boolean }
 ): Promise<boolean> {
   const parts = token.split('.');
   if (parts.length !== 3 || parts[0] !== 'v1') return false;
@@ -148,7 +157,11 @@ export async function verifyAuthToken(
     };
     if (payload.v !== 1 || typeof payload.exp !== 'number') return false;
     if (payload.exp <= now) return false;
-    if (typeof payload.epoch !== 'number' || payload.epoch !== epoch) return false;
+    if (!options?.skipEpoch) {
+      if (typeof payload.epoch !== 'number' || payload.epoch !== epoch) return false;
+    } else if (typeof payload.epoch !== 'number') {
+      return false;
+    }
     if (payload.role !== expectedRole) return false;
     return true;
   } catch {
@@ -163,13 +176,18 @@ async function resolveAuth(
   const token = bearerToken(request);
   if (!token) return null;
   const epoch = await readSessionEpoch(env);
+  const skipEpoch = await isTrustedDevice(env, deviceIdFromRequest(request));
+  const verifyOpts = skipEpoch ? { skipEpoch: true } : undefined;
   if (
     env.STREAMER_PASSWORD &&
-    (await verifyAuthToken(token, env.STREAMER_PASSWORD, epoch, 'streamer'))
+    (await verifyAuthToken(token, env.STREAMER_PASSWORD, epoch, 'streamer', Date.now(), verifyOpts))
   ) {
     return { role: 'streamer' };
   }
-  if (env.ADMIN_PASSWORD && (await verifyAuthToken(token, env.ADMIN_PASSWORD, epoch, 'admin'))) {
+  if (
+    env.ADMIN_PASSWORD &&
+    (await verifyAuthToken(token, env.ADMIN_PASSWORD, epoch, 'admin', Date.now(), verifyOpts))
+  ) {
     return { role: 'admin' };
   }
   return null;
@@ -194,7 +212,7 @@ async function writeLoginAttempts(env: AuthEnv, ip: string, count: number, reset
   await env.ROSTER.put(`auth:login:${ip}`, JSON.stringify({ count, resetAt }));
 }
 
-/** 스트리머 또는 관리자 토큰 */
+/** 스트리머 또는 관리자 토큰. 스트리머 입장 OFF면 스트리머 역할만 403(토큰 유지). */
 export async function requireStreamer(request: Request, env: AuthEnv): Promise<Response | null> {
   if (!env.STREAMER_PASSWORD && !env.ADMIN_PASSWORD) {
     return json({ error: 'STREAMER_PASSWORD 시크릿이 없습니다.' }, { status: 503 });
@@ -202,6 +220,12 @@ export async function requireStreamer(request: Request, env: AuthEnv): Promise<R
   const auth = await resolveAuth(request, env);
   if (!auth) {
     return json({ error: '인증이 필요합니다.' }, { status: 401 });
+  }
+  if (auth.role === 'streamer' && !(await isStreamerAccessOpen(env))) {
+    const trusted = await isTrustedDevice(env, deviceIdFromRequest(request));
+    if (!trusted) {
+      return json({ error: '지금은 스트리머 입장이 닫혀 있습니다.' }, { status: 403 });
+    }
   }
   await appendAccessLog(
     env,
@@ -263,6 +287,11 @@ export async function handleAuthLogin(request: Request, env: AuthEnv): Promise<R
   }
 
   if (env.STREAMER_PASSWORD && password === env.STREAMER_PASSWORD) {
+    const accessOpen = await isStreamerAccessOpen(env);
+    const trusted = await isTrustedDevice(env, deviceIdFromRequest(request));
+    if (!accessOpen && !trusted) {
+      return json({ ok: false, error: '지금은 스트리머 입장이 닫혀 있습니다.' }, { status: 403 });
+    }
     await writeLoginAttempts(env, ip, 0, attempts.resetAt);
     const token = await issueAuthToken(env.STREAMER_PASSWORD, epoch, 'streamer');
     await appendAccessLog(env, { ip, at: Date.now(), ok: true });
@@ -317,4 +346,57 @@ export async function handleAuthAccessLog(request: Request, env: AuthEnv): Promi
   }
   const items = await readAccessLog(env);
   return json({ items });
+}
+
+export async function handleAuthTrustStatus(request: Request, env: AuthEnv): Promise<Response> {
+  if (request.method !== 'GET') {
+    return json({ error: 'Method not allowed' }, { status: 405 });
+  }
+  const trusted = await isTrustedDevice(env, deviceIdFromRequest(request));
+  return json({ trusted });
+}
+
+export async function handleAuthTrustDevice(request: Request, env: AuthEnv): Promise<Response> {
+  if (request.method === 'GET') {
+    const denied = await requireAdmin(request, env);
+    if (denied) return denied;
+    const devices = await readTrustedDevices(env);
+    return json({ devices });
+  }
+
+  if (request.method === 'POST') {
+    const denied = await requireAdmin(request, env);
+    if (denied) return denied;
+    let body: { deviceId?: string; label?: string };
+    try {
+      body = (await request.json()) as { deviceId?: string; label?: string };
+    } catch {
+      return json({ error: '잘못된 JSON입니다.' }, { status: 400 });
+    }
+    const deviceId = (body.deviceId ?? deviceIdFromRequest(request)).trim();
+    if (!deviceId) {
+      return json({ error: 'deviceId가 필요합니다.' }, { status: 400 });
+    }
+    const devices = await trustDevice(env, deviceId, body.label);
+    return json({ ok: true, devices });
+  }
+
+  if (request.method === 'DELETE') {
+    const denied = await requireAdmin(request, env);
+    if (denied) return denied;
+    let body: { deviceId?: string };
+    try {
+      body = (await request.json()) as { deviceId?: string };
+    } catch {
+      return json({ error: '잘못된 JSON입니다.' }, { status: 400 });
+    }
+    const deviceId = (body.deviceId ?? deviceIdFromRequest(request)).trim();
+    if (!deviceId) {
+      return json({ error: 'deviceId가 필요합니다.' }, { status: 400 });
+    }
+    const devices = await untrustDevice(env, deviceId);
+    return json({ ok: true, devices });
+  }
+
+  return json({ error: 'Method not allowed' }, { status: 405 });
 }

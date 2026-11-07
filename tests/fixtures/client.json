@@ -138,7 +138,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -150,7 +151,8 @@
     "name": "pushRemoteRoster",
     "status": 401,
     "result": {
-      "ok": false
+      "ok": false,
+      "unauthorized": true
     },
     "requests": [
       {
@@ -159,7 +161,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -203,7 +206,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -224,7 +228,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -245,7 +250,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -266,7 +272,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -287,7 +294,8 @@
           "method": "PUT",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"updatedAt\":123,\"players\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"riotName\":\"seed\",\"riotTag\":\"KR\",\"wins\":0,\"losses\":0,\"streak\":0}]}"
         }
@@ -459,7 +467,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -480,7 +489,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -501,7 +511,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -522,7 +533,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -543,7 +555,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -564,7 +577,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -585,7 +599,8 @@
           "method": "GET",
           "cache": "no-store",
           "headers": {
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -628,7 +643,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -649,7 +665,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -670,7 +687,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -691,7 +709,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -712,7 +731,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -733,7 +753,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -754,7 +775,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -775,7 +797,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -796,7 +819,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -817,7 +841,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -838,7 +863,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -859,7 +885,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -880,7 +907,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -901,7 +929,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           }
         }
       }
@@ -921,7 +950,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -942,7 +972,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -963,7 +994,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -984,7 +1016,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -1005,7 +1038,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -1026,7 +1060,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -1047,7 +1082,8 @@
         "options": {
           "method": "POST",
           "headers": {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"password\":\"fake\"}"
         }
@@ -1069,7 +1105,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
@@ -1092,7 +1129,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
@@ -1115,7 +1153,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
@@ -1138,7 +1177,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
@@ -1161,7 +1201,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
@@ -1183,7 +1224,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }
@@ -1206,7 +1248,8 @@
           "method": "POST",
           "headers": {
             "content-type": "application/json",
-            "Authorization": "Bearer fake"
+            "Authorization": "Bearer fake",
+            "X-Device-Id": "test-device-id"
           },
           "body": "{\"seeds\":[{\"riotName\":\"seed\",\"riotTag\":\"KR\"}],\"roster\":[{\"id\":\"seed\",\"name\":\"포뇨\",\"riotName\":\"seed\",\"riotTag\":\"KR\"}]}"
         }

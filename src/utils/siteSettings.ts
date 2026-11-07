@@ -3,31 +3,72 @@ import { adminAuthHeaders } from './streamerAuth';
 export interface SiteSettings {
   showViewerCard: boolean;
   showMatchRecord: boolean;
+  streamerAccessOpen: boolean;
 }
 
-const DEFAULT_SETTINGS: SiteSettings = {
-  showViewerCard: true,
-  showMatchRecord: true,
+/** 캐시·응답 실패 시 접근 게이트는 닫힘(fail-closed). 표시 설정은 캐시가 있으면 유지. */
+const CLOSED_SETTINGS: SiteSettings = {
+  showViewerCard: false,
+  showMatchRecord: false,
+  streamerAccessOpen: false,
 };
+
+const SITE_SETTINGS_CACHE_KEY = 'valnce-site-settings-cache';
+
+let memoryCache: SiteSettings | null = null;
 
 function apiUrl() {
   return '/api/site-settings';
 }
 
+function normalize(data: {
+  showViewerCard?: unknown;
+  showMatchRecord?: unknown;
+  streamerAccessOpen?: unknown;
+}): SiteSettings {
+  return {
+    showViewerCard: data.showViewerCard !== false,
+    showMatchRecord: data.showMatchRecord !== false,
+    streamerAccessOpen: data.streamerAccessOpen !== false,
+  };
+}
+
+function readCache(): SiteSettings | null {
+  if (memoryCache) return memoryCache;
+  try {
+    const raw = sessionStorage.getItem(SITE_SETTINGS_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Parameters<typeof normalize>[0];
+    memoryCache = normalize(parsed);
+    return memoryCache;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(settings: SiteSettings): void {
+  memoryCache = settings;
+  try {
+    sessionStorage.setItem(SITE_SETTINGS_CACHE_KEY, JSON.stringify(settings));
+  } catch {
+    /* ignore */
+  }
+}
+
+function fallbackSettings(): SiteSettings {
+  return readCache() ?? { ...CLOSED_SETTINGS };
+}
+
 export async function fetchSiteSettings(): Promise<SiteSettings> {
   try {
     const response = await fetch(apiUrl(), { method: 'GET', cache: 'no-store' });
-    if (!response.ok) return { ...DEFAULT_SETTINGS };
-    const data = (await response.json()) as {
-      showViewerCard?: unknown;
-      showMatchRecord?: unknown;
-    };
-    return {
-      showViewerCard: data.showViewerCard !== false,
-      showMatchRecord: data.showMatchRecord !== false,
-    };
+    if (!response.ok) return fallbackSettings();
+    const data = (await response.json()) as Parameters<typeof normalize>[0];
+    const settings = normalize(data);
+    writeCache(settings);
+    return settings;
   } catch {
-    return { ...DEFAULT_SETTINGS };
+    return fallbackSettings();
   }
 }
 
@@ -47,14 +88,10 @@ export async function pushSiteSettings(
       const data = (await response.json().catch(() => null)) as { error?: string } | null;
       return { ok: false, error: data?.error || '설정을 저장하지 못했습니다.' };
     }
-    const data = (await response.json()) as SiteSettings & { ok?: boolean };
-    return {
-      ok: true,
-      settings: {
-        showViewerCard: data.showViewerCard !== false,
-        showMatchRecord: data.showMatchRecord !== false,
-      },
-    };
+    const data = (await response.json()) as Parameters<typeof normalize>[0];
+    const settings = normalize(data);
+    writeCache(settings);
+    return { ok: true, settings };
   } catch {
     return { ok: false, error: '설정을 저장하지 못했습니다.' };
   }

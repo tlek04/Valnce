@@ -38,9 +38,8 @@ export const useAppStore = create<AppStore>()(
         sessionSavedAt: Date.now(),
         rosterUpdatedAt: state.rosterUpdatedAt,
         lastMatchSyncAt: state.lastMatchSyncAt,
-        showMatchRecord: state.showMatchRecord,
       }),
-      migrate: (persisted) => restorePersistedState(persisted as Partial<AppState>),
+      migrate: (persisted) => restorePersistedState(persisted as Partial<AppState>) as never,
       merge: (persisted, current) => ({
         ...current,
         ...restorePersistedState(persisted as Partial<AppState>),

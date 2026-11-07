@@ -98,7 +98,7 @@ export default function SavedPlayerPanel({ onClose, onNotice }: SavedPlayerPanel
               기존 플레이어
             </h2>
             <p className="mt-1 text-xs text-val-muted">
-              {players.length}명 · 닉·태그·티어·전적을 보관합니다
+              {players.length}명 · 닉네임·태그·티어·전적을 보관합니다
             </p>
           </div>
           <button

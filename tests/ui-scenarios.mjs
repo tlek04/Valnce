@@ -4,6 +4,7 @@ import { player } from './scenarios.mjs';
 export async function renderScreens(root = 'src') {
   globalThis.localStorage = memoryStorage();
   globalThis.sessionStorage = memoryStorage();
+  globalThis.localStorage.setItem('valnce-device-id', 'test-device-id');
   globalThis.window = { location: { pathname: '/' } };
   const entry = `
     import React from 'react';
@@ -13,6 +14,7 @@ export async function renderScreens(root = 'src') {
     import JoinPage from './${root}/pages/JoinPage';
     import StreamerGate from './${root}/pages/StreamerGate';
     import ManageApp from './${root}/pages/ManageApp';
+    import AdminApp from './${root}/pages/AdminApp';
     import PlayerFormModal from './${root}/components/PlayerFormModal';
     import SavedPlayerPanel from './${root}/components/SavedPlayerPanel';
     export { useAppStore };
@@ -23,6 +25,7 @@ export async function renderScreens(root = 'src') {
         join: renderToStaticMarkup(<JoinPage onBack={noop} />),
         gate: renderToStaticMarkup(<StreamerGate onBack={noop} onSuccess={noop} />),
         manage: renderToStaticMarkup(<ManageApp onLogout={noop} />),
+        admin: renderToStaticMarkup(<AdminApp onLogout={noop} />),
         create: renderToStaticMarkup(<PlayerFormModal open player={null} onClose={noop} />),
         edit: renderToStaticMarkup(<PlayerFormModal open player={player} onClose={noop} />),
         library: renderToStaticMarkup(<SavedPlayerPanel onClose={noop} />),

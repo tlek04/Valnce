@@ -4,6 +4,7 @@ import { useAppStore } from '../store/useAppStore';
 import { RESTRICTION_OPTIONS, restrictionKey, sameRating } from '../constants/valorant';
 import { DEFAULT_RATING } from '../constants/game';
 import { cloneRating, isRatingAtLeast } from '../utils/rating';
+import { formatRiotId, parseRiotId } from '../utils/matchStats';
 
 interface PlayerFormOptions {
   open: boolean;
@@ -20,8 +21,7 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
   const formRef = useRef<HTMLFormElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const [name, setName] = useState(player?.name ?? '');
-  const [riotName, setRiotName] = useState(player?.riotName ?? '');
-  const [riotTag, setRiotTag] = useState(player?.riotTag ?? '');
+  const [riotId, setRiotId] = useState(formatRiotId(player?.riotName, player?.riotTag));
   const [currentTier, setCurrentTier] = useState<RankRating>(player?.currentTier ?? DEFAULT_RATING);
   const [maxTier, setMaxTier] = useState<RankRating>(player?.maxTier ?? player?.currentTier ?? DEFAULT_RATING);
   const [internalTier, setInternalTier] = useState<RankRating | null>(player?.internalTier ?? null);
@@ -41,8 +41,7 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
     const saved = player ? useAppStore.getState().players.find((item) => item.id === player.id) : null;
     const source = player ?? saved;
     setName(source?.name ?? '');
-    setRiotName(source?.riotName ?? '');
-    setRiotTag(source?.riotTag ?? '');
+    setRiotId(formatRiotId(source?.riotName, source?.riotTag));
     setCurrentTier(source?.currentTier ?? DEFAULT_RATING);
     setMaxTier(player?.maxTier ?? source?.currentTier ?? DEFAULT_RATING);
     setInternalTier(player?.internalTier ?? null);
@@ -143,8 +142,12 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (!trimmedName) return;
-    const trimmedRiotName = riotName.trim();
-    const trimmedRiotTag = riotTag.trim();
+    const trimmedRiotId = riotId.trim();
+    const parsed = parseRiotId(trimmedRiotId);
+    if (trimmedRiotId && (!parsed.riotName || !parsed.riotTag)) {
+      onNotice?.('발로란트 닉네임#태그 형식으로 입력하거나 비워 두세요.');
+      return;
+    }
     const saved = player ? useAppStore.getState().players.find((item) => item.id === player.id) : null;
     const payload: Player = {
       id: player?.id ?? crypto.randomUUID(),
@@ -158,8 +161,8 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
       lockedTeam,
       rivalIds,
       allyIds,
-      riotName: trimmedRiotName || undefined,
-      riotTag: trimmedRiotTag || undefined,
+      riotName: parsed.riotName || undefined,
+      riotTag: parsed.riotTag || undefined,
       wins: player?.wins ?? saved?.wins ?? 0,
       losses: player?.losses ?? saved?.losses ?? 0,
       streak: player?.streak ?? saved?.streak ?? 0,
@@ -171,9 +174,8 @@ export function usePlayerForm({ open, player, onClose, onNotice }: PlayerFormOpt
 
   return {
     formRef, name,
-    setName, riotName,
-    setRiotName, riotTag,
-    setRiotTag, currentTier,
+    setName, riotId,
+    setRiotId, currentTier,
     setCurrentTier, maxTier,
     setMaxTier, internalTier,
     setInternalTier, restrictions,

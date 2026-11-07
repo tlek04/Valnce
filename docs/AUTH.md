@@ -37,15 +37,31 @@
 - payload: `{ v, exp, epoch, role }` — 만료 기본 30일, `epoch`는 KV `auth:session-epoch`
 - 검증: 서명 + 만료 + **현재 epoch와 일치** + role
 - 스트리머 토큰은 `STREAMER_PASSWORD`로, 관리자 토큰은 `ADMIN_PASSWORD`로 서명됩니다.
-- 클라이언트: 명단·신청 등 staff API는 스트리머 토큰(없으면 관리자), access-log는 관리자 토큰만.
+- 클라이언트: 명단·신청 등 staff API는 **관리자 토큰 우선**, 없으면 스트리머 토큰(`streamerAuthHeaders`). 듀얼 토큰 + 스트리머 OFF일 때 admin Bearer로 staff API가 통과한다. access-log·site-settings PUT은 관리자 토큰만.
+
+### 이 PC 예외 (신뢰 기기)
+
+- 브라우저 `localStorage` `valnce-device-id` + 요청 헤더 `X-Device-Id`
+- KV `auth:trusted-devices` — 관리자 로그인 시 자동 등록, `/admin`에서 수동 등록·해제
+- **세션 끊기**: epoch는 올라가지만 신뢰 기기 토큰은 epoch 검사 생략 → 이 PC는 유지
+- **스트리머 OFF**: 신뢰 기기는 로그인·매니지 API 계속 허용
+- 다른 PC에는 둘 다 정상 적용
+
+### 스트리머 입장 ON/OFF (토큰 유지)
+
+- 관리 화면(`/admin`) → 세션 · 접속 → **스트리머 입장**
+- 서버 `site-settings.streamerAccessOpen`
+- **OFF**: 미신뢰 기기의 스트리머 로그인·API만 403. 토큰은 삭제하지 않음. 미신뢰 매니지 탭은 `alert` 후 창 닫기(실패 시 `/`)
+- **ON**: 기존 토큰으로 바로 재개
+- 관리자 로그인·API는 OFF와 무관. 미신뢰 PC는 랜딩 **관리자** 카드 또는 `/admin`
 
 ### 무효화 방법
 
 1. **관리 화면(`/admin`) → 세션 · 접속 → 모든 세션 끊기**  
    - API: `POST /api/auth/revoke-all` body `{ "password": "..." }`  
    - **`ADMIN_PASSWORD`만** 확인에 사용 가능 (스트리머 비번은 거부)  
-   - KV epoch +1 → 기존 토큰 전부 401  
-   - 다시 로그인하면 새 토큰을 받습니다.
+   - KV epoch +1 → **미신뢰** 기기 토큰 401. 신뢰된 이 PC는 예외  
+   - 미신뢰 기기는 다시 로그인하면 새 토큰을 받습니다.
 
 2. **Cloudflare에서 해당 비밀번호 Secret 변경**  
    - 서명 키가 바뀌어 그 역할의 기존 토큰이 무효 + 비번도 교체됩니다.
@@ -73,9 +89,11 @@
 | `POST /api/auth/login` | 없음 (비번) | `{ ok, token, role, expiresInMs }` — role은 `streamer` \| `admin` |
 | `GET /api/auth/access-log` | Bearer **admin** 토큰 | `{ items: [{ ip, at, ok }] }` |
 | `DELETE /api/auth/access-log` | Bearer **admin** 토큰 | `{ ok: true }` — 로그 비우기 |
-| `POST /api/auth/revoke-all` | **ADMIN_PASSWORD** | epoch 증가, 전 세션 무효 |
-| `GET /api/site-settings` | 없음 | `{ showViewerCard, showMatchRecord }` |
-| `PUT /api/site-settings` | Bearer **admin** 토큰 | 표시 설정 부분 갱신(merge) |
+| `POST /api/auth/revoke-all` | **ADMIN_PASSWORD** | epoch 증가 (신뢰 기기는 예외) |
+| `GET /api/auth/trust-status` | `X-Device-Id` | `{ trusted }` |
+| `GET/POST/DELETE /api/auth/trust-device` | Bearer **admin** | 신뢰 기기 목록·등록·해제 |
+| `GET /api/site-settings` | 없음 | `{ showViewerCard, showMatchRecord, streamerAccessOpen }` |
+| `PUT /api/site-settings` | Bearer **admin** 토큰 | 표시·입장 설정 부분 갱신(merge) |
 
 ## 로컬
 
@@ -83,10 +101,10 @@
 
 ```bash
 npm run build
-npx wrangler dev
+npm run dev:worker
 ```
 
 ## 관련 코드
 
-- 서버: `src/server/auth.ts`, `src/worker.ts`
-- 클라이언트: `src/utils/streamerAuth.ts`, `src/pages/AdminApp.tsx`, `src/App.tsx`
+- 서버: `src/server/auth.ts`, `src/server/trustedDevices.ts`, `src/server/siteSettings.ts`, `src/server/siteSettingsStore.ts`, `src/worker.ts`
+- 클라이언트: `src/utils/streamerAuth.ts`, `src/utils/deviceId.ts`, `src/utils/siteSettings.ts`, `src/pages/AdminApp.tsx`, `src/App.tsx`

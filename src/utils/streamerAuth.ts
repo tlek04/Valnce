@@ -1,4 +1,5 @@
 import { readJsonOrEmpty } from './apiResponse';
+import { deviceIdHeaders, getOrCreateDeviceId } from './deviceId';
 
 const STREAMER_TOKEN_KEY = 'valnce-streamer-token';
 const ADMIN_TOKEN_KEY = 'valnce-admin-token';
@@ -11,6 +12,12 @@ export interface AccessLogEntry {
   ip: string;
   at: number;
   ok: boolean;
+}
+
+export interface TrustedDevice {
+  id: string;
+  label?: string;
+  trustedAt: number;
 }
 
 function readToken(key: string): string | null {
@@ -116,15 +123,15 @@ export function clearAllAuthTokens(): void {
 }
 
 function bearerHeaders(token: string | null, extra?: HeadersInit): HeadersInit {
-  return {
+  return deviceIdHeaders({
     ...(extra ?? {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  });
 }
 
-/** 매니지·명단·신청 API — 스트리머 토큰 우선, 없으면 관리자 */
+/** 매니지·명단·신청 API — 관리자 토큰 우선(OFF 시 streamer Bearer 403 회피), 없으면 스트리머 */
 export function streamerAuthHeaders(extra?: HeadersInit): HeadersInit {
-  return bearerHeaders(getStreamerToken() || getAdminToken(), extra);
+  return bearerHeaders(getAdminToken() || getStreamerToken(), extra);
 }
 
 /** access-log 등 관리자 전용 API */
@@ -142,7 +149,7 @@ async function requestLogin(password: string): Promise<{
   try {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: deviceIdHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify({ password: trimmed }),
     });
     const data = await readJsonOrEmpty<{
@@ -160,12 +167,112 @@ async function requestLogin(password: string): Promise<{
   }
 }
 
+/** 관리자 로그인 직후 이 PC를 신뢰 기기로 등록 */
+export async function trustThisDevice(label?: string): Promise<{
+  ok: boolean;
+  devices?: TrustedDevice[];
+  error?: string;
+  unauthorized?: boolean;
+}> {
+  try {
+    const response = await fetch('/api/auth/trust-device', {
+      method: 'POST',
+      headers: adminAuthHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({
+        deviceId: getOrCreateDeviceId(),
+        label: label?.trim() || '이 PC',
+      }),
+    });
+    const data = await readJsonOrEmpty<{ ok?: boolean; devices?: TrustedDevice[]; error?: string }>(
+      response
+    );
+    if (response.status === 401) {
+      return { ok: false, unauthorized: true, error: data.error || '관리자 인증이 필요합니다.' };
+    }
+    if (!response.ok || !data.ok) {
+      return { ok: false, error: data.error || '이 PC 등록에 실패했습니다.' };
+    }
+    return { ok: true, devices: Array.isArray(data.devices) ? data.devices : [] };
+  } catch {
+    return { ok: false, error: '신뢰 기기 서버에 연결하지 못했습니다.' };
+  }
+}
+
+export async function untrustThisDevice(): Promise<{
+  ok: boolean;
+  devices?: TrustedDevice[];
+  error?: string;
+  unauthorized?: boolean;
+}> {
+  try {
+    const response = await fetch('/api/auth/trust-device', {
+      method: 'DELETE',
+      headers: adminAuthHeaders({ 'content-type': 'application/json' }),
+      body: JSON.stringify({ deviceId: getOrCreateDeviceId() }),
+    });
+    const data = await readJsonOrEmpty<{ ok?: boolean; devices?: TrustedDevice[]; error?: string }>(
+      response
+    );
+    if (response.status === 401) {
+      return { ok: false, unauthorized: true, error: data.error || '관리자 인증이 필요합니다.' };
+    }
+    if (!response.ok || !data.ok) {
+      return { ok: false, error: data.error || '이 PC 해제에 실패했습니다.' };
+    }
+    return { ok: true, devices: Array.isArray(data.devices) ? data.devices : [] };
+  } catch {
+    return { ok: false, error: '신뢰 기기 서버에 연결하지 못했습니다.' };
+  }
+}
+
+const TRUST_STATUS_CACHE_KEY = 'valnce-trust-status-cache';
+
+export async function fetchTrustStatus(): Promise<boolean> {
+  try {
+    const response = await fetch('/api/auth/trust-status', {
+      headers: deviceIdHeaders(),
+      cache: 'no-store',
+    });
+    if (!response.ok) {
+      return readTrustStatusCache();
+    }
+    const data = (await response.json()) as { trusted?: unknown };
+    const trusted = data.trusted === true;
+    writeTrustStatusCache(trusted);
+    return trusted;
+  } catch {
+    return readTrustStatusCache();
+  }
+}
+
+function readTrustStatusCache(): boolean {
+  try {
+    const raw = sessionStorage.getItem(TRUST_STATUS_CACHE_KEY);
+    if (raw === '1') return true;
+    if (raw === '0') return false;
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
+function writeTrustStatusCache(trusted: boolean): void {
+  try {
+    sessionStorage.setItem(TRUST_STATUS_CACHE_KEY, trusted ? '1' : '0');
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function verifyStreamerPassword(
   password: string
 ): Promise<{ ok: boolean; role?: AuthRole; error?: string }> {
   const result = await requestLogin(password);
   if (!result.ok || !result.token || !result.role) return { ok: false, error: result.error };
   setAuthSession(result.token, result.role);
+  if (result.role === 'admin') {
+    void trustThisDevice('이 PC');
+  }
   return { ok: true, role: result.role };
 }
 
@@ -179,6 +286,7 @@ export async function unlockAdminPassword(
     return { ok: false, error: '관리자 비밀번호가 아닙니다.' };
   }
   setAdminSession(result.token);
+  void trustThisDevice('이 PC');
   return { ok: true };
 }
 
@@ -235,14 +343,14 @@ export async function revokeAllStreamerSessions(password: string): Promise<{
   try {
     const response = await fetch('/api/auth/revoke-all', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: deviceIdHeaders({ 'content-type': 'application/json' }),
       body: JSON.stringify({ password: password.trim() }),
     });
     const data = await readJsonOrEmpty<{ ok?: boolean; error?: string }>(response);
     if (!response.ok || !data.ok) {
       return { ok: false, error: data.error || '세션 회수에 실패했습니다.' };
     }
-    clearAllAuthTokens();
+    // 이 PC는 신뢰 기기로 epoch 예외 — 토큰을 지우지 않는다.
     return { ok: true };
   } catch {
     return { ok: false, error: '세션 회수 서버에 연결하지 못했습니다.' };

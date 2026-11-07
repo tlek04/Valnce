@@ -7,9 +7,11 @@ import StreamerGate from './pages/StreamerGate';
 import {
   clearAdminToken,
   clearStreamerToken,
+  fetchTrustStatus,
   getAdminToken,
   getStreamerToken,
 } from './utils/streamerAuth';
+import { fetchSiteSettings } from './utils/siteSettings';
 
 type Route = 'landing' | 'gate' | 'manage' | 'admin' | 'join';
 
@@ -82,7 +84,8 @@ export default function App() {
     return (
       <ManageApp
         onLogout={() => {
-          clearStreamerToken();
+          // 401/만료 시 clearAllAuthTokens는 Manage 쪽에서 호출. 여기선 게이트로만 이동.
+          if (getStreamerToken()) clearStreamerToken();
           navigate('gate');
         }}
         onAdminEnter={() => navigate('admin')}
@@ -93,11 +96,23 @@ export default function App() {
   return (
     <LandingPage
       onSelectStreamer={() => {
-        if (!getStreamerToken()) {
-          navigate('gate');
-          return;
-        }
-        navigate('manage');
+        void (async () => {
+          if (getAdminToken()) {
+            navigate('admin');
+            return;
+          }
+          const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
+          const streamerOpen = settings.streamerAccessOpen || trusted;
+          if (!streamerOpen) {
+            navigate('gate');
+            return;
+          }
+          if (!getStreamerToken()) {
+            navigate('gate');
+            return;
+          }
+          navigate('manage');
+        })();
       }}
       onSelectViewer={() => navigate('join')}
     />

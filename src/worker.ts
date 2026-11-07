@@ -3,6 +3,8 @@ import {
   handleAuthAccessLog,
   handleAuthLogin,
   handleAuthRevokeAll,
+  handleAuthTrustDevice,
+  handleAuthTrustStatus,
 } from './server/auth';
 import { handleRoster } from './server/roster';
 import { handleJoin } from './server/join';
@@ -21,6 +23,12 @@ export default {
     }
     if (path === '/api/auth/revoke-all') {
       return handleAuthRevokeAll(request, env);
+    }
+    if (path === '/api/auth/trust-status') {
+      return handleAuthTrustStatus(request, env);
+    }
+    if (path === '/api/auth/trust-device') {
+      return handleAuthTrustDevice(request, env);
     }
     if (path === '/api/roster') {
       return handleRoster(request, env);
