@@ -144,7 +144,7 @@ function explainBalance(best: Candidate, pool: Player[]): string {
   const rivals = pool.some((player) => (player.rivalIds ?? []).length > 0);
 
   if (locked.length > 0) parts.push('팀 고정 유지');
-  if (matchLocked) parts.push('고정 시청자 포함');
+  if (matchLocked) parts.push('고정 포함');
   if (allies) parts.push('고정 듀오 유지');
   if (rivals) parts.push('라이벌 분리');
 
@@ -172,7 +172,7 @@ function buildBalanceDetails(best: Candidate, selected: Player[], extras: Player
     if (lock === 'TEAM_1' || lock === 'TEAM_2') {
       details.push(`${player.name} → ${sideLabel(side)} (팀 고정)`);
     } else if (lock === 'MATCH') {
-      details.push(`${player.name} → ${sideLabel(side)} (고정 시청자)`);
+      details.push(`${player.name} → ${sideLabel(side)} (고정)`);
     }
   }
 
@@ -241,7 +241,7 @@ function selectMatchPool(
   const requiredUnits = unitsOrError.filter(unitMustPlay);
   const requiredSize = requiredUnits.reduce((sum, unit) => sum + unit.size, 0);
   if (requiredSize > MATCH_SIZE) {
-    return { error: '팀 고정·고정 시청자 인원이 10명을 넘습니다.' };
+    return { error: '팀 고정·고정 인원이 10명을 넘습니다.' };
   }
 
   if (all.length <= MATCH_SIZE) {
@@ -264,7 +264,7 @@ function selectMatchPool(
 
   if (count !== MATCH_SIZE) {
     return {
-      error: '고정 듀오·고정 시청자 때문에 10명을 고를 수 없습니다. 묶기를 조정한 뒤 다시 시도하세요.',
+      error: '고정 듀오·고정 때문에 10명을 고를 수 없습니다. 묶기를 조정한 뒤 다시 시도하세요.',
     };
   }
 

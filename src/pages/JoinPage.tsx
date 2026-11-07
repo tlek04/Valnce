@@ -20,6 +20,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   const saved = loadJoinProfile();
   const [name, setName] = useState(saved.name);
   const [riotId, setRiotId] = useState(formatRiotId(saved.riotName, saved.riotTag));
+  const [canOrder, setCanOrder] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<DoneState | null>(null);
@@ -76,6 +77,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       name: name.trim(),
       riotName: parsed.riotName,
       riotTag: parsed.riotTag,
+      canOrder,
     };
     const result = await submitJoinApplication(profile);
     setBusy(false);
@@ -177,7 +179,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream">참가 신청</h1>
-        <p className="mt-2 text-sm text-val-muted">치지직 닉네임과 발로란트 닉네임#태그만 입력하면 됩니다.</p>
+        <p className="mt-2 text-sm text-val-muted">치지직 닉네임·발로란트 닉네임#태그·오더 여부를 입력합니다.</p>
 
         <label htmlFor="join-name" className="mt-6 block text-xs font-semibold text-val-muted">
           치지직 닉네임
@@ -203,6 +205,23 @@ export default function JoinPage({ onBack }: JoinPageProps) {
           spellCheck={false}
           className="mt-1.5 w-full rounded-lg border border-val-line bg-val-bg px-3 py-2.5 text-val-cream outline-none focus:border-val-teal"
         />
+
+        <p className="mt-4 text-xs font-semibold text-val-muted">오더</p>
+        <button
+          type="button"
+          aria-pressed={canOrder}
+          onClick={() => setCanOrder((value) => !value)}
+          className={
+            canOrder
+              ? 'mt-1.5 rounded-md border border-val-teal/50 px-3 py-2 text-sm font-semibold text-val-cream transition-colors'
+              : 'mt-1.5 rounded-md border border-val-teal/15 px-3 py-2 text-sm text-val-teal/50 transition-colors'
+          }
+          style={{
+            backgroundColor: canOrder ? 'rgba(15, 223, 195, 0.6)' : 'rgba(15, 223, 195, 0.08)',
+          }}
+        >
+          {canOrder ? '오더 가능' : '오더 불가능'}
+        </button>
 
         {error && (
           <p role="alert" className="mt-3 rounded-lg border border-val-warn/40 bg-val-warn/10 px-3 py-2 text-sm text-val-warn">

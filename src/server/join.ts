@@ -235,9 +235,14 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
   const limited = await checkJoinRateLimit(env, clientIp(request));
   if (limited) return limited;
 
-  let body: { name?: string; riotName?: string; riotTag?: string };
+  let body: { name?: string; riotName?: string; riotTag?: string; canOrder?: boolean };
   try {
-    body = (await request.json()) as { name?: string; riotName?: string; riotTag?: string };
+    body = (await request.json()) as {
+      name?: string;
+      riotName?: string;
+      riotTag?: string;
+      canOrder?: boolean;
+    };
   } catch {
     return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
   }
@@ -245,6 +250,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
   const name = (body.name ?? '').trim();
   const riotName = (body.riotName ?? '').trim().replace(/^#+/, '');
   const riotTag = (body.riotTag ?? '').trim().replace(/^#+/, '');
+  const canOrder = Boolean(body.canOrder);
   if (!name) return json({ ok: false, error: '치지직 닉네임을 입력하세요.' }, { status: 400 });
   if (!riotName || !riotTag) {
     return json({ ok: false, error: '발로란트 닉네임과 태그를 입력하세요.' }, { status: 400 });
@@ -292,6 +298,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           riotTag: typeof existingByRiot.riotTag === 'string' ? existingByRiot.riotTag : riotTag,
           queueNo: queue.nextNo,
           createdAt: Date.now(),
+          ...(canOrder ? { canOrder: true } : {}),
           auto: true,
           playerId: existingByRiot.id,
         };
@@ -339,6 +346,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
         riotTag,
         queueNo: queue.nextNo,
         createdAt: Date.now(),
+        ...(canOrder ? { canOrder: true } : {}),
       };
       const committed = await commitJoinQueue(env, queue.revision ?? 0, {
         nextNo: queue.nextNo + 1,
@@ -436,7 +444,7 @@ async function buildApprovedResponse(
     player: {
       ...saved,
       maxTier: saved.maxTier,
-      canOrder: false,
+      canOrder: Boolean(application.canOrder),
       restrictions: [],
       lockedTeam: null,
       rivalIds: [],
@@ -608,7 +616,10 @@ async function claimAutoJoin(env: Env, id: string): Promise<Response> {
 
       return json({
         ok: true,
-        player: toSessionPlayer(saved, application.queueNo),
+        player: {
+          ...toSessionPlayer(saved, application.queueNo),
+          canOrder: Boolean(application.canOrder) || Boolean(saved.canOrder),
+        },
         items: remaining,
       });
     }

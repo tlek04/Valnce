@@ -17,6 +17,7 @@ export async function submitJoinApplication(input: {
   name: string;
   riotName: string;
   riotTag: string;
+  canOrder?: boolean;
 }): Promise<{ ok: boolean; application?: JoinApplication; autoJoined?: boolean; error?: string }> {
   try {
     const response = await fetch(joinUrl(), {

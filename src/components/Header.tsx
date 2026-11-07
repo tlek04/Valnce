@@ -231,7 +231,7 @@ export default function Header({
               >
                 <p className="font-display text-xs font-semibold uppercase tracking-[0.18em] text-val-red">밸런스 규칙</p>
                 <ol className="mt-2 space-y-1.5 text-xs leading-relaxed text-val-cream/90 break-keep">
-                  <li className="whitespace-normal">1. 팀 고정 · 고정 시청자 · 고정 듀오 · 라이벌을 먼저 지킵니다.</li>
+                  <li className="whitespace-normal">1. 팀 고정 · 고정 · 고정 듀오 · 라이벌을 먼저 지킵니다.</li>
                   <li className="whitespace-normal">2. 고티어일수록 점수 비중이 커집니다.</li>
                   <li className="whitespace-normal">3. 고티어는 양쪽에 나누고, 팀 점수 합을 맞춥니다.</li>
                   <li className="whitespace-normal">4. 최고 티어는 약한 가산만 합니다. 내전 티어가 있으면 무시합니다.</li>

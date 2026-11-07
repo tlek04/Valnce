@@ -41,6 +41,7 @@ function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>): numb
     // 이미 팀/대기열에 있으면 프로필만 갱신 — 기존 보드 순번·팀 위치 유지
     state.updatePlayer(player.id, {
       name: profile.name,
+      canOrder: Boolean(profile.canOrder),
       ...(profile.riotName ? { riotName: profile.riotName } : {}),
       ...(profile.riotTag ? { riotTag: profile.riotTag } : {}),
       currentTier: profile.currentTier,
@@ -57,9 +58,11 @@ function bringPlayerToWaitlist(player: ReturnType<typeof normalizePlayer>): numb
       maxTier: profile.maxTier,
     });
     state.enlistPlayer(player.id, 'waitlist');
+    // enlist는 명단→세션 변환 시 canOrder가 빠지므로 보드에 올린 뒤 다시 붙인다
+    state.updatePlayer(player.id, { canOrder: Boolean(profile.canOrder) });
     return boardQueueNo(player.id);
   }
-  state.addPlayer(profile);
+  state.addPlayer({ ...profile, canOrder: Boolean(profile.canOrder) });
   return boardQueueNo(player.id);
 }
 

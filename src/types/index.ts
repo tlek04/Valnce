@@ -105,6 +105,8 @@ export interface JoinApplication {
   riotTag: string;
   queueNo: number;
   createdAt: number;
+  /** 신청자가 오더 가능으로 표시 */
+  canOrder?: boolean;
   /** 명단에 이미 있으면 true — 스트리머 승인 없이 대기열로 합류 */
   auto?: boolean;
   /** auto일 때 명단 플레이어 id */

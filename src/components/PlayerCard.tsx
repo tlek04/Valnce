@@ -65,7 +65,7 @@ export default function PlayerCard({
       : player.lockedTeam === 'TEAM_2'
         ? '2팀 고정'
         : player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST'
-          ? '고정 시청자'
+          ? '고정'
           : null;
   const lockTone =
     player.lockedTeam === 'TEAM_1'

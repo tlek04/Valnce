@@ -17,7 +17,7 @@ function submitLabel(player: Player | null, lockedTeam: Player['lockedTeam']) {
   if (player) return '수정 저장';
   if (lockedTeam === 'TEAM_1') return '1팀에 추가';
   if (lockedTeam === 'TEAM_2') return '2팀에 추가';
-  if (lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST') return '고정 시청자로 추가';
+  if (lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST') return '고정으로 추가';
   return '대기열에 추가';
 }
 
@@ -52,8 +52,8 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
     }
     if (tone === 'teal') {
       return active
-        ? 'rounded-md border border-val-teal/70 px-3 py-1.5 text-sm font-semibold text-val-cream transition-colors'
-        : 'rounded-md border border-val-teal/15 bg-val-teal/[0.06] px-3 py-1.5 text-sm text-val-teal/45 transition-colors hover:border-val-teal/30 hover:bg-val-teal/10';
+        ? 'rounded-md border border-val-teal/70 bg-val-teal/35 px-3 py-1.5 text-sm font-semibold text-teal-100 transition-colors'
+        : 'rounded-md border border-val-teal/15 bg-val-teal/[0.06] px-3 py-1.5 text-sm text-val-teal/45 transition-colors hover:border-val-teal/30 hover:bg-val-teal/10 hover:text-val-teal/70';
     }
     if (tone === 'red') {
       return active
@@ -202,7 +202,7 @@ export default function PlayerFormModal({ open, player, onClose, onNotice }: Pla
               }
               className={toggleBtn(lockedTeam === 'MATCH' || lockedTeam === 'WAITLIST', 'teal')}
             >
-              고정 시청자
+              고정
             </button>
           </div>
 
