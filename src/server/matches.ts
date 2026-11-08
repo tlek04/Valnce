@@ -202,7 +202,9 @@ export async function handleMatchImport(request: Request, env: Env): Promise<Res
   const ip = request.headers.get('CF-Connecting-IP') || 'local';
   const rateKey = 'match-import:' + ip;
   const last = await env.ROSTER.get(rateKey, 'json');
-  if (typeof last === 'number' && Date.now() - last < 10000) return json({ ok: false, error: '전적 조회 후 10초 뒤 다시 시도하세요.', matches: [] }, { status: 429 });
+  if (typeof last === 'number' && Date.now() - last < 10000) {
+    return json({ ok: false, error: '전적 조회 후 10초 뒤 다시 시도하세요.', matches: [] }, { status: 429 });
+  }
   await env.ROSTER.put(rateKey, JSON.stringify(Date.now()), { expirationTtl: 60 });
   const cutoff = matchHistoryCutoff();
   const raw: unknown[] = [];

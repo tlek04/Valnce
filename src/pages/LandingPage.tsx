@@ -38,18 +38,18 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
       : 'max-w-md grid-cols-1';
 
   return (
-    <div className="flex min-h-screen flex-col items-center px-4 pb-8 pt-16 sm:pt-20">
-      <div className="mb-8 text-center">
+    <div className="flex min-h-[100dvh] flex-col items-center px-4 pb-8 pt-10 sm:pt-20">
+      <div className="mb-6 text-center sm:mb-8">
         <img
           src="/valorant-logo.webp"
           alt="VALORANT"
-          className="mx-auto h-14 w-auto mix-blend-lighten sm:h-16"
+          className="mx-auto h-12 w-auto mix-blend-lighten sm:h-16"
           draggable={false}
         />
-        <h1 className="mt-4 font-display text-3xl font-bold uppercase tracking-[0.2em] text-val-red sm:text-4xl">
+        <h1 className="mt-3 font-display text-3xl font-bold uppercase tracking-[0.2em] text-val-red sm:mt-4 sm:text-4xl">
           Valnce
         </h1>
-        <p className="mt-3 text-sm text-val-muted">내전 참가 방식을 선택하세요</p>
+        <p className="mt-2 text-sm text-val-muted sm:mt-3">내전 참가 방식을 선택하세요</p>
       </div>
 
       {!ready ? (
@@ -57,19 +57,19 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
       ) : cardCount === 0 ? (
         <p className="text-sm text-val-muted">지금은 선택할 수 있는 입장이 없습니다.</p>
       ) : (
-        <div className={`grid w-full gap-5 sm:gap-6 ${gridClass}`}>
+        <div className={`grid w-full gap-3 sm:gap-6 ${gridClass}`}>
           {showStreamerCard ? (
             <button
               type="button"
               onClick={onSelectStreamer}
-              className={`group flex aspect-square flex-col items-center justify-center rounded-3xl border-2 bg-val-panel/70 p-8 text-center transition hover:bg-val-panel ${
+              className={`group flex min-h-[9.5rem] flex-col items-center justify-center rounded-2xl border-2 bg-val-panel/70 p-6 text-center transition hover:bg-val-panel sm:aspect-square sm:min-h-0 sm:rounded-3xl sm:p-8 ${
                 streamerEntryOpen
                   ? 'border-val-line hover:border-val-red'
                   : 'border-val-warn/50 hover:border-val-warn'
               }`}
             >
               <span
-                className={`font-display text-4xl font-bold tracking-wide text-val-cream transition sm:text-5xl ${
+                className={`font-display text-3xl font-bold tracking-wide text-val-cream transition sm:text-5xl ${
                   streamerEntryOpen ? 'group-hover:text-val-red' : 'group-hover:text-val-warn'
                 }`}
               >
@@ -83,14 +83,14 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
               type="button"
               onClick={onSelectViewer}
               disabled={!viewerEntryOpen}
-              className={`group flex aspect-square flex-col items-center justify-center rounded-3xl border-2 bg-val-panel/70 p-8 text-center transition ${
+              className={`group flex min-h-[9.5rem] flex-col items-center justify-center rounded-2xl border-2 bg-val-panel/70 p-6 text-center transition sm:aspect-square sm:min-h-0 sm:rounded-3xl sm:p-8 ${
                 viewerEntryOpen
                   ? 'border-val-line hover:border-val-teal hover:bg-val-panel'
                   : 'cursor-not-allowed border-val-line/50 opacity-60'
               }`}
             >
               <span
-                className={`font-display text-4xl font-bold tracking-wide text-val-cream transition sm:text-5xl ${
+                className={`font-display text-3xl font-bold tracking-wide text-val-cream transition sm:text-5xl ${
                   viewerEntryOpen ? 'group-hover:text-val-teal' : ''
                 }`}
               >
@@ -101,7 +101,7 @@ export default function LandingPage({ onSelectStreamer, onSelectViewer }: Landin
         </div>
       )}
 
-      <p className="mx-auto mt-8 max-w-lg text-center text-sm leading-relaxed text-val-muted/90">
+      <p className="mx-auto mt-6 max-w-lg px-1 text-center text-xs leading-relaxed text-val-muted/90 sm:mt-8 sm:text-sm">
         빠른 내전 진행을 위해 스트리머의 팬심으로 만든 페이지입니다.
         <br />
         재미로 하는 내전이니 독선적인 행동은 피해 주세요.

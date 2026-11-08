@@ -87,6 +87,9 @@ export interface SavedPlayer {
   playCount?: number;
 }
 
+/** 다음 판 출석. 보드 전용(명단 persist 안 함). null=미응답 */
+export type CheckInStatus = 'ready' | 'away';
+
 export interface Player {
   id: string;
   name: string;
@@ -110,6 +113,11 @@ export interface Player {
   matchSeed?: boolean;
   /** 오늘 매니지 보드(대기열·팀)에 올라온 순서. 신청 티켓과 별개 */
   queueNo?: number;
+  /**
+   * 다음 판 출석. ready=참가, away=불참, null=미응답(팀 초기화 후).
+   * 명단에는 저장하지 않음.
+   */
+  checkIn?: CheckInStatus | null;
   wins: number;
   losses: number;
   streak: number;
@@ -143,6 +151,17 @@ export interface QualifyingMatch {
   results: { playerId: string; result: 'win' | 'loss' }[];
 }
 
+/** 임시 저장용 보드 스냅샷 (팀 초기화 시 비움, persist 안 함) */
+export interface TeamHistorySnapshot {
+  waitlist: Player[];
+  team1: Player[];
+  team2: Player[];
+  matchMapId: string | null;
+  attackSide: 'TEAM_1' | 'TEAM_2' | null;
+  balanceNote: string | null;
+  balanceDetails: string[];
+}
+
 export interface AppState {
   players: SavedPlayer[];
   team1: Player[];
@@ -150,7 +169,7 @@ export interface AppState {
   waitlist: Player[];
   balanceNote: string | null;
   balanceDetails: string[];
-  /** 랜덤 맵 추첨 결과 (맵 id). 결과 이미지·보드에 표시 */
+  /** 맵 추천 결과 (맵 id). 결과 텍스트·보드에 표시 */
   matchMapId: string | null;
   /** 공격 시작 팀. null이면 미추첨 */
   attackSide: 'TEAM_1' | 'TEAM_2' | null;
@@ -160,10 +179,14 @@ export interface AppState {
   rosterUpdatedAt: number;
   /** 공유 보드(대기열·팀·맵·공수)가 마지막으로 바뀐 시각. 서버 동기화 비교용. */
   boardUpdatedAt: number;
-  /** 커스텀 매치 전적·참여를 마지막으로 성공 동기화한 시각 (하루 1회 자동) */
+  /** 커스텀 매치 전적·참여를 마지막으로 성공 동기화한 시각 (자동 동기화 30분 간격) */
   lastMatchSyncAt: number | null;
   /** 보드 카드에 승패·연승 표시 */
   showMatchRecord: boolean;
+  /** 임시 저장된 팀 구성. 팀 초기화 시 비움 */
+  teamHistory: TeamHistorySnapshot[];
+  /** teamHistory 커서. 비어 있으면 -1 */
+  teamHistoryIndex: number;
 }
 
 export type ColumnId = 'waitlist' | 'team1' | 'team2';
@@ -186,6 +209,14 @@ export interface AppActions {
     details?: string[];
   };
   resetTeams: () => void;
+  /** checkIn이 ready가 아닌 보드 인원을 내보낸다(미응답·불참). */
+  dismissAbsentPlayers: () => { ok: boolean; removed: number; message: string };
+  /** 현재 대기열·팀·맵·공수를 임시 저장한다. */
+  saveTeamSnapshot: () => { ok: boolean; message: string };
+  /** 임시 저장한 팀 구성 중 이전으로 이동 */
+  prevTeamSnapshot: () => { ok: boolean; message?: string };
+  /** 임시 저장한 팀 구성 중 다음으로 이동 */
+  nextTeamSnapshot: () => { ok: boolean; message?: string };
   /** 커스텀 맵 풀에서 하나 추첨. 직전에 뽑힌 맵은 가능하면 제외 */
   drawRandomMap: () => { mapId: string; label: string };
   /** 1·2팀 중 공격 시작 팀 추첨 */

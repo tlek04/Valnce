@@ -1,6 +1,6 @@
 import { useJoinApplications } from '../hooks/useJoinApplications';
-import { useState } from 'react';
-import { Contact, UserPlus, Users } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Contact, UserMinus, UserPlus, Users } from 'lucide-react';
 import { Player } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import DroppableColumn from './DroppableColumn';
@@ -26,10 +26,18 @@ export default function WaitlistPanel({
   activeId,
 }: WaitlistPanelProps) {
   const waitlist = useAppStore((state) => state.waitlist);
+  const team1 = useAppStore((state) => state.team1);
+  const team2 = useAppStore((state) => state.team2);
   const savedCount = useAppStore((state) => state.players.length);
   const dismissPlayer = useAppStore((state) => state.dismissPlayer);
+  const dismissAbsentPlayers = useAppStore((state) => state.dismissAbsentPlayers);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const { applications, actingId, handleApprove, handleReject } = useJoinApplications(onNotice, onUnauthorized);
+
+  const absentCount = useMemo(() => {
+    const seats = [...waitlist, ...team1, ...team2];
+    return seats.filter((player) => player.checkIn === null || player.checkIn === 'away').length;
+  }, [waitlist, team1, team2]);
 
   const isEmpty = waitlist.length === 0 && applications.length === 0;
 
@@ -37,22 +45,22 @@ export default function WaitlistPanel({
     <DroppableColumn
       id="waitlist"
       players={waitlist}
-      className="flex min-h-[12rem] w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-val-line bg-val-panel/60 p-4 sm:p-5 md:min-h-[20rem] xl:min-h-[28rem]"
+      className="flex min-h-[10rem] w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-val-line bg-val-panel/60 p-3 sm:min-h-[12rem] sm:p-5 md:min-h-[20rem] xl:min-h-[28rem]"
     >
-      <div className="mb-4 space-y-2.5">
-        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
-          <Users size={22} className="relative top-[0.15em] shrink-0 text-val-red" />
-          <h2 className="font-display text-2xl font-bold leading-none">대기열</h2>
-          <p className="text-sm leading-none text-val-muted">
+      <div className="mb-3 space-y-2 sm:mb-4 sm:space-y-2.5">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 sm:gap-x-2.5">
+          <Users size={20} className="relative top-[0.15em] shrink-0 text-val-red" />
+          <h2 className="font-display text-xl font-bold leading-none sm:text-2xl">대기열</h2>
+          <p className="text-xs leading-none text-val-muted sm:text-sm">
             {waitlist.length}명 대기
             {applications.length > 0 ? ` · 신청 ${applications.length}명` : ''}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={onAdd}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-val-red px-3 py-2 text-sm font-semibold text-white hover:bg-val-red/90 sm:text-base"
+            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-val-red px-3 py-2 text-sm font-semibold text-white hover:bg-val-red/90 sm:flex-none sm:text-base"
           >
             <UserPlus size={16} />
             새로 추가
@@ -64,10 +72,26 @@ export default function WaitlistPanel({
             style={{
               backgroundColor: libraryOpen ? 'rgba(56, 189, 248, 0.8)' : 'rgba(56, 189, 248, 0.68)',
             }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 sm:text-base"
+            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 sm:flex-none sm:text-base"
           >
             <Contact size={16} />
             기존 플레이어
+          </button>
+          <button
+            type="button"
+            aria-label="미응답·불참 정리"
+            title="출석 미응답·불참을 보드에서 내보냅니다"
+            disabled={absentCount === 0}
+            onClick={() => {
+              const result = dismissAbsentPlayers();
+              onNotice?.(result.message);
+            }}
+            style={{ backgroundColor: 'rgba(251, 191, 36, 0.55)' }}
+            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none sm:text-base"
+          >
+            <UserMinus size={16} />
+            미응답·불참 정리
+            {absentCount > 0 ? ` (${absentCount})` : ''}
           </button>
         </div>
       </div>

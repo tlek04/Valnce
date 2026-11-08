@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DAY_MS, PLAY_WINDOW_MS } from '../constants/game';
+import { MATCH_SYNC_COOLDOWN_MS, PLAY_WINDOW_MS } from '../constants/game';
 import { useAppStore } from '../store/useAppStore';
 import { importQualifyingMatches, isMatchSyncConfigured } from '../utils/matchImport';
 
-/** 마지막 성공 동기화로부터 하루가 지났으면 자동 동기화 대상 */
+/** 자동 전적 동기화 대상 (마지막 성공 후 30분) */
+export function isMatchSyncDue(lastAt: number | null, now = Date.now()) {
+  return lastAt == null || now - lastAt >= MATCH_SYNC_COOLDOWN_MS;
+}
+
+/** @deprecated isMatchSyncDue 사용 */
 export function isDailyMatchSyncDue(lastAt: number | null, now = Date.now()) {
-  return lastAt == null || now - lastAt >= DAY_MS;
+  return isMatchSyncDue(lastAt, now);
 }
 
 /**
  * 전적·최근 참여 동기화.
- * - 헤더 버튼: 즉시 강제 동기화
- * - 하루 1회: 매니지 입장 후(및 매시간 점검) 자동 동기화
+ * - 헤더 버튼(force): 서버 10초 제한만 적용, 즉시 요청
+ * - 팀 승 기록·매니지 입장 자동: 30분에 한 번
  */
 export function useMatchSync(onNotice?: (message: string) => void) {
   const [syncing, setSyncing] = useState(false);
@@ -20,7 +25,9 @@ export function useMatchSync(onNotice?: (message: string) => void) {
   const runMatchSync = useCallback(
     async (options?: { force?: boolean }) => {
       if (!options?.force) {
-        return { ok: false as const, skipped: true as const };
+        if (!isMatchSyncDue(useAppStore.getState().lastMatchSyncAt)) {
+          return { ok: false as const, skipped: true as const };
+        }
       }
       if (!isMatchSyncConfigured()) {
         onNotice?.('배포된 Cloudflare 주소에서만 전적 동기화가 됩니다.');
@@ -38,7 +45,6 @@ export function useMatchSync(onNotice?: (message: string) => void) {
           return { ok: false as const, skipped: false as const };
         }
 
-        // 성공 시에만 lastMatchSyncAt을 갱신해 하루 1회 자동 주기를 맞춘다.
         useAppStore.getState().reconcileMatchStats(imported.matches);
         const count = imported.matches.length;
         const recent = imported.matches.filter(
@@ -67,14 +73,13 @@ export function useMatchSync(onNotice?: (message: string) => void) {
 
     let cancelled = false;
     let removeHydration: (() => void) | undefined;
-    const tryDaily = () => {
+    const tryAuto = () => {
       if (cancelled || inFlight.current) return;
-      if (!isDailyMatchSyncDue(useAppStore.getState().lastMatchSyncAt)) return;
-      void runMatchSync({ force: true });
+      void runMatchSync();
     };
 
     const start = () => {
-      if (!cancelled) tryDaily();
+      if (!cancelled) tryAuto();
     };
 
     if (useAppStore.persist.hasHydrated()) {
@@ -83,7 +88,7 @@ export function useMatchSync(onNotice?: (message: string) => void) {
       removeHydration = useAppStore.persist.onFinishHydration(start);
     }
 
-    const timer = window.setInterval(tryDaily, 60 * 60 * 1000);
+    const timer = window.setInterval(tryAuto, 60 * 1000);
     return () => {
       cancelled = true;
       window.clearInterval(timer);

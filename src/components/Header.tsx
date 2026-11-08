@@ -1,5 +1,16 @@
 import { PointerEvent, useEffect, useRef, useState } from 'react';
-import { ClipboardCopy, HelpCircle, Map, RefreshCw, RotateCcw, Scale, Swords } from 'lucide-react';
+import {
+  BookmarkPlus,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardCopy,
+  HelpCircle,
+  Map,
+  RefreshCw,
+  RotateCcw,
+  Scale,
+  Swords,
+} from 'lucide-react';
 import { BalanceFocus } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { copyText } from '../utils/copyText';
@@ -33,11 +44,19 @@ export default function Header({
 }: HeaderProps) {
   const matchCount = useAppStore((state) => state.waitlist.length + state.team1.length + state.team2.length);
   const assignedCount = useAppStore((state) => state.team1.length + state.team2.length);
+  const teamHistoryCount = useAppStore((state) => state.teamHistory.length);
+  const teamHistoryIndex = useAppStore((state) => state.teamHistoryIndex);
   const resetTeams = useAppStore((state) => state.resetTeams);
+  const saveTeamSnapshot = useAppStore((state) => state.saveTeamSnapshot);
+  const prevTeamSnapshot = useAppStore((state) => state.prevTeamSnapshot);
+  const nextTeamSnapshot = useAppStore((state) => state.nextTeamSnapshot);
   const autoBalance = useAppStore((state) => state.autoBalance);
   const drawRandomMap = useAppStore((state) => state.drawRandomMap);
   const drawAttackSide = useAppStore((state) => state.drawAttackSide);
   const canBalance = matchCount >= 2;
+  const canSaveTeam = assignedCount > 0;
+  const canPrevTeam = teamHistoryIndex > 0;
+  const canNextTeam = teamHistoryIndex >= 0 && teamHistoryIndex < teamHistoryCount - 1;
 
   const [adminUnlockOpen, setAdminUnlockOpen] = useState(false);
   const holdTimerRef = useRef<number | null>(null);
@@ -55,7 +74,7 @@ export default function Header({
   const runTeamReset = () => {
     if (matchCount === 0) return;
     resetTeams();
-    onNotice('팀 인원을 대기열로 옮겼습니다.');
+    onNotice('팀 인원을 대기열로 옮겼습니다. 다음 판 출석을 받아 주세요.');
   };
 
   const handleResetPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
@@ -88,21 +107,25 @@ export default function Header({
     onNotice(copied ? '결과 텍스트를 복사했습니다.' : '결과 텍스트 복사에 실패했습니다.');
   };
 
+  const actionBtn =
+    'inline-flex items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:gap-1.5 sm:px-3.5 sm:py-2.5 sm:text-base';
+
   return (
-    <header className="border-b border-val-line bg-val-bg/90 backdrop-blur">
-      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-5">
-        <h1 className="flex min-w-0 items-center gap-3 sm:gap-4">
+    <header className="sticky top-0 z-30 border-b border-val-line bg-val-bg/95 pt-[env(safe-area-inset-top)] backdrop-blur">
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-end gap-2 px-3 py-3 sm:gap-3 sm:px-4 sm:py-5">
+        <h1 className="mr-auto flex min-w-0 items-center gap-2 sm:gap-4">
           <img
             src="/valorant-logo.webp"
             alt="VALORANT"
-            className="h-12 w-auto mix-blend-lighten sm:h-16"
+            className="h-9 w-auto mix-blend-lighten sm:h-16"
             draggable={false}
           />
-          <span className="font-display text-lg font-bold uppercase tracking-[0.18em] text-val-red sm:text-2xl sm:tracking-[0.24em]">
-            5v5 Scrim Manager
+          <span className="font-display text-base font-bold uppercase tracking-[0.14em] text-val-red sm:text-2xl sm:tracking-[0.24em]">
+            <span className="sm:hidden">Valnce</span>
+            <span className="hidden sm:inline">5v5 Scrim Manager</span>
           </span>
         </h1>
-        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-2.5">
+        <div className="flex w-full flex-wrap items-center justify-end gap-1.5 sm:w-auto sm:gap-2.5">
           {syncStatus !== 'idle' && (
             <span
               className={`hidden text-sm sm:inline ${
@@ -141,10 +164,39 @@ export default function Header({
             disabled={matchSyncing}
             onClick={() => onMatchSync?.({ force: true })}
             style={{ backgroundColor: 'rgba(168, 85, 247, 0.6)' }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className={actionBtn}
           >
-            <RefreshCw size={17} className={matchSyncing ? 'animate-spin' : undefined} />
-            {matchSyncing ? '동기화 중' : '전적 동기화'}
+            <RefreshCw size={16} className={matchSyncing ? 'animate-spin' : undefined} />
+            <span className="sm:hidden">{matchSyncing ? '동기화' : '전적'}</span>
+            <span className="hidden sm:inline">{matchSyncing ? '동기화 중' : '전적 동기화'}</span>
+          </button>
+          <button
+            type="button"
+            aria-label="맵 추천"
+            onClick={() => {
+              const result = drawRandomMap();
+              onNotice(`맵 추천 · ${result.label}`);
+            }}
+            style={{ backgroundColor: 'rgba(56, 189, 248, 0.55)' }}
+            className={actionBtn}
+          >
+            <Map size={16} />
+            <span className="sm:hidden">맵추천</span>
+            <span className="hidden sm:inline">맵 추천</span>
+          </button>
+          <button
+            type="button"
+            aria-label="공수 추첨"
+            onClick={() => {
+              const result = drawAttackSide();
+              onNotice(`공수 · ${result.label}`);
+            }}
+            style={{ backgroundColor: 'rgba(251, 113, 133, 0.55)' }}
+            className={actionBtn}
+          >
+            <Swords size={16} />
+            <span className="sm:hidden">공수</span>
+            <span className="hidden sm:inline">공수 추첨</span>
           </button>
           <button
             type="button"
@@ -162,13 +214,61 @@ export default function Header({
               if (!holdTriggeredRef.current) runTeamReset();
             }}
             style={{ backgroundColor: 'rgba(139, 151, 143, 0.45)' }}
-            className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 ${
-              matchCount === 0 ? 'opacity-40' : ''
-            }`}
+            className={`${actionBtn} ${matchCount === 0 ? 'opacity-40' : ''}`}
           >
-            <RotateCcw size={17} />
-            팀 초기화
+            <RotateCcw size={16} />
+            <span className="sm:hidden">초기화</span>
+            <span className="hidden sm:inline">팀 초기화</span>
           </button>
+          <div className="flex overflow-hidden rounded-lg border border-val-line/80">
+            <button
+              type="button"
+              aria-label="이전 임시 저장"
+              title="이전 임시 저장"
+              disabled={!canPrevTeam}
+              onClick={() => {
+                const result = prevTeamSnapshot();
+                if (result.message) onNotice(result.message);
+              }}
+              className="inline-flex items-center justify-center bg-val-panel/80 px-2 py-2 text-val-cream hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 sm:px-2.5 sm:py-2.5"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              type="button"
+              aria-label="팀 임시 저장"
+              title="현재 팀 구성을 임시 저장"
+              disabled={!canSaveTeam}
+              onClick={() => {
+                const result = saveTeamSnapshot();
+                onNotice(result.message);
+              }}
+              style={{ backgroundColor: 'rgba(52, 211, 153, 0.45)' }}
+              className={`${actionBtn} rounded-none`}
+            >
+              <BookmarkPlus size={16} />
+              <span className="sm:hidden">임시</span>
+              <span className="hidden sm:inline">임시 저장</span>
+              {teamHistoryCount > 0 && (
+                <span className="tabular-nums text-val-cream/80">
+                  {teamHistoryIndex + 1}/{teamHistoryCount}
+                </span>
+              )}
+            </button>
+            <button
+              type="button"
+              aria-label="다음 임시 저장"
+              title="다음 임시 저장"
+              disabled={!canNextTeam}
+              onClick={() => {
+                const result = nextTeamSnapshot();
+                if (result.message) onNotice(result.message);
+              }}
+              className="inline-flex items-center justify-center bg-val-panel/80 px-2 py-2 text-val-cream hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 sm:px-2.5 sm:py-2.5"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
           <button
             type="button"
             aria-label="결과 저장"
@@ -177,38 +277,13 @@ export default function Header({
             }}
             disabled={assignedCount === 0}
             style={{ backgroundColor: 'rgba(245, 158, 11, 0.88)' }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className={actionBtn}
           >
-            <ClipboardCopy size={17} />
-            결과 저장
+            <ClipboardCopy size={16} />
+            <span className="sm:hidden">결과</span>
+            <span className="hidden sm:inline">결과 저장</span>
           </button>
-          <button
-            type="button"
-            aria-label="랜덤 맵"
-            onClick={() => {
-              const result = drawRandomMap();
-              onNotice(`맵 · ${result.label}`);
-            }}
-            style={{ backgroundColor: 'rgba(56, 189, 248, 0.55)' }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110"
-          >
-            <Map size={17} />
-            랜덤 맵
-          </button>
-          <button
-            type="button"
-            aria-label="공수 추첨"
-            onClick={() => {
-              const result = drawAttackSide();
-              onNotice(`공수 · ${result.label}`);
-            }}
-            style={{ backgroundColor: 'rgba(251, 113, 133, 0.55)' }}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110"
-          >
-            <Swords size={17} />
-            공수 추첨
-          </button>
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
             <button
               type="button"
               aria-label="자동 밸런스"
@@ -218,10 +293,11 @@ export default function Header({
               }}
               disabled={!canBalance}
               style={{ backgroundColor: 'rgba(15, 223, 195, 0.6)' }}
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2.5 text-base font-semibold text-val-cream hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+              className={actionBtn}
             >
-              <Scale size={18} />
-              자동 밸런스
+              <Scale size={16} />
+              <span className="sm:hidden">밸런스</span>
+              <span className="hidden sm:inline">자동 밸런스</span>
             </button>
             <div className="flex overflow-hidden rounded-lg border border-val-line/80">
               {FOCUS_BUTTONS.map((item) => (
@@ -235,7 +311,7 @@ export default function Header({
                     if (!result.ok) onNotice(result.message);
                   }}
                   disabled={!canBalance}
-                  className="whitespace-nowrap border-r border-val-line/80 bg-val-panel/80 px-2.5 py-2.5 text-sm font-semibold text-val-cream last:border-r-0 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="whitespace-nowrap border-r border-val-line/80 bg-val-panel/80 px-2 py-2 text-xs font-semibold text-val-cream last:border-r-0 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 sm:px-2.5 sm:py-2.5 sm:text-sm"
                 >
                   {item.label}
                 </button>

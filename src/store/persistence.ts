@@ -26,6 +26,8 @@ export function hydrateLibrary(raw: Partial<AppState> | undefined): AppState {
     lastMatchSyncAt: typeof raw?.lastMatchSyncAt === 'number' ? raw.lastMatchSyncAt : null,
     // 서버 site-settings만 사용. persist 잔여 값은 무시하고 기본 켜짐(마운트 시 fetch로 덮음).
     showMatchRecord: true,
+    teamHistory: [],
+    teamHistoryIndex: -1,
   };
 }
 

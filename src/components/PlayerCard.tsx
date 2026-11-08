@@ -66,6 +66,20 @@ export default function PlayerCard({
   const scrimTier = playerScrimTier(player);
   const isMatch = player.lockedTeam === 'MATCH' || player.lockedTeam === 'WAITLIST';
   const isBench = player.lockedTeam === 'BENCH';
+  const checkInLabel =
+    player.checkIn === null
+      ? '미응답'
+      : player.checkIn === 'away'
+        ? '불참'
+        : player.checkIn === 'ready'
+          ? '참가'
+          : null;
+  const checkInTone =
+    player.checkIn === null
+      ? 'border-val-muted/40 bg-val-muted/10 text-val-muted'
+      : player.checkIn === 'away'
+        ? 'border-val-warn/40 bg-val-warn/15 text-val-warn'
+        : 'border-val-teal/40 bg-val-teal/15 text-val-teal';
   const teamLockLabel =
     player.lockedTeam === 'TEAM_1' ? '1팀 고정' : player.lockedTeam === 'TEAM_2' ? '2팀 고정' : null;
   const teamLockTone =
@@ -103,11 +117,11 @@ export default function PlayerCard({
 
   return (
     <article
-      className={`rounded-xl border bg-val-panel/80 p-3 shadow-sm transition-colors ${
+      className={`rounded-xl border bg-val-panel/80 p-2.5 shadow-sm transition-colors sm:p-3 ${
         overlay ? 'border-val-red/60 shadow-xl' : 'border-val-line hover:border-val-red/40'
       }`}
     >
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-x-2 gap-y-1.5">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5">
         <div className="flex min-w-[1.25rem] items-center justify-center self-center">
           {queueNo ? (
             <span className="text-sm font-semibold leading-none text-val-muted">#{queueNo}</span>
@@ -115,7 +129,7 @@ export default function PlayerCard({
         </div>
         <h3
           ref={nameEllipsis.ref}
-          className={`min-w-0 self-center whitespace-nowrap text-lg font-semibold leading-none text-val-cream ${
+          className={`min-w-0 self-center whitespace-nowrap text-base font-semibold leading-none text-val-cream sm:text-lg ${
             nameEllipsis.overflow ? 'overflow-hidden text-ellipsis' : 'overflow-hidden'
           }`}
           title={nameEllipsis.overflow ? player.name : undefined}
@@ -123,12 +137,12 @@ export default function PlayerCard({
           {player.name}
         </h3>
 
-        <div className="row-span-2 flex flex-col items-end justify-start gap-1.5">
-          <div className="flex flex-wrap items-center justify-end gap-2 text-xs leading-none text-val-muted">
-            {showCurrent ? <span>현재 {formatRating(player.currentTier)}</span> : null}
-            {showPeak ? <span>최고 {formatRating(player.maxTier)}</span> : null}
+        <div className="row-span-2 flex flex-col items-end justify-start gap-1 sm:gap-1.5">
+          <div className="flex flex-wrap items-center justify-end gap-1.5 text-[11px] leading-none text-val-muted sm:gap-2 sm:text-xs">
+            {showCurrent ? <span className="hidden sm:inline">현재 {formatRating(player.currentTier)}</span> : null}
+            {showPeak ? <span className="hidden sm:inline">최고 {formatRating(player.maxTier)}</span> : null}
             <span
-              className={`rounded-md border px-2 py-0.5 text-base font-semibold leading-none ${
+              className={`rounded-md border px-1.5 py-0.5 text-sm font-semibold leading-none sm:px-2 sm:text-base ${
                 TIER_STYLES[(scrimTier ?? player.currentTier).tier]
               }`}
             >
@@ -238,10 +252,23 @@ export default function PlayerCard({
           </>
         ) : null}
 
-        {(player.canOrder || teamLockLabel || restrictionLabels.length > 0 || rivals || allies) && (
+        {(checkInLabel ||
+          player.canOrder ||
+          teamLockLabel ||
+          restrictionLabels.length > 0 ||
+          rivals ||
+          allies) && (
           <>
             <div aria-hidden />
             <div className="col-span-2 flex flex-wrap gap-1">
+              {checkInLabel ? (
+                <span
+                  className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[11px] font-medium ${checkInTone}`}
+                  title="다음 판 출석"
+                >
+                  {checkInLabel}
+                </span>
+              ) : null}
               {player.canOrder && (
                 <span className="inline-flex items-center gap-0.5 rounded border border-val-teal/35 bg-val-teal/10 px-1.5 py-0.5 text-[11px] font-medium text-val-teal">
                   <Megaphone size={11} />

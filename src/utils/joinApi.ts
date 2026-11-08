@@ -53,6 +53,74 @@ export async function submitJoinApplication(input: {
   }
 }
 
+export type JoinCheckIn = 'ready' | 'away' | null;
+
+export async function fetchJoinPresence(): Promise<{
+  ok: boolean;
+  onBoard?: boolean;
+  checkIn?: JoinCheckIn;
+  checkInOpen?: boolean;
+  name?: string;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(joinUrl('/presence'), {
+      method: 'GET',
+      cache: 'no-store',
+      credentials: 'include',
+    });
+    const data = await readJsonOrEmpty<{
+      ok?: boolean;
+      onBoard?: boolean;
+      checkIn?: JoinCheckIn;
+      checkInOpen?: boolean;
+      name?: string;
+      error?: string;
+    }>(response);
+    if (!response.ok || !data.ok) {
+      return { ok: false, error: data.error || '출석 상태를 불러오지 못했습니다.' };
+    }
+    return {
+      ok: true,
+      onBoard: Boolean(data.onBoard),
+      checkIn: data.checkIn === 'ready' || data.checkIn === 'away' ? data.checkIn : null,
+      checkInOpen: Boolean(data.checkInOpen),
+      name: data.name,
+    };
+  } catch {
+    return { ok: false, error: '출석 서버에 연결하지 못했습니다.' };
+  }
+}
+
+export async function submitJoinCheckIn(
+  ready: boolean
+): Promise<{ ok: boolean; checkIn?: JoinCheckIn; onBoard?: boolean; error?: string }> {
+  try {
+    const response = await fetch(joinUrl('/check-in'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ready }),
+    });
+    const data = await readJsonOrEmpty<{
+      ok?: boolean;
+      checkIn?: JoinCheckIn;
+      onBoard?: boolean;
+      error?: string;
+    }>(response);
+    if (!response.ok || !data.ok) {
+      return { ok: false, error: data.error || '출석 반영에 실패했습니다.' };
+    }
+    return {
+      ok: true,
+      checkIn: data.checkIn === 'ready' || data.checkIn === 'away' ? data.checkIn : null,
+      onBoard: Boolean(data.onBoard),
+    };
+  } catch {
+    return { ok: false, error: '출석 서버에 연결하지 못했습니다.' };
+  }
+}
+
 export async function fetchJoinStatus(id: string): Promise<{
   ok: boolean;
   status?: JoinStatus;

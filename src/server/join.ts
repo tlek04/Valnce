@@ -133,7 +133,125 @@ function toSessionPlayer(saved: Record<string, unknown>, queueNo: number) {
       ? saved.playAts.filter((item): item is number => typeof item === 'number')
       : [],
     playCount: typeof saved.playCount === 'number' && saved.playCount > 0 ? Math.floor(saved.playCount) : 0,
+    checkIn: 'ready' as const,
   };
+}
+
+function readViewerCookie(request: Request): string | null {
+  return (
+    request.headers.get('Cookie')?.match(/(?:^|;\s*)valnce-viewer=([a-zA-Z0-9-]{20,100})(?:;|$)/)?.[1] ??
+    null
+  );
+}
+
+type BoardSeat = {
+  id?: unknown;
+  name?: unknown;
+  riotName?: unknown;
+  riotTag?: unknown;
+  checkIn?: unknown;
+};
+
+function seatRiotKey(seat: BoardSeat): string {
+  const riotName = typeof seat.riotName === 'string' ? seat.riotName : '';
+  const riotTag = typeof seat.riotTag === 'string' ? seat.riotTag : '';
+  return riotKey(riotName, riotTag);
+}
+
+function findSeatByTagKey(seats: unknown[], tagKey: string): BoardSeat | null {
+  if (!tagKey) return null;
+  for (const raw of seats) {
+    if (!raw || typeof raw !== 'object') continue;
+    const seat = raw as BoardSeat;
+    if (seatRiotKey(seat) === tagKey) return seat;
+  }
+  return null;
+}
+
+function parseCheckIn(value: unknown): 'ready' | 'away' | null {
+  if (value === 'ready' || value === 'away') return value;
+  return null;
+}
+
+async function resolveViewerTagKey(env: Env, request: Request): Promise<string | null> {
+  const cookie = readViewerCookie(request);
+  if (!cookie) return null;
+  const approved = await env.ROSTER.get('viewer-approved:' + cookie, 'json');
+  return typeof approved === 'string' && approved.includes('#') ? approved : null;
+}
+
+async function writeSharedBoard(env: Env, board: Awaited<ReturnType<typeof readSharedBoard>>) {
+  await env.ROSTER.put(BOARD_KEY, JSON.stringify(board), { expirationTtl: BOARD_TTL_SECONDS });
+}
+
+async function handleJoinPresence(request: Request, env: Env): Promise<Response> {
+  const tagKey = await resolveViewerTagKey(env, request);
+  if (!tagKey) {
+    return json({ ok: true, onBoard: false, checkIn: null, checkInOpen: false });
+  }
+  const board = await readSharedBoard(env);
+  const seats = boardSeats(board);
+  const seat = findSeatByTagKey(seats, tagKey);
+  if (!seat) {
+    return json({ ok: true, onBoard: false, checkIn: null, checkInOpen: false });
+  }
+  const checkInOpen = seats.some((raw) => {
+    if (!raw || typeof raw !== 'object') return false;
+    return (raw as BoardSeat).checkIn === null;
+  });
+  return json({
+    ok: true,
+    onBoard: true,
+    checkIn: parseCheckIn(seat.checkIn),
+    checkInOpen,
+    name: typeof seat.name === 'string' ? seat.name : undefined,
+  });
+}
+
+async function handleJoinCheckIn(request: Request, env: Env): Promise<Response> {
+  const tagKey = await resolveViewerTagKey(env, request);
+  if (!tagKey) {
+    return json({ ok: false, error: '승인된 시청자 세션이 없습니다. 다시 참가 신청해 주세요.' }, { status: 401 });
+  }
+
+  let body: { ready?: boolean };
+  try {
+    body = (await request.json()) as { ready?: boolean };
+  } catch {
+    return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
+  }
+  if (typeof body.ready !== 'boolean') {
+    return json({ ok: false, error: 'ready 값이 필요합니다.' }, { status: 400 });
+  }
+
+  const board = await readSharedBoard(env);
+  const seats = boardSeats(board);
+  const seat = findSeatByTagKey(seats, tagKey);
+  if (!seat || typeof seat.id !== 'string') {
+    return json(
+      { ok: false, error: '보드에 없습니다. 참가 신청으로 대기열에 오른 뒤 출석해 주세요.' },
+      { status: 404 }
+    );
+  }
+
+  const checkIn = body.ready ? ('ready' as const) : ('away' as const);
+  const patchList = (list: unknown[]) =>
+    list.map((raw) => {
+      if (!raw || typeof raw !== 'object') return raw;
+      const row = raw as BoardSeat & Record<string, unknown>;
+      if (row.id !== seat.id) return raw;
+      return { ...row, checkIn };
+    });
+
+  const next = {
+    ...board,
+    waitlist: patchList(board.waitlist),
+    team1: patchList(board.team1),
+    team2: patchList(board.team2),
+    updatedAt: Math.max(Date.now(), board.updatedAt + 1),
+  };
+  await writeSharedBoard(env, next);
+  return json({ ok: true, checkIn, onBoard: true });
 }
 
 export async function handleJoin(request: Request, env: Env, path: string): Promise<Response> {
@@ -166,6 +284,14 @@ export async function handleJoin(request: Request, env: Env, path: string): Prom
       name: record.name,
       auto: record.auto,
     });
+  }
+
+  if (path === '/api/join/presence' && request.method === 'GET') {
+    return handleJoinPresence(request, env);
+  }
+
+  if (path === '/api/join/check-in' && request.method === 'POST') {
+    return handleJoinCheckIn(request, env);
   }
 
   const approveMatch = path.match(/^\/api\/join\/([^/]+)\/approve$/);

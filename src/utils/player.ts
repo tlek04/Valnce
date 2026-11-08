@@ -1,10 +1,16 @@
-import { Player, SavedPlayer, WeaponRestriction } from '../types';
+import { CheckInStatus, Player, SavedPlayer, WeaponRestriction } from '../types';
 import { sameRating } from '../constants/valorant';
 import { normalizeMatchStats } from './matchStats';
 import { playCountFromAts, readPlayAts } from './playCount';
 import { cloneRating, ratingFromUnknown } from './rating';
 
 import { DEFAULT_RATING as FALLBACK } from '../constants/game';
+
+export function readCheckIn(value: unknown): CheckInStatus | null | undefined {
+  if (value === 'ready' || value === 'away') return value;
+  if (value === null) return null;
+  return undefined;
+}
 
 function asStringArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.filter((item): item is string => typeof item === 'string');
@@ -47,6 +53,7 @@ export function normalizePlayer(raw: unknown): Player {
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
   const queueNo = readQueueNo(data.queueNo);
+  const checkIn = readCheckIn(data.checkIn);
 
   return {
     id: typeof data.id === 'string' ? data.id : crypto.randomUUID(),
@@ -70,6 +77,7 @@ export function normalizePlayer(raw: unknown): Player {
     ...(riotTag ? { riotTag } : {}),
     matchSeed: Boolean(data.matchSeed),
     ...(queueNo ? { queueNo } : {}),
+    ...(checkIn !== undefined ? { checkIn } : {}),
     wins: stats.wins,
     losses: stats.losses,
     streak: stats.streak,
@@ -176,6 +184,7 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     ...(saved.riotName ? { riotName: saved.riotName } : {}),
     ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
     ...(saved.matchSeed ? { matchSeed: true } : {}),
+    checkIn: 'ready',
     wins: saved.wins ?? 0,
     losses: saved.losses ?? 0,
     streak: saved.streak ?? 0,

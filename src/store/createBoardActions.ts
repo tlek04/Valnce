@@ -1,5 +1,5 @@
 import { pickRandomAttackSide, pickRandomMap } from '../constants/maps';
-import { ColumnId, Player } from '../types';
+import { ColumnId, Player, TeamHistorySnapshot } from '../types';
 import { autoBalanceTeams } from '../utils/balance';
 import { withRemoteBoardApply } from '../utils/boardApplyGuard';
 import { applyMove, repairLocks } from '../utils/placement';
@@ -12,11 +12,55 @@ function stampBoard<T extends object>(patch: T): T & { boardUpdatedAt: number } 
   return { ...patch, boardUpdatedAt: Date.now() };
 }
 
+function clonePlayers(list: Player[]): Player[] {
+  return list.map((player) => normalizePlayer(player));
+}
+
+function captureTeamSnapshot(state: {
+  waitlist: Player[];
+  team1: Player[];
+  team2: Player[];
+  matchMapId: string | null;
+  attackSide: 'TEAM_1' | 'TEAM_2' | null;
+  balanceNote: string | null;
+  balanceDetails: string[];
+}): TeamHistorySnapshot {
+  return {
+    waitlist: clonePlayers(state.waitlist),
+    team1: clonePlayers(state.team1),
+    team2: clonePlayers(state.team2),
+    matchMapId: state.matchMapId,
+    attackSide: state.attackSide,
+    balanceNote: state.balanceNote,
+    balanceDetails: [...state.balanceDetails],
+  };
+}
+
+function restoreTeamSnapshot(snapshot: TeamHistorySnapshot) {
+  return stampBoard({
+    waitlist: clonePlayers(snapshot.waitlist),
+    team1: clonePlayers(snapshot.team1),
+    team2: clonePlayers(snapshot.team2),
+    matchMapId: snapshot.matchMapId,
+    attackSide: snapshot.attackSide,
+    balanceNote: snapshot.balanceNote,
+    balanceDetails: [...snapshot.balanceDetails],
+  });
+}
+
+function isAbsentCheckIn(player: Player) {
+  return player.checkIn === null || player.checkIn === 'away';
+}
+
 export const createBoardActions: ActionCreator<
   | 'enlistPlayer'
   | 'movePlayer'
   | 'autoBalance'
   | 'resetTeams'
+  | 'dismissAbsentPlayers'
+  | 'saveTeamSnapshot'
+  | 'prevTeamSnapshot'
+  | 'nextTeamSnapshot'
   | 'drawRandomMap'
   | 'drawAttackSide'
   | 'applyRemoteBoard'
@@ -80,9 +124,13 @@ export const createBoardActions: ActionCreator<
   },
 
   resetTeams: () =>
-    set((state) =>
-      stampBoard({
-        waitlist: [...state.waitlist, ...state.team1, ...state.team2],
+    set((state) => {
+      const waitlist = [...state.waitlist, ...state.team1, ...state.team2].map((player) => ({
+        ...player,
+        checkIn: null,
+      }));
+      return stampBoard({
+        waitlist,
         team1: [],
         team2: [],
         balanceNote: null,
@@ -90,8 +138,82 @@ export const createBoardActions: ActionCreator<
         matchMapId: null,
         attackSide: null,
         sessionSavedAt: Date.now(),
+        teamHistory: [],
+        teamHistoryIndex: -1,
+      });
+    }),
+
+  dismissAbsentPlayers: () => {
+    const state = get();
+    const keep = (player: Player) => !isAbsentCheckIn(player);
+    const before =
+      state.waitlist.length + state.team1.length + state.team2.length;
+    const waitlist = state.waitlist.filter(keep);
+    const team1 = state.team1.filter(keep);
+    const team2 = state.team2.filter(keep);
+    const after = waitlist.length + team1.length + team2.length;
+    const removed = before - after;
+    if (removed === 0) {
+      return { ok: false, removed: 0, message: '내보낼 미응답·불참이 없습니다.' };
+    }
+    set(
+      stampBoard({
+        waitlist,
+        team1,
+        team2,
       })
-    ),
+    );
+    return {
+      ok: true,
+      removed,
+      message: `미응답·불참 ${removed}명을 내보냈습니다.`,
+    };
+  },
+
+  saveTeamSnapshot: () => {
+    const state = get();
+    if (state.team1.length === 0 && state.team2.length === 0) {
+      return { ok: false, message: '저장된 팀이 없습니다. 먼저 팀을 짜 주세요.' };
+    }
+    const snapshot = captureTeamSnapshot(state);
+    const kept = state.teamHistory.slice(0, Math.max(0, state.teamHistoryIndex + 1));
+    const teamHistory = [...kept, snapshot];
+    set({
+      teamHistory,
+      teamHistoryIndex: teamHistory.length - 1,
+    });
+    return { ok: true, message: `팀 구성 임시 저장 (${teamHistory.length})` };
+  },
+
+  prevTeamSnapshot: () => {
+    const state = get();
+    if (state.teamHistory.length === 0 || state.teamHistoryIndex <= 0) {
+      return { ok: false, message: '이전 저장이 없습니다.' };
+    }
+    const teamHistoryIndex = state.teamHistoryIndex - 1;
+    const snapshot = state.teamHistory[teamHistoryIndex];
+    if (!snapshot) return { ok: false, message: '이전 저장이 없습니다.' };
+    set({
+      ...restoreTeamSnapshot(snapshot),
+      teamHistoryIndex,
+    });
+    return { ok: true, message: `임시 저장 ${teamHistoryIndex + 1}/${state.teamHistory.length}` };
+  },
+
+  nextTeamSnapshot: () => {
+    const state = get();
+    if (state.teamHistory.length === 0 || state.teamHistoryIndex >= state.teamHistory.length - 1) {
+      return { ok: false, message: '다음 저장이 없습니다.' };
+    }
+    const teamHistoryIndex = state.teamHistoryIndex + 1;
+    const snapshot = state.teamHistory[teamHistoryIndex];
+    if (!snapshot) return { ok: false, message: '다음 저장이 없습니다.' };
+    set({
+      ...restoreTeamSnapshot(snapshot),
+      teamHistoryIndex,
+    });
+    return { ok: true, message: `임시 저장 ${teamHistoryIndex + 1}/${state.teamHistory.length}` };
+  },
 
   drawRandomMap: () => {
     const picked = pickRandomMap(get().matchMapId);

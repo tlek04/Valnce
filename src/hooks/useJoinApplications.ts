@@ -39,7 +39,7 @@ function forceAppendWaitlist(player: Player) {
     if (already) return state;
     const { queueNo: _ticket, ...rest } = player;
     const session = withAddNo(
-      { ...rest, canOrder: Boolean(player.canOrder) } as Player,
+      { ...rest, canOrder: Boolean(player.canOrder), checkIn: 'ready' } as Player,
       [state.waitlist, state.team1, state.team2]
     );
     const now = Date.now();

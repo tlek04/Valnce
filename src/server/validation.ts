@@ -25,6 +25,7 @@ function players(value: unknown, board = false): boolean {
     if (row.restrictions != null && (!Array.isArray(row.restrictions) || row.restrictions.length > 100 || !row.restrictions.every(v => object(v) && text(v.id) && text(v.type) && (v.customText == null || text(v.customText, 200)) && (v.weaponId == null || text(v.weaponId, 40))))) return false;
     if (board) {
       if (row.lockedTeam != null && !['TEAM_1','TEAM_2','MATCH','WAITLIST','BENCH'].includes(String(row.lockedTeam))) return false;
+      if (row.checkIn != null && row.checkIn !== 'ready' && row.checkIn !== 'away') return false;
     } else if (row.lockedTeam != null && !['TEAM_1','TEAM_2','MATCH','WAITLIST'].includes(String(row.lockedTeam))) {
       return false;
     }
@@ -75,6 +76,9 @@ export async function validateRequest(request: Request): Promise<Response | null
   if (path === '/api/join') {
     for (const key of ['name','riotName','riotTag']) if (!text(body[key], 100)) return bad();
     if (body.canOrder != null && typeof body.canOrder !== 'boolean') return bad();
+  }
+  if (path === '/api/join/check-in') {
+    if (typeof body.ready !== 'boolean') return bad();
   }
   if (path === '/api/roster' && !players(body.players)) return bad();
   if (path === '/api/board') {

@@ -122,6 +122,9 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
         onEdit={openEdit}
         onNotice={showNotice}
         onUnauthorized={handleUnauthorized}
+        onMatchSync={(options) => {
+          void runMatchSync(options);
+        }}
       />
       {formOpen && (
         <PlayerFormModal

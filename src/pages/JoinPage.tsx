@@ -1,5 +1,12 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { fetchJoinStatus, JoinStatus, submitJoinApplication } from '../utils/joinApi';
+import {
+  fetchJoinPresence,
+  fetchJoinStatus,
+  JoinCheckIn,
+  JoinStatus,
+  submitJoinApplication,
+  submitJoinCheckIn,
+} from '../utils/joinApi';
 import {
   clearJoinSession,
   loadJoinProfile,
@@ -33,6 +40,13 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   const [done, setDone] = useState<DoneState | null>(() => loadJoinSession());
   const [joinOpen, setJoinOpen] = useState<boolean | null>(null);
   const [restoring, setRestoring] = useState(() => Boolean(loadJoinSession()));
+  const [presence, setPresence] = useState<{
+    onBoard: boolean;
+    checkIn: JoinCheckIn;
+    checkInOpen: boolean;
+  } | null>(null);
+  const [checkInBusy, setCheckInBusy] = useState(false);
+  const [checkInError, setCheckInError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -102,6 +116,50 @@ export default function JoinPage({ onBack }: JoinPageProps) {
       window.clearInterval(timer);
     };
   }, [done]);
+
+  const joinedDone =
+    done &&
+    (done.status === 'approved' || done.status === 'joined');
+
+  useEffect(() => {
+    if (!joinedDone) {
+      setPresence(null);
+      return;
+    }
+    let cancelled = false;
+    const tick = async () => {
+      const result = await fetchJoinPresence();
+      if (cancelled || !result.ok) return;
+      setPresence({
+        onBoard: Boolean(result.onBoard),
+        checkIn: result.checkIn ?? null,
+        checkInOpen: Boolean(result.checkInOpen),
+      });
+    };
+    void tick();
+    const timer = window.setInterval(() => void tick(), 3000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [joinedDone]);
+
+  const handleCheckIn = async (ready: boolean) => {
+    if (checkInBusy) return;
+    setCheckInBusy(true);
+    setCheckInError(null);
+    const result = await submitJoinCheckIn(ready);
+    setCheckInBusy(false);
+    if (!result.ok) {
+      setCheckInError(result.error || '출석 반영에 실패했습니다.');
+      return;
+    }
+    setPresence({
+      onBoard: Boolean(result.onBoard),
+      checkIn: result.checkIn ?? (ready ? 'ready' : 'away'),
+      checkInOpen: presence?.checkInOpen ?? false,
+    });
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -211,6 +269,47 @@ export default function JoinPage({ onBack }: JoinPageProps) {
           </p>
           <p className="mt-2 text-xs text-val-muted">{detail}</p>
           {waiting ? <p className="mt-3 text-xs text-val-teal/80">상태 확인 중…</p> : null}
+          {!waiting && presence?.onBoard ? (
+            <div className="mt-5 rounded-xl border border-val-teal/30 bg-val-teal/[0.08] px-4 py-3 text-left">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-val-teal">다음 판 출석</p>
+              <p className="mt-2 text-sm text-val-cream/90">
+                팀 초기화 후에는 여기서 다음 판 참가·불참을 눌러 주세요.
+              </p>
+              <p className="mt-1.5 text-xs text-val-muted">
+                현재:{' '}
+                {presence.checkIn === 'ready'
+                  ? '참가'
+                  : presence.checkIn === 'away'
+                    ? '불참'
+                    : presence.checkInOpen
+                      ? '미응답'
+                      : '참가(기본)'}
+              </p>
+              {checkInError ? (
+                <p className="mt-2 text-xs text-val-red" role="alert">
+                  {checkInError}
+                </p>
+              ) : null}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={checkInBusy || presence.checkIn === 'ready'}
+                  onClick={() => void handleCheckIn(true)}
+                  className="flex-1 rounded-lg bg-val-teal/80 px-3 py-2.5 text-sm font-semibold text-val-bg hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  다음 판 참가
+                </button>
+                <button
+                  type="button"
+                  disabled={checkInBusy || presence.checkIn === 'away'}
+                  onClick={() => void handleCheckIn(false)}
+                  className="flex-1 rounded-lg border border-val-line px-3 py-2.5 text-sm font-semibold text-val-cream hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  이번 판 불참
+                </button>
+              </div>
+            </div>
+          ) : null}
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             {!waiting ? (
               <button
@@ -239,10 +338,10 @@ export default function JoinPage({ onBack }: JoinPageProps) {
     'mt-2 w-full rounded-lg border border-val-line bg-val-bg px-3.5 py-3 text-base text-val-cream placeholder:text-val-muted/50 outline-none transition focus:border-val-teal focus:ring-1 focus:ring-val-teal/40';
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center px-3 py-6 sm:px-4 sm:py-10">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg rounded-2xl border border-val-line bg-val-panel/90 p-6 shadow-xl sm:p-7"
+        className="w-full max-w-lg rounded-2xl border border-val-line bg-val-panel/90 p-4 shadow-xl sm:p-7"
       >
         <p className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-val-teal">Viewer</p>
         <h1 className="mt-2 font-display text-2xl font-bold text-val-cream sm:text-3xl">참가 신청</h1>

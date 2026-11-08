@@ -14,9 +14,10 @@ interface BoardProps {
   onEdit: (player: Player) => void;
   onNotice?: (message: string) => void;
   onUnauthorized?: () => void;
+  onMatchSync?: (options?: { force?: boolean }) => void;
 }
 
-export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: BoardProps) {
+export default function Board({ onAdd, onEdit, onNotice, onUnauthorized, onMatchSync }: BoardProps) {
   const {
     team1,
     team2,
@@ -57,7 +58,7 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActivePlayer(null)}
     >
-      <main className="mx-auto grid max-w-[1600px] gap-5 px-4 py-5 xl:grid-cols-[minmax(18rem,22rem)_1fr]">
+      <main className="mx-auto grid max-w-[1600px] gap-3 px-3 py-3 sm:gap-5 sm:px-4 sm:py-5 xl:grid-cols-[minmax(18rem,22rem)_1fr]">
         <WaitlistPanel
           onAdd={onAdd}
           onEdit={onEdit}
@@ -66,9 +67,9 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
           groupedIds={groupedIds}
           activeId={activePlayer?.id}
         />
-        <div id="match-board" className="min-w-0 space-y-3">
+        <div id="match-board" className="min-w-0 space-y-2.5 sm:space-y-3">
           {(matchMapLabel || attackLabel) && (
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-val-line bg-val-panel/60 px-4 py-2.5 text-sm">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-val-line bg-val-panel/60 px-3 py-2 text-sm sm:gap-x-4 sm:px-4 sm:py-2.5">
               {matchMapLabel && (
                 <p className="text-val-cream">
                   <span className="text-val-muted">맵</span>
@@ -124,7 +125,7 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
               )}
             </div>
           )}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
             <TeamPanel
               side="TEAM_1"
               onEdit={onEdit}
@@ -132,6 +133,7 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
               onWin={() => {
                 const result = recordTeamResult('TEAM_1');
                 if (result.message) onNotice?.(result.message);
+                if (result.ok) onMatchSync?.();
               }}
               groupedIds={groupedIds}
               activeId={activePlayer?.id}
@@ -143,6 +145,7 @@ export default function Board({ onAdd, onEdit, onNotice, onUnauthorized }: Board
               onWin={() => {
                 const result = recordTeamResult('TEAM_2');
                 if (result.message) onNotice?.(result.message);
+                if (result.ok) onMatchSync?.();
               }}
               groupedIds={groupedIds}
               activeId={activePlayer?.id}

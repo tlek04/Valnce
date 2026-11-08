@@ -43,7 +43,7 @@ function liveBoard(board: BoardPayload, now = Date.now()): BoardPayload {
   return isBoardExpired(board, now) ? emptyBoard(0) : board;
 }
 
-/** 조인 중복 검사용 — 대기열·팀 전원 (24시간 만료 반영) */
+/** 조인 중복 검사용 — 대기열·팀 전원 (보드 TTL 만료 반영) */
 export async function readSharedBoard(env: Pick<Env, 'ROSTER'>): Promise<BoardPayload> {
   if (!env.ROSTER) return emptyBoard();
   const stored = (await env.ROSTER.get(BOARD_KEY, 'json')) as BoardPayload | null;

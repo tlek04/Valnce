@@ -23,6 +23,8 @@ export const useAppStore = create<AppStore>()(
       boardUpdatedAt: 0,
       lastMatchSyncAt: null,
       showMatchRecord: true,
+      teamHistory: [],
+      teamHistoryIndex: -1,
 
       ...createPlayerActions(set, get, api),
       ...createBoardActions(set, get, api),
