@@ -13,22 +13,38 @@ export type JoinStatus =
   | 'joined'
   | 'cancelled';
 
+export type JoinCheckIn = 'ready' | 'away' | null;
+
 export async function submitJoinApplication(input: {
   name: string;
   riotName: string;
   riotTag: string;
   canOrder?: boolean;
-}): Promise<{ ok: boolean; application?: JoinApplication; autoJoined?: boolean; error?: string }> {
+}): Promise<{
+  ok: boolean;
+  application?: JoinApplication;
+  autoJoined?: boolean;
+  alreadyOnBoard?: boolean;
+  name?: string;
+  queueNo?: number;
+  checkIn?: JoinCheckIn;
+  error?: string;
+}> {
   try {
     const response = await fetch(joinUrl(), {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(input),
     });
     const parsed = await readJsonText<{
       ok?: boolean;
       application?: JoinApplication;
       autoJoined?: boolean;
+      alreadyOnBoard?: boolean;
+      name?: string;
+      queueNo?: number;
+      checkIn?: JoinCheckIn;
       error?: string;
     }>(response);
     if (!parsed.parsed) {
@@ -41,6 +57,16 @@ export async function submitJoinApplication(input: {
       };
     }
     const data = parsed.data;
+    if (response.ok && data.ok && data.alreadyOnBoard) {
+      return {
+        ok: true,
+        alreadyOnBoard: true,
+        autoJoined: Boolean(data.autoJoined),
+        name: data.name,
+        queueNo: typeof data.queueNo === 'number' ? data.queueNo : 0,
+        checkIn: data.checkIn === 'ready' || data.checkIn === 'away' ? data.checkIn : null,
+      };
+    }
     if (!response.ok || !data.ok || !data.application) {
       return {
         ok: false,
@@ -52,8 +78,6 @@ export async function submitJoinApplication(input: {
     return { ok: false, error: '신청 서버에 연결하지 못했습니다.' };
   }
 }
-
-export type JoinCheckIn = 'ready' | 'away' | null;
 
 export async function fetchJoinPresence(): Promise<{
   ok: boolean;

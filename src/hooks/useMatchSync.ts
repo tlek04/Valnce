@@ -3,7 +3,7 @@ import { MATCH_SYNC_COOLDOWN_MS, PLAY_WINDOW_MS } from '../constants/game';
 import { useAppStore } from '../store/useAppStore';
 import { importQualifyingMatches, isMatchSyncConfigured } from '../utils/matchImport';
 
-/** 자동 전적 동기화 대상 (마지막 성공 후 30분) */
+/** 자동 전적 동기화 대상 (마지막 성공 후 12시간) */
 export function isMatchSyncDue(lastAt: number | null, now = Date.now()) {
   return lastAt == null || now - lastAt >= MATCH_SYNC_COOLDOWN_MS;
 }
@@ -15,8 +15,8 @@ export function isDailyMatchSyncDue(lastAt: number | null, now = Date.now()) {
 
 /**
  * 전적·최근 참여 동기화.
- * - 헤더 버튼(force): 서버 10초 제한만 적용, 즉시 요청
- * - 팀 승 기록·매니지 입장 자동: 30분에 한 번
+ * - 헤더 버튼·팀 초기화(force): 서버 10초 제한만 적용, 즉시 요청
+ * - 팀 승 기록·매니지 입장 자동: 12시간에 한 번
  */
 export function useMatchSync(onNotice?: (message: string) => void) {
   const [syncing, setSyncing] = useState(false);

@@ -29,6 +29,13 @@ type DoneState = {
   status: JoinStatus;
 };
 
+/** 신청 상태 API 없이 보드 탑승만으로 복구한 세션 */
+const ON_BOARD_SESSION_ID = 'on-board';
+
+function isTrackableSessionId(id: string) {
+  return Boolean(id) && id !== ON_BOARD_SESSION_ID;
+}
+
 export default function JoinPage({ onBack }: JoinPageProps) {
   const saved = loadJoinProfile();
   const [name, setName] = useState(saved.name);
@@ -39,7 +46,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   const submitting = useRef(false);
   const [done, setDone] = useState<DoneState | null>(() => loadJoinSession());
   const [joinOpen, setJoinOpen] = useState<boolean | null>(null);
-  const [restoring, setRestoring] = useState(() => Boolean(loadJoinSession()));
+  const [restoring, setRestoring] = useState(true);
   const [presence, setPresence] = useState<{
     onBoard: boolean;
     checkIn: JoinCheckIn;
@@ -47,6 +54,26 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   } | null>(null);
   const [checkInBusy, setCheckInBusy] = useState(false);
   const [checkInError, setCheckInError] = useState<string | null>(null);
+
+  const enterOnBoardSession = (
+    info: { name?: string; queueNo?: number; checkIn?: JoinCheckIn; checkInOpen?: boolean },
+    base?: DoneState | null
+  ) => {
+    const next: DoneState = {
+      id: base && isTrackableSessionId(base.id) ? base.id : ON_BOARD_SESSION_ID,
+      queueNo: info.queueNo ?? base?.queueNo ?? 0,
+      name: info.name || base?.name || loadJoinProfile().name || '참가자',
+      autoJoined: true,
+      status: 'joined',
+    };
+    saveJoinSession(next);
+    setDone(next);
+    setPresence({
+      onBoard: true,
+      checkIn: info.checkIn ?? null,
+      checkInOpen: Boolean(info.checkInOpen),
+    });
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -60,17 +87,41 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   }, []);
 
   useEffect(() => {
-    const session = loadJoinSession();
-    if (!session) {
-      setRestoring(false);
-      return;
-    }
     let cancelled = false;
     (async () => {
+      const session = loadJoinSession();
+      const presenceResult = await fetchJoinPresence();
+      if (cancelled) return;
+
+      // 승인 후 나가도, 같은 브라우저 쿠키로 보드에 있으면 출석 화면 복구
+      if (presenceResult.ok && presenceResult.onBoard) {
+        enterOnBoardSession(
+          {
+            name: presenceResult.name,
+            checkIn: presenceResult.checkIn ?? null,
+            checkInOpen: presenceResult.checkInOpen,
+            queueNo: session?.queueNo,
+          },
+          session
+        );
+        setRestoring(false);
+        return;
+      }
+
+      if (!session || !isTrackableSessionId(session.id)) {
+        if (session && !isTrackableSessionId(session.id)) clearJoinSession();
+        setDone(null);
+        setRestoring(false);
+        return;
+      }
+
       const result = await fetchJoinStatus(session.id);
       if (cancelled) return;
       if (!result.ok || !result.status) {
-        if (result.notFound) { clearJoinSession(); setDone(null); }
+        if (result.notFound) {
+          clearJoinSession();
+          setDone(null);
+        }
         setRestoring(false);
         return;
       }
@@ -91,7 +142,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
   }, []);
 
   useEffect(() => {
-    if (!done || done.status !== 'pending') return;
+    if (!done || done.status !== 'pending' || !isTrackableSessionId(done.id)) return;
     let cancelled = false;
     const tick = async () => {
       const result = await fetchJoinStatus(done.id);
@@ -183,11 +234,23 @@ export default function JoinPage({ onBack }: JoinPageProps) {
     const result = await submitJoinApplication(profile);
     submitting.current = false;
     setBusy(false);
-    if (!result.ok || !result.application) {
+    if (!result.ok) {
       setError(result.error || '알 수 없는 오류입니다.');
       return;
     }
     saveJoinProfile(profile);
+    if (result.alreadyOnBoard) {
+      enterOnBoardSession({
+        name: result.name || profile.name,
+        queueNo: result.queueNo,
+        checkIn: result.checkIn ?? null,
+      });
+      return;
+    }
+    if (!result.application) {
+      setError(result.error || '알 수 없는 오류입니다.');
+      return;
+    }
     const next: DoneState = {
       id: result.application.id,
       queueNo: result.application.queueNo,
@@ -311,7 +374,7 @@ export default function JoinPage({ onBack }: JoinPageProps) {
             </div>
           ) : null}
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {!waiting ? (
+            {!waiting && !presence?.onBoard ? (
               <button
                 type="button"
                 onClick={resetToForm}

@@ -413,10 +413,18 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
 
       if (existingByRiot && typeof existingByRiot.id === 'string' && approvedIdentity === tagKey) {
         if (onBoardAlready(existingByRiot.id)) {
-          return json(
-            { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.' },
-            { status: 409 }
-          );
+          const seat = findSeatByTagKey(seats, tagKey);
+          return json({
+            ok: true,
+            alreadyOnBoard: true,
+            autoJoined: true,
+            name: typeof seat?.name === 'string' ? seat.name : typeof existingByRiot.name === 'string' ? existingByRiot.name : name,
+            queueNo:
+              seat && typeof (seat as { queueNo?: unknown }).queueNo === 'number'
+                ? (seat as { queueNo: number }).queueNo
+                : 0,
+            checkIn: parseCheckIn(seat?.checkIn),
+          });
         }
         if (pendingSame(existingByRiot.id)) {
           return json({ ok: false, error: '이미 대기열 합류 요청이 있습니다.' }, { status: 409 });
@@ -451,6 +459,21 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
       }
 
       if (onBoardAlready()) {
+        // 승인 쿠키가 있으면 출석 화면 복구용으로 성공 응답
+        if (approvedIdentity === tagKey) {
+          const seat = findSeatByTagKey(seats, tagKey);
+          return json({
+            ok: true,
+            alreadyOnBoard: true,
+            autoJoined: true,
+            name: typeof seat?.name === 'string' ? seat.name : name,
+            queueNo:
+              seat && typeof (seat as { queueNo?: unknown }).queueNo === 'number'
+                ? (seat as { queueNo: number }).queueNo
+                : 0,
+            checkIn: parseCheckIn(seat?.checkIn),
+          });
+        }
         return json(
           { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.' },
           { status: 409 }

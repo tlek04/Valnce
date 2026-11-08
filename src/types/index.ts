@@ -179,7 +179,7 @@ export interface AppState {
   rosterUpdatedAt: number;
   /** 공유 보드(대기열·팀·맵·공수)가 마지막으로 바뀐 시각. 서버 동기화 비교용. */
   boardUpdatedAt: number;
-  /** 커스텀 매치 전적·참여를 마지막으로 성공 동기화한 시각 (자동 동기화 30분 간격) */
+  /** 커스텀 매치 전적·참여를 마지막으로 성공 동기화한 시각 (자동 동기화 12시간 간격) */
   lastMatchSyncAt: number | null;
   /** 보드 카드에 승패·연승 표시 */
   showMatchRecord: boolean;

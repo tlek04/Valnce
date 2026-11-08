@@ -75,6 +75,7 @@ export default function Header({
     if (matchCount === 0) return;
     resetTeams();
     onNotice('팀 인원을 대기열로 옮겼습니다. 다음 판 출석을 받아 주세요.');
+    onMatchSync?.({ force: true });
   };
 
   const handleResetPointerDown = (event: PointerEvent<HTMLButtonElement>) => {

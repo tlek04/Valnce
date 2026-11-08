@@ -9,5 +9,5 @@ export const DAY_MS = 24 * 60 * 60 * 1000;
 export const PLAY_WINDOW_MS = DAY_MS;
 export const BOARD_TTL_MS = 12 * 60 * 60 * 1000;
 export const BOARD_TTL_SECONDS = 12 * 60 * 60;
-/** 자동 전적 동기화 간격 (수동 버튼·서버 10초 제한과 별개) */
-export const MATCH_SYNC_COOLDOWN_MS = 30 * 60 * 1000;
+/** 자동 전적 동기화 간격 (수동·팀 초기화 force와 별개) */
+export const MATCH_SYNC_COOLDOWN_MS = 12 * 60 * 60 * 1000;
