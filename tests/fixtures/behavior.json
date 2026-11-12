@@ -6409,6 +6409,10 @@
           "{\"updatedAt\":1793790000000,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
           "{\"count\":1,\"resetAt\":1793790900000}"
         ],
@@ -6423,16 +6427,25 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"pending\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
     {
       "path": "/api/join",
       "method": "POST",
-      "status": 409,
+      "status": 429,
       "data": {
         "ok": false,
-        "error": "같은 치지직 닉네임이 이미 있습니다."
+        "error": "같은 닉네임으로 너무 빠르게 신청했습니다. 잠시 후 다시 시도하세요.",
+        "code": "join_rate_identity"
       },
       "kv": [
         [
@@ -6460,8 +6473,12 @@
           "{\"updatedAt\":1793790000000,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":2,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6474,6 +6491,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"pending\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -6519,8 +6544,12 @@
           "{\"updatedAt\":1793790000000,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":2,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6533,6 +6562,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"pending\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -6642,8 +6679,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":2,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6656,6 +6697,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "viewer-approved:test-id-1",
@@ -6697,8 +6746,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":2,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6713,6 +6766,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ]
@@ -6721,10 +6782,11 @@
     {
       "path": "/api/join",
       "method": "POST",
-      "status": 409,
+      "status": 429,
       "data": {
         "ok": false,
-        "error": "이미 대기열 또는 경기에 참가 중입니다."
+        "error": "같은 닉네임으로 너무 빠르게 신청했습니다. 잠시 후 다시 시도하세요.",
+        "code": "join_rate_identity"
       },
       "kv": [
         [
@@ -6752,8 +6814,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":3,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6768,6 +6834,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ]
@@ -6776,10 +6850,11 @@
     {
       "path": "/api/join",
       "method": "POST",
-      "status": 409,
+      "status": 429,
       "data": {
         "ok": false,
-        "error": "이미 대기열 또는 경기에 참가 중입니다."
+        "error": "같은 닉네임으로 너무 빠르게 신청했습니다. 잠시 후 다시 시도하세요.",
+        "code": "join_rate_identity"
       },
       "kv": [
         [
@@ -6807,8 +6882,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":4,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6821,6 +6900,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "viewer-approved:test-id-1",
@@ -6862,8 +6949,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":4,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6876,6 +6967,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "viewer-approved:test-id-1",
@@ -6917,8 +7016,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":4,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -6931,6 +7034,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "viewer-approved:test-id-1",
@@ -7030,8 +7141,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":4,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7046,6 +7161,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ]
@@ -7054,10 +7177,11 @@
     {
       "path": "/api/join",
       "method": "POST",
-      "status": 409,
+      "status": 429,
       "data": {
         "ok": false,
-        "error": "이미 대기열 또는 경기에 참가 중입니다."
+        "error": "같은 닉네임으로 너무 빠르게 신청했습니다. 잠시 후 다시 시도하세요.",
+        "code": "join_rate_identity"
       },
       "kv": [
         [
@@ -7085,8 +7209,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":1,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":5,\"resetAt\":1793790900000}"
+          "{\"count\":1,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7099,6 +7227,14 @@
         [
           "join-status:test-id-2",
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "viewer-approved:test-id-1",
@@ -7148,8 +7284,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7164,6 +7304,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7174,6 +7322,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"pending\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7211,8 +7367,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7227,6 +7387,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7237,6 +7405,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7275,8 +7451,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7291,6 +7471,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7301,6 +7489,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7337,8 +7533,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7353,6 +7553,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7363,6 +7571,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7402,8 +7618,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7418,6 +7638,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7428,6 +7656,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7480,8 +7716,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7496,6 +7736,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7506,6 +7754,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7543,8 +7799,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7559,6 +7819,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7569,6 +7837,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7606,8 +7882,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7622,6 +7902,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7632,6 +7920,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7669,8 +7965,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7685,6 +7985,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7695,6 +8003,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7774,8 +8090,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7790,6 +8110,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7800,6 +8128,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7839,8 +8175,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7855,6 +8195,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7865,6 +8213,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7937,8 +8293,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -7953,6 +8313,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -7963,6 +8331,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -7999,8 +8375,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8015,6 +8395,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8025,6 +8413,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -8067,8 +8463,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8083,6 +8483,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8093,6 +8501,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ]
       ]
     },
@@ -8129,8 +8545,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8145,6 +8565,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8155,6 +8583,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8202,8 +8638,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8218,6 +8658,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8228,6 +8676,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8274,8 +8730,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8290,6 +8750,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8300,6 +8768,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8343,8 +8819,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8359,6 +8839,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8369,6 +8857,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8410,8 +8906,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8426,6 +8926,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8436,6 +8944,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8476,8 +8992,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8492,6 +9012,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8502,6 +9030,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8542,8 +9078,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8558,6 +9098,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8568,6 +9116,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8611,8 +9167,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8627,6 +9187,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8637,6 +9205,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8654,7 +9230,8 @@
         "showStreamerCard": true,
         "showMatchRecord": true,
         "streamerAccessOpen": false,
-        "viewerAccessOpen": true
+        "viewerAccessOpen": true,
+        "chatBridgeOpen": true
       },
       "kv": [
         [
@@ -8671,7 +9248,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -8682,8 +9259,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8698,6 +9279,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8708,6 +9297,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8738,7 +9335,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -8749,8 +9346,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8765,6 +9366,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8775,6 +9384,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8805,7 +9422,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -8816,8 +9433,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8832,6 +9453,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8842,6 +9471,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8872,7 +9509,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -8883,8 +9520,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8899,6 +9540,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8909,6 +9558,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8938,7 +9595,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -8949,8 +9606,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -8965,6 +9626,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -8975,6 +9644,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -8991,7 +9668,8 @@
         "showStreamerCard": true,
         "showMatchRecord": true,
         "streamerAccessOpen": false,
-        "viewerAccessOpen": true
+        "viewerAccessOpen": true,
+        "chatBridgeOpen": true
       },
       "kv": [
         [
@@ -9008,7 +9686,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -9019,8 +9697,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -9035,6 +9717,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -9045,6 +9735,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -9062,7 +9760,8 @@
         "showStreamerCard": true,
         "showMatchRecord": true,
         "streamerAccessOpen": false,
-        "viewerAccessOpen": false
+        "viewerAccessOpen": false,
+        "chatBridgeOpen": true
       },
       "kv": [
         [
@@ -9079,7 +9778,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":false}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":false,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -9090,8 +9789,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -9106,6 +9809,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -9116,6 +9827,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -9146,7 +9865,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":false}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":false,\"viewerAccessOpen\":false,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -9157,8 +9876,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -9173,6 +9896,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -9183,6 +9914,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -9200,7 +9939,8 @@
         "showStreamerCard": true,
         "showMatchRecord": true,
         "streamerAccessOpen": true,
-        "viewerAccessOpen": true
+        "viewerAccessOpen": true,
+        "chatBridgeOpen": true
       },
       "kv": [
         [
@@ -9217,7 +9957,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":true,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":true,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -9228,8 +9968,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -9244,6 +9988,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -9254,6 +10006,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -9283,7 +10043,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":true,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":true,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -9294,8 +10054,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -9310,6 +10074,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -9320,6 +10092,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",
@@ -9349,7 +10129,7 @@
         ],
         [
           "site-settings",
-          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":true,\"viewerAccessOpen\":true}"
+          "{\"showViewerCard\":true,\"showStreamerCard\":true,\"showMatchRecord\":true,\"streamerAccessOpen\":true,\"viewerAccessOpen\":true,\"chatBridgeOpen\":true}"
         ],
         [
           "shared-roster",
@@ -9360,8 +10140,12 @@
           "{\"updatedAt\":1793790000001,\"waitlist\":[{\"id\":\"a\",\"name\":\"a\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0},{\"id\":\"test-id-4\",\"name\":\"viewer\",\"currentTier\":{\"tier\":\"Gold\",\"division\":2},\"maxTier\":{\"tier\":\"Gold\",\"division\":2},\"canOrder\":false,\"restrictions\":[],\"lockedTeam\":null,\"rivalIds\":[],\"allyIds\":[],\"riotName\":\"nick\",\"riotTag\":\"KR\",\"matchSeed\":false,\"queueNo\":1,\"wins\":0,\"losses\":0,\"streak\":0,\"playAts\":[],\"playCount\":0,\"checkIn\":\"ready\"}],\"team1\":[],\"team2\":[],\"matchMapId\":\"lotus\",\"attackSide\":\"TEAM_1\",\"balanceNote\":null,\"balanceDetails\":[]}"
         ],
         [
+          "auth:join:global",
+          "{\"count\":2,\"resetAt\":1793790060000}"
+        ],
+        [
           "auth:join:local",
-          "{\"count\":6,\"resetAt\":1793790900000}"
+          "{\"count\":2,\"resetAt\":1793790900000}"
         ],
         [
           "join-queue",
@@ -9376,6 +10160,14 @@
           "{\"status\":\"approved\",\"queueNo\":1,\"name\":\"viewer\",\"auto\":false,\"playerId\":\"test-id-4\",\"updatedAt\":1793790000000}"
         ],
         [
+          "auth:join-id:name:viewer",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:nick#kr",
+          "{\"at\":1793790000000}"
+        ],
+        [
           "viewer-approved:test-id-1",
           "\"nick#kr\""
         ],
@@ -9386,6 +10178,14 @@
         [
           "join-status:test-id-9",
           "{\"status\":\"rejected\",\"queueNo\":2,\"name\":\"other\",\"auto\":false,\"updatedAt\":1793790000000}"
+        ],
+        [
+          "auth:join-id:name:other",
+          "{\"at\":1793790000000}"
+        ],
+        [
+          "auth:join-id:riot:other#kr",
+          "{\"at\":1793790000000}"
         ],
         [
           "auth:trusted-devices",

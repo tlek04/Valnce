@@ -56,6 +56,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
   const [showStreamerCard, setShowStreamerCard] = useState(true);
   const [streamerAccessOpen, setStreamerAccessOpen] = useState(true);
   const [viewerAccessOpen, setViewerAccessOpen] = useState(true);
+  const [chatBridgeOpen, setChatBridgeOpen] = useState(true);
   const [settingsBusy, setSettingsBusy] = useState(false);
   const [thisPcTrusted, setThisPcTrusted] = useState(false);
   const [trustBusy, setTrustBusy] = useState(false);
@@ -95,6 +96,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       setShowMatchRecord(settings.showMatchRecord);
       setStreamerAccessOpen(settings.streamerAccessOpen);
       setViewerAccessOpen(settings.viewerAccessOpen);
+      setChatBridgeOpen(settings.chatBridgeOpen);
       let isTrusted = trusted;
       if (!trusted) {
         const registered = await trustThisDevice('이 PC');
@@ -315,6 +317,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       showMatchRecord: boolean;
       streamerAccessOpen: boolean;
       viewerAccessOpen: boolean;
+      chatBridgeOpen: boolean;
     }>,
     revert: () => void,
     successMessage: string
@@ -339,6 +342,7 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       setShowMatchRecord(result.settings.showMatchRecord);
       setStreamerAccessOpen(result.settings.streamerAccessOpen);
       setViewerAccessOpen(result.settings.viewerAccessOpen);
+      setChatBridgeOpen(result.settings.chatBridgeOpen);
     }
     showNotice(successMessage);
   };
@@ -372,6 +376,16 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
       { viewerAccessOpen: checked },
       () => setViewerAccessOpen(previous),
       checked ? '시청자 참가 신청을 열었습니다.' : '시청자 참가 신청을 닫았습니다.'
+    );
+  };
+
+  const handleChatBridgeToggle = (checked: boolean) => {
+    const previous = chatBridgeOpen;
+    setChatBridgeOpen(checked);
+    void saveSiteSetting(
+      { chatBridgeOpen: checked },
+      () => setChatBridgeOpen(previous),
+      checked ? '치지직 채팅 연동을 켰습니다.' : '치지직 채팅 연동을 껐습니다.'
     );
   };
 
@@ -551,6 +565,14 @@ export default function AdminApp({ onLogout }: AdminAppProps) {
                   onChange: handleViewerAccessToggle,
                   onText: '열림',
                   offText: '닫힘',
+                },
+                {
+                  key: 'chat-bridge',
+                  label: '채팅 연동',
+                  checked: chatBridgeOpen,
+                  onChange: handleChatBridgeToggle,
+                  onText: '켜짐',
+                  offText: '꺼짐',
                 },
                 {
                   key: 'viewer-card',

@@ -16,6 +16,8 @@ export interface SiteSettings {
   streamerAccessOpen: boolean;
   /** 시청자 `/join` 참가 신청 */
   viewerAccessOpen: boolean;
+  /** 치지직 채팅 브릿지 명령 수락 */
+  chatBridgeOpen: boolean;
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
@@ -24,6 +26,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   showMatchRecord: true,
   streamerAccessOpen: true,
   viewerAccessOpen: true,
+  chatBridgeOpen: true,
 };
 
 export function normalizeSiteSettings(raw: unknown): SiteSettings {
@@ -34,6 +37,7 @@ export function normalizeSiteSettings(raw: unknown): SiteSettings {
     showMatchRecord?: unknown;
     streamerAccessOpen?: unknown;
     viewerAccessOpen?: unknown;
+    chatBridgeOpen?: unknown;
   };
   const showViewerCard = data.showViewerCard !== false;
   return {
@@ -44,6 +48,7 @@ export function normalizeSiteSettings(raw: unknown): SiteSettings {
     // 구버전은 showViewerCard가 참가 API도 같이 막았음
     viewerAccessOpen:
       data.viewerAccessOpen !== undefined ? data.viewerAccessOpen !== false : showViewerCard,
+    chatBridgeOpen: data.chatBridgeOpen !== false,
   };
 }
 

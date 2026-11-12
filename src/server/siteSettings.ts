@@ -57,6 +57,8 @@ export async function handleSiteSettings(request: Request, env: SiteEnv): Promis
         body.viewerAccessOpen !== undefined
           ? body.viewerAccessOpen !== false
           : existing.viewerAccessOpen,
+      chatBridgeOpen:
+        body.chatBridgeOpen !== undefined ? body.chatBridgeOpen !== false : existing.chatBridgeOpen,
     });
     await env.ROSTER.put(SITE_SETTINGS_KEY, JSON.stringify(next));
     return json({ ok: true, ...next });

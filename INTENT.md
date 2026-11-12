@@ -36,7 +36,7 @@ Valnce는 치지직 스트리머가 **발로란트 내전(커스텀 5대5)** 을
 - 신청 큐의 `queueNo`는 **접수 순서 티켓**(승인/거절과 무관, 갭 허용)이다. 신청 카드 표시용.
 - 보드 카드 `queueNo`는 **매니지 보드에 추가된 순서**(대기열·팀 합산 max+1). 신청 티켓을 보드에 옮기지 않는다. 보드가 비면 다시 1부터.
 - 공개 `GET /api/join/status/:id`로 시청자 화면이 승인·거절·합류·취소를 폴링한다.
-- IP당 짧은 창의 신청 횟수 제한이 있다.
+- 신청 남용 방지: IP당 15분 12회, 전체 분당 상한, 같은 닉/발로 ID 짧은 쿨다운, pending 큐 상한(100). 동시 신청은 Durable Object가 직렬화하고 revision으로 티켓 누락·중복을 막는다.
 - 승인 시 명단 KV 저장이 먼저 성공한 뒤에만 큐에서 제거한다(저장 실패 시 큐 유지).
 - 자동 합류 claim 때 명단에 플레이어가 없으면 큐에서 빼고 상태를 `cancelled`로 둔다.
 - 기존 발로란트 닉네임 재방문 시 치지직 닉네임이 바뀌었으면 명단 `name`을 갱신한 뒤 합류한다.
@@ -87,13 +87,29 @@ Valnce는 치지직 스트리머가 **발로란트 내전(커스텀 5대5)** 을
 - 거절·승인 시 신청 티켓·보드 순번 재정렬
 - 매니지 화면의 명시적 로그아웃 버튼
 - 시청자 화면에 보드 전체 공개(출석 자가 체크인만 허용)
-- 치지직 채팅 연동 출석·WebSocket 실시간 출석
+- Workers 안에서 치지직 Socket을 직접 유지하는 것(채팅은 별도 브릿지 프로세스)
+
+---
+
+## 치지직 채팅 연동
+
+시청자는 `/join` 외에 채팅 명령으로도 신청·출석할 수 있다. 서버컴의 Node 브릿지가 치지직 Open API 채팅을 구독하고, `CHAT_BRIDGE_SECRET`으로 Workers `/api/bridge/*`를 호출한다. 보드 공유는 기존처럼 폴링이다.
+
+| 명령 | 동작 |
+| --- | --- |
+| `!신청 닉#태그` / `!참가 닉#태그` | 채팅 닉 + Riot ID로 참가 신청(신규 승인 대기 / 명단이면 자동 합류) |
+| `!참가` | 보드면 출석(ready), 명단만 있으면 자동 합류, 없으면 신청 안내 |
+| `!불참` | 보드 출석 away |
+| `!도움` | 명령 안내 |
+
+관리자 site-settings의 `chatBridgeOpen`으로 채팅 입구를 끌 수 있다. `/join` 웹 신청은 그대로 유지한다.
 
 ---
 
 ## 기술적으로 이 의도를 받치는 방식
 
 - 프론트: Vite + React + TypeScript + Zustand. 보드는 서버 폴링 sync만, 명단은 로컬 persist + Workers API + KV.
-- 백엔드: Cloudflare Workers. 스트리머/관리자 인증 분리, 참가 큐·상태·명단·공유 보드·접속 로그·site-settings·신뢰 기기.
+- 백엔드: Cloudflare Workers. 스트리머/관리자 인증 분리, 참가 큐·상태·명단·공유 보드·접속 로그·site-settings·신뢰 기기·채팅 브릿지 API.
+- 채팅 브릿지: `bridge/` Node 앱(Docker). 치지직 Session CHAT 구독 → bridge API.
 - MMR: Henrik API(키 있을 때). 실패해도 승인은 진행하고 UI에 알린다.
 - 로컬: `npm install` → `npm run dev`. API 포함: `npm run build` 후 `npm run dev:worker`. 검증: `npm run check`.

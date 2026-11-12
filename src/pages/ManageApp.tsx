@@ -10,6 +10,7 @@ import { useToastStack } from '../hooks/useToastStack';
 import { useAppStore } from '../store/useAppStore';
 import { clearAllAuthTokens, fetchTrustStatus } from '../utils/streamerAuth';
 import { fetchSiteSettings } from '../utils/siteSettings';
+import { fetchBridgeStatus } from '../utils/bridgeStatus';
 import { Player } from '../types';
 
 interface ManageAppProps {
@@ -31,6 +32,9 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [formKey, setFormKey] = useState(0);
   const [accessReady, setAccessReady] = useState(false);
+  const [chatBridgeStatus, setChatBridgeStatus] = useState<
+    'idle' | 'connected' | 'offline' | 'disabled'
+  >('idle');
   const { items: notices, showNotice } = useToastStack();
   const setShowMatchRecord = useAppStore((state) => state.setShowMatchRecord);
   const closingRef = useRef(false);
@@ -49,9 +53,20 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
   useEffect(() => {
     let cancelled = false;
     const pull = async () => {
-      const [settings, trusted] = await Promise.all([fetchSiteSettings(), fetchTrustStatus()]);
+      const [settings, trusted, bridge] = await Promise.all([
+        fetchSiteSettings(),
+        fetchTrustStatus(),
+        fetchBridgeStatus(),
+      ]);
       if (cancelled || closingRef.current) return;
       setShowMatchRecord(settings.showMatchRecord);
+      if (!settings.chatBridgeOpen || (bridge && !bridge.chatBridgeOpen)) {
+        setChatBridgeStatus('disabled');
+      } else if (bridge?.connected) {
+        setChatBridgeStatus('connected');
+      } else {
+        setChatBridgeStatus('offline');
+      }
 
       const open = settings.streamerAccessOpen || trusted;
       if (knownOpenRef.current === null) {
@@ -110,6 +125,7 @@ export default function ManageApp({ onLogout, onAdminEnter }: ManageAppProps) {
         onNotice={showNotice}
         syncStatus={syncStatus}
         boardSyncStatus={boardSyncStatus}
+        chatBridgeStatus={chatBridgeStatus}
         onMatchSync={(options) => {
           void runMatchSync(options);
         }}

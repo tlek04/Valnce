@@ -15,6 +15,8 @@ export interface Env {
   HENRIK_API_KEY?: string;
   STREAMER_PASSWORD?: string;
   ADMIN_PASSWORD?: string;
+  /** 치지직 채팅 브릿지 → Workers API 공유 시크릿 */
+  CHAT_BRIDGE_SECRET?: string;
 }
 
 export interface RosterPayload {

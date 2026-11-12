@@ -10,7 +10,8 @@ binding = "ASSETS"
 not_found_handling = "single-page-application"
 run_worker_first = true
 
-# Secrets (대시보드): HENRIK_API_KEY
+# Secrets (대시보드 / wrangler secret put):
+#   HENRIK_API_KEY, STREAMER_PASSWORD, ADMIN_PASSWORD, CHAT_BRIDGE_SECRET
 [[kv_namespaces]]
 binding = "ROSTER"
 id = "c94cfa210bfb4b78af3268219335e564"

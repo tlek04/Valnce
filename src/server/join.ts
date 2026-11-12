@@ -7,11 +7,16 @@ import { BOARD_TTL_SECONDS, DEFAULT_RATING as DEFAULT_TIER } from '../constants/
 import { riotKey } from './identity';
 import { fetchRiotRatings } from './mmr';
 import { isViewerJoinOpen } from './siteSettingsStore';
+import {
+  JOIN_QUEUE_MAX,
+  checkJoinGlobalRateLimit,
+  checkJoinIdentityCooldown,
+  checkJoinIpRateLimit,
+  markJoinIdentityCooldown,
+} from './joinGuards';
 
 const JOIN_KEY = 'join-queue';
 const JOIN_STATUS_PREFIX = 'join-status:';
-const JOIN_RATE_WINDOW_MS = 15 * 60 * 1000;
-const JOIN_RATE_MAX = 12;
 
 type JoinStatusState = 'pending' | 'approved' | 'rejected' | 'joined' | 'cancelled';
 
@@ -82,23 +87,6 @@ async function writeJoinStatus(env: Env, id: string, record: JoinStatusRecord) {
 
 async function readJoinStatus(env: Env, id: string): Promise<JoinStatusRecord | null> {
   return (await env.ROSTER.get(`${JOIN_STATUS_PREFIX}${id}`, 'json')) as JoinStatusRecord | null;
-}
-
-async function checkJoinRateLimit(env: Env, ip: string): Promise<Response | null> {
-  const key = `auth:join:${ip}`;
-  const now = Date.now();
-  const stored = (await env.ROSTER.get(key, 'json')) as { count?: number; resetAt?: number } | null;
-  let count = 0;
-  let resetAt = now + JOIN_RATE_WINDOW_MS;
-  if (stored && typeof stored.resetAt === 'number' && stored.resetAt > now) {
-    count = typeof stored.count === 'number' ? stored.count : 0;
-    resetAt = stored.resetAt;
-  }
-  if (count >= JOIN_RATE_MAX) {
-    return json({ ok: false, error: '신청이 너무 많습니다. 잠시 후 다시 시도하세요.' }, { status: 429 });
-  }
-  await env.ROSTER.put(key, JSON.stringify({ count: count + 1, resetAt }), { expirationTtl: 900 });
-  return null;
 }
 
 function asSavedPlayers(raw: unknown[]): Record<string, unknown>[] {
@@ -180,7 +168,7 @@ async function resolveViewerTagKey(env: Env, request: Request): Promise<string |
   return typeof approved === 'string' && approved.includes('#') ? approved : null;
 }
 
-async function writeSharedBoard(env: Env, board: Awaited<ReturnType<typeof readSharedBoard>>) {
+async function writeSharedBoard(env: Pick<Env, 'ROSTER'>, board: Awaited<ReturnType<typeof readSharedBoard>>) {
   await env.ROSTER.put(BOARD_KEY, JSON.stringify(board), { expirationTtl: BOARD_TTL_SECONDS });
 }
 
@@ -208,6 +196,59 @@ async function handleJoinPresence(request: Request, env: Env): Promise<Response>
   });
 }
 
+export async function applyBoardCheckIn(
+  env: Pick<Env, 'ROSTER'>,
+  seatId: string,
+  ready: boolean
+): Promise<{ ok: true; checkIn: 'ready' | 'away' } | { ok: false; status: number; error: string }> {
+  const board = await readSharedBoard(env);
+  const seats = boardSeats(board);
+  const seat = seats.find((raw) => {
+    if (!raw || typeof raw !== 'object') return false;
+    return (raw as BoardSeat).id === seatId;
+  }) as BoardSeat | undefined;
+  if (!seat || typeof seat.id !== 'string') {
+    return {
+      ok: false,
+      status: 404,
+      error: '보드에 없습니다. 참가 신청으로 대기열에 오른 뒤 출석해 주세요.',
+    };
+  }
+
+  const checkIn = ready ? ('ready' as const) : ('away' as const);
+  const patchList = (list: unknown[]) =>
+    list.map((raw) => {
+      if (!raw || typeof raw !== 'object') return raw;
+      const row = raw as BoardSeat & Record<string, unknown>;
+      if (row.id !== seatId) return raw;
+      return { ...row, checkIn };
+    });
+
+  const next = {
+    ...board,
+    waitlist: patchList(board.waitlist),
+    team1: patchList(board.team1),
+    team2: patchList(board.team2),
+    updatedAt: Math.max(Date.now(), board.updatedAt + 1),
+  };
+  await writeSharedBoard(env, next);
+  return { ok: true, checkIn };
+}
+
+export function findSeatByNameKey(seats: unknown[], nameKey: string): BoardSeat | null {
+  if (!nameKey) return null;
+  for (const raw of seats) {
+    if (!raw || typeof raw !== 'object') continue;
+    const seat = raw as BoardSeat;
+    if (typeof seat.name === 'string' && seat.name.normalize('NFC').toLowerCase() === nameKey) {
+      return seat;
+    }
+  }
+  return null;
+}
+
+export { findSeatByTagKey, parseCheckIn };
+
 async function handleJoinCheckIn(request: Request, env: Env): Promise<Response> {
   const tagKey = await resolveViewerTagKey(env, request);
   if (!tagKey) {
@@ -234,24 +275,11 @@ async function handleJoinCheckIn(request: Request, env: Env): Promise<Response> 
     );
   }
 
-  const checkIn = body.ready ? ('ready' as const) : ('away' as const);
-  const patchList = (list: unknown[]) =>
-    list.map((raw) => {
-      if (!raw || typeof raw !== 'object') return raw;
-      const row = raw as BoardSeat & Record<string, unknown>;
-      if (row.id !== seat.id) return raw;
-      return { ...row, checkIn };
-    });
-
-  const next = {
-    ...board,
-    waitlist: patchList(board.waitlist),
-    team1: patchList(board.team1),
-    team2: patchList(board.team2),
-    updatedAt: Math.max(Date.now(), board.updatedAt + 1),
-  };
-  await writeSharedBoard(env, next);
-  return json({ ok: true, checkIn, onBoard: true });
+  const result = await applyBoardCheckIn(env, seat.id, body.ready);
+  if (!result.ok) {
+    return json({ ok: false, error: result.error }, { status: result.status });
+  }
+  return json({ ok: true, checkIn: result.checkIn, onBoard: true });
 }
 
 export async function handleJoin(request: Request, env: Env, path: string): Promise<Response> {
@@ -337,10 +365,7 @@ export async function handleJoin(request: Request, env: Env, path: string): Prom
   return json({ error: 'Method not allowed' }, { status: 405 });
 }
 
-async function enqueueJoin(request: Request, env: Env): Promise<Response> {
-  const limited = await checkJoinRateLimit(env, clientIp(request));
-  if (limited) return limited;
-
+export async function enqueueJoin(request: Request, env: Env): Promise<Response> {
   let body: { name?: string; riotName?: string; riotTag?: string; canOrder?: boolean };
   try {
     body = (await request.json()) as {
@@ -362,11 +387,23 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
     return json({ ok: false, error: '발로란트 닉네임과 태그를 입력하세요.' }, { status: 400 });
   }
 
+  const nameKey = name.normalize('NFC').toLowerCase();
+  const tagKey = riotKey(riotName, riotTag);
+
   const cookie = request.headers.get('Cookie')?.match(/(?:^|;\s*)valnce-viewer=([a-zA-Z0-9-]{20,100})(?:;|$)/)?.[1];
   const viewerToken = cookie || crypto.randomUUID();
   const approvedIdentity = cookie ? await env.ROSTER.get('viewer-approved:' + cookie, 'json') : null;
-  const nameKey = name.normalize('NFC').toLowerCase();
-  const tagKey = riotKey(riotName, riotTag);
+  const approvedReturn = Boolean(cookie && approvedIdentity === tagKey);
+
+  // 승인된 시청자 재합류/출석 복구는 쿨다운에서 제외
+  if (!approvedReturn) {
+    const identityLimited = await checkJoinIdentityCooldown(env, nameKey, tagKey);
+    if (identityLimited) return identityLimited;
+  }
+  const globalLimited = await checkJoinGlobalRateLimit(env);
+  if (globalLimited) return globalLimited;
+  const ipLimited = await checkJoinIpRateLimit(env, clientIp(request));
+  if (ipLimited) return ipLimited;
 
   const locked = await withJoinQueueLock(env, async () => {
     for (let attempt = 0; attempt < 8; attempt++) {
@@ -427,10 +464,19 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           });
         }
         if (pendingSame(existingByRiot.id)) {
-          return json({ ok: false, error: '이미 대기열 합류 요청이 있습니다.' }, { status: 409 });
+          await markJoinIdentityCooldown(env, nameKey, tagKey);
+          return json(
+            { ok: false, error: '이미 대기열 합류 요청이 있습니다.', code: 'duplicate_pending' },
+            { status: 409 }
+          );
         }
 
-        if (queue.items.length >= 500) return json({ error: '신청 대기열이 가득 찼습니다.' }, { status: 429 });
+        if (queue.items.length >= JOIN_QUEUE_MAX) {
+          return json(
+            { ok: false, error: '신청 대기열이 가득 찼습니다.', code: 'queue_full' },
+            { status: 429 }
+          );
+        }
         const application: JoinApplication = {
           id: crypto.randomUUID(),
           name: typeof existingByRiot.name === 'string' ? existingByRiot.name : name,
@@ -455,6 +501,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
           auto: true,
           updatedAt: Date.now(),
         });
+        await markJoinIdentityCooldown(env, nameKey, tagKey);
         return json({ ok: true, application, autoJoined: true });
       }
 
@@ -474,8 +521,17 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
             checkIn: parseCheckIn(seat?.checkIn),
           });
         }
+        await markJoinIdentityCooldown(env, nameKey, tagKey);
         return json(
-          { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.' },
+          { ok: false, error: '이미 대기열 또는 경기에 참가 중입니다.', code: 'already_on_board' },
+          { status: 409 }
+        );
+      }
+
+      if (pendingSame()) {
+        await markJoinIdentityCooldown(env, nameKey, tagKey);
+        return json(
+          { ok: false, error: '이미 참가 신청이 대기 중입니다.', code: 'duplicate_pending' },
           { status: 409 }
         );
       }
@@ -487,7 +543,11 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
             typeof item.name === 'string' && item.name.normalize('NFC').toLowerCase() === nameKey && item !== existingByRiot
         );
       if (nameTaken) {
-        return json({ ok: false, error: '같은 치지직 닉네임이 이미 있습니다.' }, { status: 409 });
+        await markJoinIdentityCooldown(env, nameKey, tagKey);
+        return json(
+          { ok: false, error: '같은 치지직 닉네임이 이미 있습니다.', code: 'duplicate_name' },
+          { status: 409 }
+        );
       }
 
       const riotTaken =
@@ -499,10 +559,19 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
             riotKey(item.riotName, item.riotTag) === tagKey && item !== existingByRiot
         );
       if (riotTaken) {
-        return json({ ok: false, error: '같은 발로란트 닉네임#태그가 이미 있습니다.' }, { status: 409 });
+        await markJoinIdentityCooldown(env, nameKey, tagKey);
+        return json(
+          { ok: false, error: '같은 발로란트 닉네임#태그가 이미 있습니다.', code: 'duplicate_riot' },
+          { status: 409 }
+        );
       }
 
-      if (queue.items.length >= 500) return json({ error: '신청 대기열이 가득 찼습니다.' }, { status: 429 });
+      if (queue.items.length >= JOIN_QUEUE_MAX) {
+        return json(
+          { ok: false, error: '신청 대기열이 가득 찼습니다.', code: 'queue_full' },
+          { status: 429 }
+        );
+      }
       const application: JoinApplication = {
         id: crypto.randomUUID(),
         name,
@@ -525,6 +594,7 @@ async function enqueueJoin(request: Request, env: Env): Promise<Response> {
         auto: false,
         updatedAt: Date.now(),
       });
+      await markJoinIdentityCooldown(env, nameKey, tagKey);
       return json({ ok: true, application, autoJoined: false });
     }
     return json({ ok: false, error: '신청 처리가 잠시 충돌했습니다. 다시 시도하세요.' }, { status: 409 });

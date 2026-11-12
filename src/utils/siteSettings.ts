@@ -6,6 +6,7 @@ export interface SiteSettings {
   showMatchRecord: boolean;
   streamerAccessOpen: boolean;
   viewerAccessOpen: boolean;
+  chatBridgeOpen: boolean;
 }
 
 /** 캐시·응답 실패 시 접근 게이트는 닫힘(fail-closed). 표시 설정은 캐시가 있으면 유지. */
@@ -15,6 +16,7 @@ const CLOSED_SETTINGS: SiteSettings = {
   showMatchRecord: false,
   streamerAccessOpen: false,
   viewerAccessOpen: false,
+  chatBridgeOpen: false,
 };
 
 const SITE_SETTINGS_CACHE_KEY = 'valnce-site-settings-cache';
@@ -31,6 +33,7 @@ function normalize(data: {
   showMatchRecord?: unknown;
   streamerAccessOpen?: unknown;
   viewerAccessOpen?: unknown;
+  chatBridgeOpen?: unknown;
 }): SiteSettings {
   const showViewerCard = data.showViewerCard !== false;
   return {
@@ -40,6 +43,7 @@ function normalize(data: {
     streamerAccessOpen: data.streamerAccessOpen !== false,
     viewerAccessOpen:
       data.viewerAccessOpen !== undefined ? data.viewerAccessOpen !== false : showViewerCard,
+    chatBridgeOpen: data.chatBridgeOpen !== false,
   };
 }
 

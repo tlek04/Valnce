@@ -607,6 +607,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }
@@ -628,6 +629,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }
@@ -649,6 +651,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }
@@ -670,6 +673,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }
@@ -691,6 +695,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }
@@ -712,6 +717,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }
@@ -733,6 +739,7 @@
           "headers": {
             "content-type": "application/json"
           },
+          "credentials": "include",
           "body": "{\"name\":\"viewer\",\"riotName\":\"riot\",\"riotTag\":\"KR\"}"
         }
       }

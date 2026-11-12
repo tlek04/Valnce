@@ -80,6 +80,27 @@ export async function validateRequest(request: Request): Promise<Response | null
   if (path === '/api/join/check-in') {
     if (typeof body.ready !== 'boolean') return bad();
   }
+  if (path === '/api/bridge/heartbeat') {
+    if (body.channelId != null && !text(body.channelId, 100)) return bad();
+  }
+  if (path === '/api/bridge/join') {
+    if (!text(body.name, 100)) return bad();
+    for (const key of ['riotName', 'riotTag']) if (!text(body[key], 100)) return bad();
+    if (body.canOrder != null && typeof body.canOrder !== 'boolean') return bad();
+    if (body.senderChannelId != null && !text(body.senderChannelId, 100)) return bad();
+  }
+  if (path === '/api/bridge/check-in') {
+    if (!text(body.name, 100) || typeof body.ready !== 'boolean') return bad();
+  }
+  if (path === '/api/bridge/participate') {
+    if (!text(body.name, 100)) return bad();
+    if (body.riotName != null && !text(body.riotName, 100)) return bad();
+    if (body.riotTag != null && !text(body.riotTag, 100)) return bad();
+    if (body.riotId != null && !text(body.riotId, 120)) return bad();
+    if (body.canOrder != null && typeof body.canOrder !== 'boolean') return bad();
+    if (body.ready != null && typeof body.ready !== 'boolean') return bad();
+    if (body.senderChannelId != null && !text(body.senderChannelId, 100)) return bad();
+  }
   if (path === '/api/roster' && !players(body.players)) return bad();
   if (path === '/api/board') {
     if (!players(body.waitlist, true) || !players(body.team1, true) || !players(body.team2, true)) return bad();

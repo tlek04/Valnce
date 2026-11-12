@@ -9,6 +9,7 @@ import {
 import { handleBoard } from './board';
 import { handleRoster } from './roster';
 import { handleJoin } from './join';
+import { handleBridge } from './bridge';
 import { handleMatchImport } from './matches';
 import { handleSiteSettings } from './siteSettings';
 
@@ -44,6 +45,9 @@ export async function dispatchApi(request: Request, env: Env): Promise<Response>
     }
     if (path === '/api/join' || path.startsWith('/api/join/')) {
       return handleJoin(request, env, path);
+    }
+    if (path === '/api/bridge' || path.startsWith('/api/bridge/')) {
+      return handleBridge(request, env, path);
     }
     return env.ASSETS.fetch(request);
 }

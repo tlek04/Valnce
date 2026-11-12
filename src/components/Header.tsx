@@ -29,6 +29,7 @@ interface HeaderProps {
   onNotice: (message: string) => void;
   syncStatus?: 'idle' | 'syncing' | 'ok' | 'offline';
   boardSyncStatus?: 'idle' | 'syncing' | 'ok' | 'offline';
+  chatBridgeStatus?: 'idle' | 'connected' | 'offline' | 'disabled';
   onMatchSync?: (options?: { force?: boolean }) => void;
   matchSyncing?: boolean;
   onAdminEnter?: () => void;
@@ -38,6 +39,7 @@ export default function Header({
   onNotice,
   syncStatus = 'idle',
   boardSyncStatus = 'idle',
+  chatBridgeStatus = 'idle',
   onMatchSync,
   matchSyncing = false,
   onAdminEnter,
@@ -157,6 +159,24 @@ export default function Header({
                 : boardSyncStatus === 'syncing'
                   ? '보드 동기화 중'
                   : '보드 오프라인'}
+            </span>
+          )}
+          {chatBridgeStatus !== 'idle' && (
+            <span
+              className={`hidden text-sm sm:inline ${
+                chatBridgeStatus === 'connected'
+                  ? 'text-val-teal'
+                  : chatBridgeStatus === 'disabled'
+                    ? 'text-val-muted'
+                    : 'text-val-warn'
+              }`}
+              title="치지직 채팅 브릿지 (!참가 / !신청)"
+            >
+              {chatBridgeStatus === 'connected'
+                ? '채팅 연동됨'
+                : chatBridgeStatus === 'disabled'
+                  ? '채팅 연동 꺼짐'
+                  : '채팅 오프라인'}
             </span>
           )}
           <button

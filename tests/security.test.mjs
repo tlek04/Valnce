@@ -42,8 +42,29 @@ test('concurrent joins preserve every accepted ticket and enforce the IP limit',
 test('concurrent duplicate requests cannot create orphan successful tickets',async()=>{
   const r=runtime();
   const results=await Promise.all([r.call('/api/join',input(1)),r.call('/api/join',input(1))]);
-  assert.deepEqual(results.map(v=>v.status),[200,409]);
+  // 직렬화 후 첫 성공이 신원 쿨다운을 찍으면 두 번째는 429, 아니면 큐 중복 409
+  assert.equal(results[0].status,200);
+  assert.ok([409,429].includes(results[1].status));
   assert.equal(r.read('join-queue').items.length,1);
+});
+test('same identity cannot re-apply within cooldown and queue has a hard cap',async()=>{
+  const r=runtime();
+  const first=await r.call('/api/join',input(1));
+  assert.equal(first.status,200);
+  const rapid=await r.call('/api/join',input(1));
+  assert.equal(rapid.status,429);
+  assert.equal(rapid.data.code,'join_rate_identity');
+  assert.equal(r.read('join-queue').items.length,1);
+
+  const filled=runtime();
+  for (let n=1;n<=100;n++) {
+    const result=await filled.call('/api/join',input(n),{ip:`198.51.100.${(n%200)+1}`});
+    assert.equal(result.status,200,`seed ${n}`);
+  }
+  const overflow=await filled.call('/api/join',input(101),{ip:'198.51.100.250'});
+  assert.equal(overflow.status,429);
+  assert.equal(overflow.data.code,'queue_full');
+  assert.equal(filled.read('join-queue').items.length,100);
 });
 test('public identity cannot rename a player or bypass approval; approved browser can rejoin',async()=>{
   const r=runtime();

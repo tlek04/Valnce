@@ -11,7 +11,8 @@
 5. **Secrets** → `HENRIK_API_KEY` = [HenrikDev](https://docs.henrikdev.xyz) API 키
 6. **Secrets** → `STREAMER_PASSWORD` = 스트리머 매니저 입장·세션 서명 비밀번호
 7. **Secrets** → `ADMIN_PASSWORD` = 관리자(`/admin`) 입장·세션 서명·접속 IP 조회 비밀번호 (스트리머와 별도)
-8. Redeploy
+8. **Secrets** → `CHAT_BRIDGE_SECRET` = 치지직 채팅 브릿지(`bridge/`) ↔ Workers 공유 시크릿 (채팅 연동 시)
+9. Redeploy. 채팅 브릿지 배포는 [bridge/README.md](bridge/README.md)
 
 ## 스트리머 / 관리자 / 시청자
 
@@ -36,7 +37,7 @@
 
 ## 사이트 설정 · 신뢰 기기
 
-- KV `site-settings`: `showViewerCard`, `showStreamerCard`, `showMatchRecord`, `streamerAccessOpen`, `viewerAccessOpen` — 실패 시 표시는 캐시 유지, **세션 게이트는 닫힘(fail-closed)**
+- KV `site-settings`: `showViewerCard`, `showStreamerCard`, `showMatchRecord`, `streamerAccessOpen`, `viewerAccessOpen`, `chatBridgeOpen` — 실패 시 표시는 캐시 유지, **세션 게이트는 닫힘(fail-closed)**
 - KV `auth:trusted-devices` + `X-Device-Id`: 세션 끊기·스트리머 OFF 예외. 상세는 [docs/AUTH.md](docs/AUTH.md)
 - Zustand persist `version` 6. 명단만 저장(보드 로컬 캐시 없음). `showMatchRecord`는 persist하지 않고 서버 설정만 사용
 
