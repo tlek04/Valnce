@@ -42,5 +42,6 @@ function stripOrderFlag(rest: string): { riotId: string; canOrder: boolean } {
   return { riotId: kept.join(' ').trim(), canOrder };
 }
 
+/** 채팅 전송 한도(100자) 안에 들어가게 짧게 유지 */
 export const HELP_TEXT =
-  '명령: !신청 닉#태그 [오더] · !참가 [닉#태그] [오더] · !불참 · !도움 (!참가만으로 재합류·출석)';
+  '!신청 닉#태그 [오더] · !참가 [닉#태그] · !불참 · !도움 (!참가=재합류/출석)';

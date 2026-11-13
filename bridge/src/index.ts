@@ -3,6 +3,7 @@ import { FileTokenStore } from './tokenStore.js';
 import { ValnceClient } from './valnceClient.js';
 import { HELP_TEXT, parseChatCommand } from './commands.js';
 import { allowChatCommand } from './commandGate.js';
+import { ChatReplyQueue, formatCommandReply } from './chatReply.js';
 import { loadEnv } from './env.js';
 
 const HEARTBEAT_MS = 30_000;
@@ -31,13 +32,25 @@ async function main() {
     bridgeSecret: env.bridgeSecret,
   });
 
+  const replies = new ChatReplyQueue(
+    (message) => client.chats.send(message),
+    1_100,
+    (error, message) => {
+      log('채팅 전송 실패', message, error instanceof Error ? error.message : error);
+    }
+  );
+
+  const reply = (message: string) => {
+    replies.enqueue(message);
+  };
+
   const realtime = client.createRealtime({
     auth: 'client',
     subscriptions: ['chat'],
   });
 
   realtime.on('chat', (chat) => {
-    void handleChat(valnce, {
+    void handleChat(valnce, reply, {
       nickname: chat.nickname,
       content: chat.content,
       senderChannelId: chat.senderChannelId,
@@ -73,6 +86,7 @@ async function main() {
 
 async function handleChat(
   valnce: ValnceClient,
+  reply: (message: string) => void,
   chat: { nickname?: string; content?: string; senderChannelId?: string; channelId?: string }
 ) {
   const name = (chat.nickname ?? '').trim();
@@ -83,7 +97,8 @@ async function handleChat(
   if (!command) return;
 
   if (command.type === 'help') {
-    log(`${name}: 도움 요청 — ${HELP_TEXT}`);
+    log(`${name}: 도움 요청`);
+    reply(formatCommandReply({ name, kind: 'help', helpText: HELP_TEXT }));
     return;
   }
 
@@ -97,6 +112,7 @@ async function handleChat(
     })
   ) {
     log(`${name}: 명령 쿨다운 (로컬 디듀프)`);
+    reply(formatCommandReply({ name, kind: 'cooldown' }));
     return;
   }
 
@@ -108,6 +124,7 @@ async function handleChat(
         ready: false,
       });
       log(`${name}: !불참`, result.status, result.body.code ?? result.body.action ?? result.body.error);
+      reply(formatCommandReply({ name, kind: 'result', ready: false, result }));
       return;
     }
 
@@ -123,8 +140,10 @@ async function handleChat(
       result.status,
       result.body.code ?? result.body.action ?? result.body.error ?? (result.ok ? 'ok' : 'fail')
     );
+    reply(formatCommandReply({ name, kind: 'result', ready: true, result }));
   } catch (error) {
     log(`${name}: 명령 처리 실패`, error instanceof Error ? error.message : error);
+    reply(formatCommandReply({ name, kind: 'send_failed' }));
   }
 }
 
