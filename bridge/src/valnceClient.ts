@@ -29,6 +29,7 @@ export class ValnceClient {
     }
   }
 
+  /** 정본 경로: 신청·합류·출석·불참을 Workers가 구분 */
   async participate(input: {
     name: string;
     senderChannelId?: string;
@@ -46,19 +47,6 @@ export class ValnceClient {
         canOrder: input.canOrder,
         ready: input.ready,
       }),
-    });
-    const body = (await response.json().catch(() => ({}))) as Record<string, unknown>;
-    return { ok: response.ok, status: response.status, body };
-  }
-
-  async checkIn(input: {
-    name: string;
-    ready: boolean;
-  }): Promise<{ ok: boolean; status: number; body: Record<string, unknown> }> {
-    const response = await fetch(this.url('/api/bridge/check-in'), {
-      method: 'POST',
-      headers: this.headers(),
-      body: JSON.stringify(input),
     });
     const body = (await response.json().catch(() => ({}))) as Record<string, unknown>;
     return { ok: response.ok, status: response.status, body };

@@ -94,6 +94,8 @@ function asSavedPlayers(raw: unknown[]): Record<string, unknown>[] {
 }
 
 function toSessionPlayer(saved: Record<string, unknown>, queueNo: number) {
+  const chzzkChannelId =
+    typeof saved.chzzkChannelId === 'string' ? saved.chzzkChannelId.trim().slice(0, 100) : '';
   return {
     id: typeof saved.id === 'string' ? saved.id : crypto.randomUUID(),
     name: typeof saved.name === 'string' ? saved.name : '플레이어',
@@ -112,6 +114,7 @@ function toSessionPlayer(saved: Record<string, unknown>, queueNo: number) {
     allyIds: Array.isArray(saved.allyIds) ? saved.allyIds : [],
     riotName: typeof saved.riotName === 'string' ? saved.riotName : '',
     riotTag: typeof saved.riotTag === 'string' ? saved.riotTag : '',
+    ...(chzzkChannelId ? { chzzkChannelId } : {}),
     matchSeed: Boolean(saved.matchSeed),
     queueNo,
     wins: typeof saved.wins === 'number' ? saved.wins : 0,
@@ -137,6 +140,7 @@ type BoardSeat = {
   name?: unknown;
   riotName?: unknown;
   riotTag?: unknown;
+  chzzkChannelId?: unknown;
   checkIn?: unknown;
 };
 
@@ -199,7 +203,8 @@ async function handleJoinPresence(request: Request, env: Env): Promise<Response>
 export async function applyBoardCheckIn(
   env: Pick<Env, 'ROSTER'>,
   seatId: string,
-  ready: boolean
+  ready: boolean,
+  meta?: { name?: string; chzzkChannelId?: string }
 ): Promise<{ ok: true; checkIn: 'ready' | 'away' } | { ok: false; status: number; error: string }> {
   const board = await readSharedBoard(env);
   const seats = boardSeats(board);
@@ -216,12 +221,19 @@ export async function applyBoardCheckIn(
   }
 
   const checkIn = ready ? ('ready' as const) : ('away' as const);
+  const nextName = meta?.name?.trim();
+  const nextChannelId = meta?.chzzkChannelId?.trim().slice(0, 100);
   const patchList = (list: unknown[]) =>
     list.map((raw) => {
       if (!raw || typeof raw !== 'object') return raw;
       const row = raw as BoardSeat & Record<string, unknown>;
       if (row.id !== seatId) return raw;
-      return { ...row, checkIn };
+      return {
+        ...row,
+        checkIn,
+        ...(nextName ? { name: nextName } : {}),
+        ...(nextChannelId ? { chzzkChannelId: nextChannelId } : {}),
+      };
     });
 
   const next = {
@@ -233,6 +245,19 @@ export async function applyBoardCheckIn(
   };
   await writeSharedBoard(env, next);
   return { ok: true, checkIn };
+}
+
+export function findSeatByChannelId(seats: unknown[], channelId: string): BoardSeat | null {
+  const id = channelId.trim();
+  if (!id) return null;
+  for (const raw of seats) {
+    if (!raw || typeof raw !== 'object') continue;
+    const seat = raw as BoardSeat;
+    if (typeof seat.chzzkChannelId === 'string' && seat.chzzkChannelId === id) {
+      return seat;
+    }
+  }
+  return null;
 }
 
 export function findSeatByNameKey(seats: unknown[], nameKey: string): BoardSeat | null {
@@ -366,13 +391,20 @@ export async function handleJoin(request: Request, env: Env, path: string): Prom
 }
 
 export async function enqueueJoin(request: Request, env: Env): Promise<Response> {
-  let body: { name?: string; riotName?: string; riotTag?: string; canOrder?: boolean };
+  let body: {
+    name?: string;
+    riotName?: string;
+    riotTag?: string;
+    canOrder?: boolean;
+    chzzkChannelId?: string;
+  };
   try {
     body = (await request.json()) as {
       name?: string;
       riotName?: string;
       riotTag?: string;
       canOrder?: boolean;
+      chzzkChannelId?: string;
     };
   } catch {
     return json({ ok: false, error: '잘못된 JSON입니다.' }, { status: 400 });
@@ -382,6 +414,7 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
   const riotName = (body.riotName ?? '').trim().replace(/^#+/, '');
   const riotTag = (body.riotTag ?? '').trim().replace(/^#+/, '');
   const canOrder = Boolean(body.canOrder);
+  const chzzkChannelId = (body.chzzkChannelId ?? '').trim().slice(0, 100);
   if (!name) return json({ ok: false, error: '치지직 닉네임을 입력하세요.' }, { status: 400 });
   if (!riotName || !riotTag) {
     return json({ ok: false, error: '발로란트 닉네임과 태그를 입력하세요.' }, { status: 400 });
@@ -479,7 +512,7 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
         }
         const application: JoinApplication = {
           id: crypto.randomUUID(),
-          name: typeof existingByRiot.name === 'string' ? existingByRiot.name : name,
+          name,
           riotName: typeof existingByRiot.riotName === 'string' ? existingByRiot.riotName : riotName,
           riotTag: typeof existingByRiot.riotTag === 'string' ? existingByRiot.riotTag : riotTag,
           queueNo: queue.nextNo,
@@ -487,6 +520,7 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
           ...(canOrder ? { canOrder: true } : {}),
           auto: true,
           playerId: existingByRiot.id,
+          ...(chzzkChannelId ? { chzzkChannelId } : {}),
         };
         const committed = await commitJoinQueue(env, queue.revision ?? 0, {
           nextNo: queue.nextNo + 1,
@@ -536,11 +570,22 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
         );
       }
 
+      const sameChannel = (item: Record<string, unknown> | JoinApplication) =>
+        Boolean(
+          chzzkChannelId &&
+            typeof (item as { chzzkChannelId?: unknown }).chzzkChannelId === 'string' &&
+            (item as { chzzkChannelId: string }).chzzkChannelId === chzzkChannelId
+        );
       const nameTaken =
-        queue.items.some((item) => item.name.normalize('NFC').toLowerCase() === nameKey) ||
+        queue.items.some(
+          (item) => item.name.normalize('NFC').toLowerCase() === nameKey && !sameChannel(item)
+        ) ||
         rosterPlayers.some(
           (item) =>
-            typeof item.name === 'string' && item.name.normalize('NFC').toLowerCase() === nameKey && item !== existingByRiot
+            typeof item.name === 'string' &&
+            item.name.normalize('NFC').toLowerCase() === nameKey &&
+            item !== existingByRiot &&
+            !sameChannel(item)
         );
       if (nameTaken) {
         await markJoinIdentityCooldown(env, nameKey, tagKey);
@@ -580,6 +625,7 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
         queueNo: queue.nextNo,
         createdAt: Date.now(),
         ...(canOrder ? { canOrder: true } : {}),
+        ...(chzzkChannelId ? { chzzkChannelId } : {}),
       };
       const committed = await commitJoinQueue(env, queue.revision ?? 0, {
         nextNo: queue.nextNo + 1,
@@ -638,23 +684,37 @@ async function buildApprovedResponse(
       riotKey(item.riotName, item.riotTag) === tagKey
   );
 
+  const byChannel =
+    application.chzzkChannelId
+      ? players.find(
+          (item) =>
+            typeof item.chzzkChannelId === 'string' &&
+            item.chzzkChannelId === application.chzzkChannelId
+        )
+      : undefined;
+  const base = found ?? byChannel;
   const playerId =
-    found && typeof found.id === 'string' ? found.id : crypto.randomUUID();
+    base && typeof base.id === 'string' ? base.id : crypto.randomUUID();
   const saved = {
     id: playerId,
     name: application.name,
-    currentTier: found?.currentTier ?? currentTier,
-    maxTier: found?.maxTier ?? maxTier,
+    currentTier: base?.currentTier ?? currentTier,
+    maxTier: base?.maxTier ?? maxTier,
     riotName: application.riotName,
     riotTag: application.riotTag,
-    wins: typeof found?.wins === 'number' ? found.wins : 0,
-    losses: typeof found?.losses === 'number' ? found.losses : 0,
-    streak: typeof found?.streak === 'number' ? found.streak : 0,
-    playAts: Array.isArray(found?.playAts)
-      ? found.playAts.filter((item): item is number => typeof item === 'number')
+    ...(application.chzzkChannelId
+      ? { chzzkChannelId: application.chzzkChannelId }
+      : typeof base?.chzzkChannelId === 'string'
+        ? { chzzkChannelId: base.chzzkChannelId }
+        : {}),
+    wins: typeof base?.wins === 'number' ? base.wins : 0,
+    losses: typeof base?.losses === 'number' ? base.losses : 0,
+    streak: typeof base?.streak === 'number' ? base.streak : 0,
+    playAts: Array.isArray(base?.playAts)
+      ? base.playAts.filter((item): item is number => typeof item === 'number')
       : [],
     playCount:
-      typeof found?.playCount === 'number' && found.playCount > 0 ? Math.floor(found.playCount) : 0,
+      typeof base?.playCount === 'number' && base.playCount > 0 ? Math.floor(base.playCount) : 0,
   };
   if (!found) {
     saved.currentTier = currentTier;
@@ -849,7 +909,19 @@ async function claimAutoJoin(env: Env, id: string): Promise<Response> {
         items: remaining,
       });
       if (!committed) continue;
-      await addApprovedToBoard(env, { ...toSessionPlayer(saved, application.queueNo), canOrder: Boolean(application.canOrder) });
+      const synced = {
+        ...saved,
+        name: application.name || saved.name,
+        ...(application.chzzkChannelId ? { chzzkChannelId: application.chzzkChannelId } : {}),
+      };
+      if (synced.name !== saved.name || synced.chzzkChannelId !== saved.chzzkChannelId) {
+        const nextPlayers = [...players.filter((item) => item.id !== application.playerId), synced];
+        await env.ROSTER.put(ROSTER_KEY, JSON.stringify({ updatedAt: Date.now(), players: nextPlayers }));
+      }
+      await addApprovedToBoard(env, {
+        ...toSessionPlayer(synced, application.queueNo),
+        canOrder: Boolean(application.canOrder),
+      });
       await writeJoinStatus(env, application.id, {
         status: 'joined',
         queueNo: application.queueNo,

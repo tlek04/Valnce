@@ -170,7 +170,7 @@ export default function Header({
                     ? 'text-val-muted'
                     : 'text-val-warn'
               }`}
-              title="치지직 채팅 브릿지 (!참가 / !신청)"
+              title="치지직 채팅 브릿지 (!참가 / !불참)"
             >
               {chatBridgeStatus === 'connected'
                 ? '채팅 연동됨'

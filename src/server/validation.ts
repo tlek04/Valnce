@@ -76,6 +76,7 @@ export async function validateRequest(request: Request): Promise<Response | null
   if (path === '/api/join') {
     for (const key of ['name','riotName','riotTag']) if (!text(body[key], 100)) return bad();
     if (body.canOrder != null && typeof body.canOrder !== 'boolean') return bad();
+    if (body.chzzkChannelId != null && !text(body.chzzkChannelId, 100)) return bad();
   }
   if (path === '/api/join/check-in') {
     if (typeof body.ready !== 'boolean') return bad();
@@ -91,6 +92,7 @@ export async function validateRequest(request: Request): Promise<Response | null
   }
   if (path === '/api/bridge/check-in') {
     if (!text(body.name, 100) || typeof body.ready !== 'boolean') return bad();
+    if (body.senderChannelId != null && !text(body.senderChannelId, 100)) return bad();
   }
   if (path === '/api/bridge/participate') {
     if (!text(body.name, 100)) return bad();

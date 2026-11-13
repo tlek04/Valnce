@@ -66,6 +66,8 @@ export interface SavedPlayer {
   riotName?: string;
   /** 발로란트 태그 (# 없이) */
   riotTag?: string;
+  /** 치지직 채널 ID — 채팅 !참가 식별용(닉 변경에도 유지) */
+  chzzkChannelId?: string;
   /** 보드 합류 시 복원 — 고정 시청자(MATCH) 등. BENCH는 세션 전용이라 저장하지 않음 */
   lockedTeam?: 'TEAM_1' | 'TEAM_2' | 'MATCH' | 'WAITLIST' | 'BENCH' | null;
   canOrder?: boolean;
@@ -109,6 +111,8 @@ export interface Player {
   allyIds: string[];
   riotName?: string;
   riotTag?: string;
+  /** 치지직 채널 ID — 채팅 브릿지 식별 */
+  chzzkChannelId?: string;
   /** @deprecated 시드는 고정 닉네임 기준 */
   matchSeed?: boolean;
   /** 오늘 매니지 보드(대기열·팀)에 올라온 순서. 신청 티켓과 별개 */
@@ -141,6 +145,8 @@ export interface JoinApplication {
   auto?: boolean;
   /** auto일 때 명단 플레이어 id */
   playerId?: string;
+  /** 치지직 채널 ID (채팅 신청 시) */
+  chzzkChannelId?: string;
 }
 
 /** API로 확인된 내전 커스텀 한 판 */

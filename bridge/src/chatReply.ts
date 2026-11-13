@@ -66,16 +66,25 @@ export function formatCommandReply(input: {
   }
 
   if (code === 'need_riot') {
-    return `${who} 처음이면 !신청 닉#태그 로 신청해 주세요.`;
+    return `${who} 처음이면 !참가 닉#태그 로 신청해 주세요.`;
   }
   if (code === 'not_on_board') {
-    return `${who} 보드에 없어요. !신청 닉#태그 후 출석해 주세요.`;
+    return `${who} 보드에 없어요. !참가 닉#태그 후 출석해 주세요.`;
   }
   if (code === 'already_on_board') {
     return `${who} 이미 대기열·경기에 있어요.`;
   }
-  if (code === 'join_closed' || code === 'bridge_closed') {
-    return `${who} 지금은 채팅 참가 신청을 받지 않아요.`;
+  if (code === 'join_closed') {
+    return `${who} 지금은 시청자 참가 신청이 닫혀 있어요.`;
+  }
+  if (code === 'bridge_closed') {
+    return `${who} 지금은 채팅 연동이 꺼져 있어요.`;
+  }
+  if (code === 'duplicate_name') {
+    return `${who} ${error || '같은 치지직 닉네임이 이미 있어요.'}`;
+  }
+  if (code === 'duplicate_riot') {
+    return `${who} ${error || '같은 발로란트 닉#태그가 이미 있어요.'}`;
   }
   if (
     code === 'join_rate_ip' ||

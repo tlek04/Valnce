@@ -93,16 +93,19 @@ Valnce는 치지직 스트리머가 **발로란트 내전(커스텀 5대5)** 을
 
 ## 치지직 채팅 연동
 
-시청자는 `/join` 외에 채팅 명령으로도 신청·출석할 수 있다. 서버컴의 Node 브릿지가 치지직 Open API 채팅을 구독하고, `CHAT_BRIDGE_SECRET`으로 Workers `/api/bridge/*`를 호출한다. 보드 공유는 기존처럼 폴링이다.
+시청자는 `/join` 외에 채팅 명령으로도 신청·출석할 수 있다. 서버컴의 Node 브릿지가 치지직 Open API 채팅을 구독하고, `CHAT_BRIDGE_SECRET`으로 Workers **`/api/bridge/participate`**(및 heartbeat)를 호출한다. 보드 공유는 기존처럼 폴링이다.
+
+식별은 **치지직 `senderChannelId` → 명단/보드 `chzzkChannelId`**를 우선하고, 없으면 Riot·닉(레거시)으로 폴백한다. 첫 `!참가 닉#태그` 성공 시 채널 ID를 바인딩한다.
 
 | 명령 | 동작 |
 | --- | --- |
-| `!신청 닉#태그` / `!참가 닉#태그` | 채팅 닉 + Riot ID로 참가 신청(신규 승인 대기 / 명단이면 자동 합류) |
-| `!참가` | 보드면 출석(ready), 명단만 있으면 자동 합류, 없으면 신청 안내 |
-| `!불참` | 보드 출석 away |
-| `!도움` | 명령 안내 |
+| `!참가 닉#태그` | 신규 신청 / 명단이면 자동 합류 (+ channelId 저장). 끝에 `오더` 가능 |
+| `!참가` | 보드면 출석, 명단(channelId/닉)이면 자동 합류, 없으면 `!참가 닉#태그` 안내 |
+| `!불참` | 보드 출석 away (보드 없으면 안내) |
+| `!도움` / `!help` | 명령 안내 |
+| `!오더` | 오더로 참가·신청 |
 
-브릿지는 신청·출석·불참·도움 결과를 치지직 채팅에 한 줄로 답장한다(`채팅 메시지 쓰기` 스코프, 최대 100자). 관리자 site-settings의 `chatBridgeOpen`으로 채팅 입구를 끌 수 있다. `/join` 웹 신청은 그대로 유지한다.
+브릿지는 결과를 치지직 채팅에 한 줄 답장한다(`채팅 메시지 쓰기`, 최대 100자). `chatBridgeOpen`은 채팅 API 입구, `viewerAccessOpen`은 웹·채팅 신청 공통 게이트. `/join` 웹 신청은 그대로 유지한다.
 
 ---
 
@@ -110,6 +113,6 @@ Valnce는 치지직 스트리머가 **발로란트 내전(커스텀 5대5)** 을
 
 - 프론트: Vite + React + TypeScript + Zustand. 보드는 서버 폴링 sync만, 명단은 로컬 persist + Workers API + KV.
 - 백엔드: Cloudflare Workers. 스트리머/관리자 인증 분리, 참가 큐·상태·명단·공유 보드·접속 로그·site-settings·신뢰 기기·채팅 브릿지 API.
-- 채팅 브릿지: `bridge/` Node 앱(Docker). 치지직 Session CHAT 구독 → bridge API.
+- 채팅 브릿지: `bridge/` Node 앱(Docker·`start.bat`). 치지직 Session CHAT 구독 → `/api/bridge/participate`.
 - MMR: Henrik API(키 있을 때). 실패해도 승인은 진행하고 UI에 알린다.
 - 로컬: `npm install` → `npm run dev`. API 포함: `npm run build` 후 `npm run dev:worker`. 검증: `npm run check`.

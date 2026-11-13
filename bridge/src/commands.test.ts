@@ -4,10 +4,11 @@ import { HELP_TEXT, parseChatCommand } from './commands.js';
 import { allowChatCommand } from './commandGate.js';
 import { CHAT_MESSAGE_MAX, clipChat, formatCommandReply } from './chatReply.js';
 
-test('parseChatCommand covers join, apply, away, help, order', () => {
+test('parseChatCommand covers join, apply-alias, away, help, order', () => {
   assert.deepEqual(parseChatCommand('!도움'), { type: 'help' });
   assert.deepEqual(parseChatCommand('!불참'), { type: 'away' });
   assert.deepEqual(parseChatCommand('!참가'), { type: 'join', riotId: undefined, canOrder: false });
+  assert.deepEqual(parseChatCommand('!신청'), { type: 'join', riotId: undefined, canOrder: false });
   assert.deepEqual(parseChatCommand('!신청 Foo#KR1'), {
     type: 'join',
     riotId: 'Foo#KR1',
@@ -56,7 +57,15 @@ test('formatCommandReply stays within chat limit and maps outcomes', () => {
       kind: 'result',
       result: { ok: false, status: 400, body: { code: 'need_riot' } },
     }),
-    '쏭 처음이면 !신청 닉#태그 로 신청해 주세요.'
+    '쏭 처음이면 !참가 닉#태그 로 신청해 주세요.'
+  );
+  assert.equal(
+    formatCommandReply({
+      name: '쏭',
+      kind: 'result',
+      result: { ok: false, status: 403, body: { code: 'bridge_closed' } },
+    }),
+    '쏭 지금은 채팅 연동이 꺼져 있어요.'
   );
   assert.equal(clipChat('a'.repeat(120)).length, CHAT_MESSAGE_MAX);
 });

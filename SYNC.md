@@ -38,6 +38,9 @@
 ## 사이트 설정 · 신뢰 기기
 
 - KV `site-settings`: `showViewerCard`, `showStreamerCard`, `showMatchRecord`, `streamerAccessOpen`, `viewerAccessOpen`, `chatBridgeOpen` — 실패 시 표시는 캐시 유지, **세션 게이트는 닫힘(fail-closed)**
+  - `viewerAccessOpen`: 웹 `/join`·채팅 신청(`join_closed`) 공통
+  - `chatBridgeOpen`: 브릿지 API(heartbeat·participate) 입구. OFF면 하트비트도 거부되어 매니지에 오프라인으로 보임
+- 채팅 식별: 명단/보드 `chzzkChannelId`(치지직 sender channel). 코드 수정은 이 저장소 `bridge/`가 원본(Desktop 복제본은 참고용)
 - KV `auth:trusted-devices` + `X-Device-Id`: 세션 끊기·스트리머 OFF 예외. 상세는 [docs/AUTH.md](docs/AUTH.md)
 - Zustand persist `version` 6. 명단만 저장(보드 로컬 캐시 없음). `showMatchRecord`는 persist하지 않고 서버 설정만 사용
 

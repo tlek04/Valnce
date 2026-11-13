@@ -52,6 +52,8 @@ export function normalizePlayer(raw: unknown): Player {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
+  const chzzkChannelId =
+    typeof data.chzzkChannelId === 'string' ? data.chzzkChannelId.trim().slice(0, 100) : '';
   const queueNo = readQueueNo(data.queueNo);
   const checkIn = readCheckIn(data.checkIn);
 
@@ -75,6 +77,7 @@ export function normalizePlayer(raw: unknown): Player {
     allyIds: asStringArray(data.allyIds),
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
+    ...(chzzkChannelId ? { chzzkChannelId } : {}),
     matchSeed: Boolean(data.matchSeed),
     ...(queueNo ? { queueNo } : {}),
     ...(checkIn !== undefined ? { checkIn } : {}),
@@ -121,6 +124,8 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
   const stats = normalizeMatchStats(data);
   const riotName = typeof data.riotName === 'string' ? data.riotName.trim() : '';
   const riotTag = typeof data.riotTag === 'string' ? data.riotTag.trim() : '';
+  const chzzkChannelId =
+    typeof data.chzzkChannelId === 'string' ? data.chzzkChannelId.trim().slice(0, 100) : '';
   const currentTier = ratingFromUnknown(data.currentTier, FALLBACK);
   const maxTier = ratingFromUnknown(data.maxTier, currentTier);
   const parsedInternal =
@@ -147,6 +152,7 @@ export function toSavedPlayer(raw: unknown): SavedPlayer {
     ...(internalTier ? { internalTier } : {}),
     ...(riotName ? { riotName } : {}),
     ...(riotTag ? { riotTag } : {}),
+    ...(chzzkChannelId ? { chzzkChannelId } : {}),
     ...(lockedTeam ? { lockedTeam } : {}),
     ...(data.canOrder ? { canOrder: true } : {}),
     ...(restrictions.length > 0 ? { restrictions } : {}),
@@ -183,6 +189,7 @@ export function toSessionPlayer(saved: SavedPlayer): Player {
     allyIds: asStringArray(saved.allyIds),
     ...(saved.riotName ? { riotName: saved.riotName } : {}),
     ...(saved.riotTag ? { riotTag: saved.riotTag } : {}),
+    ...(saved.chzzkChannelId ? { chzzkChannelId: saved.chzzkChannelId } : {}),
     ...(saved.matchSeed ? { matchSeed: true } : {}),
     checkIn: 'ready',
     wins: saved.wins ?? 0,
