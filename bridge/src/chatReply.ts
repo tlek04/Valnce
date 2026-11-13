@@ -86,6 +86,9 @@ export function formatCommandReply(input: {
   if (code === 'duplicate_riot') {
     return `${who} ${error || '같은 발로란트 닉#태그가 이미 있어요.'}`;
   }
+  if (code === 'channel_bound_other' || code === 'riot_bound_other' || code === 'identity_mismatch' || code === 'identity_conflict') {
+    return `${who} ${error || '계정 연결이 충돌해요. 스트리머에게 문의하세요.'}`;
+  }
   if (
     code === 'join_rate_ip' ||
     code === 'join_rate_global' ||

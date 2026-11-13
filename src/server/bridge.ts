@@ -13,6 +13,12 @@ import {
   findSeatByTagKey,
 } from './join';
 import { checkAndMarkCheckInCooldown, checkJoinIdentityCooldown } from './joinGuards';
+import {
+  checkChannelRiotBinding,
+  mergeChannelBinding,
+  seatChannelId,
+  seatRiotTagKey,
+} from './chzzkBinding';
 
 export const BRIDGE_HEARTBEAT_KEY = 'bridge:heartbeat';
 const BRIDGE_HEARTBEAT_TTL_SEC = 120;
@@ -61,17 +67,22 @@ async function isChatBridgeOpen(env: BridgeEnv): Promise<boolean> {
   return (await readSiteSettings(env)).chatBridgeOpen;
 }
 
-/** 명단에 channelId·닉 백필 (채팅 식별 고정) */
+/** 명단에 channelId·닉 백필 — 기존 다른 channel 바인딩은 덮어쓰지 않음 */
 async function backfillRosterBinding(
   env: BridgeEnv,
   input: { channelId?: string; name?: string; tagKey?: string; playerId?: string }
-): Promise<void> {
+): Promise<{ ok: true } | { ok: false; code: 'channel_bound_other' | 'riot_bound_other' }> {
   const channelId = input.channelId?.trim().slice(0, 100);
   const name = input.name?.trim();
-  if (!channelId && !name) return;
+  if (!channelId && !name) return { ok: true };
 
   const roster = (await env.ROSTER.get(ROSTER_KEY, 'json')) as RosterPayload | null;
   const players = asSavedPlayers(Array.isArray(roster?.players) ? roster!.players : []);
+  if (channelId && input.tagKey) {
+    const conflict = checkChannelRiotBinding(players, channelId, input.tagKey);
+    if (!conflict.ok) return { ok: false, code: conflict.code };
+  }
+
   const idx = players.findIndex((item) => {
     if (input.playerId && item.id === input.playerId) return true;
     if (
@@ -87,21 +98,18 @@ async function backfillRosterBinding(
     }
     return false;
   });
-  if (idx < 0) return;
+  if (idx < 0) return { ok: true };
 
-  const prev = players[idx];
-  const next = {
-    ...prev,
-    ...(name ? { name } : {}),
-    ...(channelId ? { chzzkChannelId: channelId } : {}),
-  };
-  if (next.name === prev.name && next.chzzkChannelId === prev.chzzkChannelId) return;
+  const merged = mergeChannelBinding(players[idx], { channelId, name });
+  if (merged.refused) return { ok: false, code: merged.refused };
+  if (!merged.changed) return { ok: true };
   const nextPlayers = [...players];
-  nextPlayers[idx] = next;
+  nextPlayers[idx] = merged.next;
   await env.ROSTER.put(
     ROSTER_KEY,
     JSON.stringify({ updatedAt: Date.now(), players: nextPlayers })
   );
+  return { ok: true };
 }
 
 async function bridgeEnqueue(
@@ -129,24 +137,53 @@ async function bridgeEnqueue(
       typeof item.riotTag === 'string' &&
       riotKey(item.riotName, item.riotTag) === tagKey
   );
+  if (input.chzzkChannelId) {
+    const conflict = checkChannelRiotBinding(rosterPlayers, input.chzzkChannelId, tagKey);
+    if (!conflict.ok) {
+      return json(
+        {
+          ok: false,
+          code: conflict.code,
+          error:
+            conflict.code === 'channel_bound_other'
+              ? '이 치지직 계정은 다른 발로란트 닉에 이미 연결되어 있습니다.'
+              : '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+        },
+        { status: 409 }
+      );
+    }
+  }
+
   if (existingByRiot) {
     await env.ROSTER.put('viewer-approved:' + viewerToken, JSON.stringify(tagKey), {
       expirationTtl: 30 * 86400,
     });
-    await backfillRosterBinding(env, {
+    const filled = await backfillRosterBinding(env, {
       channelId: input.chzzkChannelId,
       name: input.name,
       tagKey,
       playerId: typeof existingByRiot.id === 'string' ? existingByRiot.id : undefined,
     });
+    if (!filled.ok) {
+      return json(
+        {
+          ok: false,
+          code: filled.code,
+          error: '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+        },
+        { status: 409 }
+      );
+    }
   }
 
+  const secret = env.CHAT_BRIDGE_SECRET?.trim() ?? '';
   const request = new Request('https://bridge.local/api/join', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
       Cookie: `valnce-viewer=${viewerToken}`,
       'CF-Connecting-IP': `bridge:${input.rateKey.slice(0, 80)}`,
+      ...(secret ? { 'X-Valnce-Bridge': secret } : {}),
     },
     body: JSON.stringify({
       name: input.name,
@@ -161,7 +198,7 @@ async function bridgeEnqueue(
 
 async function respondCheckIn(
   env: BridgeEnv,
-  seat: { id?: unknown; name?: unknown },
+  seat: { id?: unknown; name?: unknown; chzzkChannelId?: unknown; riotName?: unknown; riotTag?: unknown },
   ready: boolean,
   meta: { name: string; chzzkChannelId?: string; tagKey?: string; playerId?: string }
 ): Promise<Response> {
@@ -175,6 +212,22 @@ async function respondCheckIn(
   const cooldown = await checkAndMarkCheckInCooldown(env, cooldownKey);
   if (cooldown) return cooldown;
 
+  const existingSeatChannel = seatChannelId(seat as { chzzkChannelId?: unknown });
+  if (
+    meta.chzzkChannelId &&
+    existingSeatChannel &&
+    existingSeatChannel !== meta.chzzkChannelId
+  ) {
+    return json(
+      {
+        ok: false,
+        code: 'channel_bound_other',
+        error: '이 보드 자리는 다른 치지직 계정에 연결되어 있습니다.',
+      },
+      { status: 409 }
+    );
+  }
+
   const result = await applyBoardCheckIn(env, seat.id, ready, {
     name: meta.name,
     chzzkChannelId: meta.chzzkChannelId,
@@ -182,12 +235,22 @@ async function respondCheckIn(
   if (!result.ok) {
     return json({ ok: false, error: result.error }, { status: result.status });
   }
-  await backfillRosterBinding(env, {
+  const filled = await backfillRosterBinding(env, {
     channelId: meta.chzzkChannelId,
     name: meta.name,
     tagKey: meta.tagKey,
     playerId: meta.playerId,
   });
+  if (!filled.ok) {
+    return json(
+      {
+        ok: false,
+        code: filled.code,
+        error: '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+      },
+      { status: 409 }
+    );
+  }
   return json({
     ok: true,
     action: 'check_in',
@@ -303,22 +366,44 @@ async function handleBridgeParticipate(request: Request, env: BridgeEnv): Promis
   const board = await readSharedBoard(env);
   const seats = boardSeats(board);
 
-  // 1) channelId → 보드 출석
+  // 1) channelId → 보드 출석 (명령 Riot과 좌석 Riot이 다르면 거부)
   if (chzzkChannelId) {
     const seatByChannel = findSeatByChannelId(seats, chzzkChannelId);
     if (seatByChannel) {
+      const seatTag = seatRiotTagKey(seatByChannel as { riotName?: unknown; riotTag?: unknown });
+      if (hasRiot && seatTag && seatTag !== tagKey) {
+        return json(
+          {
+            ok: false,
+            code: 'identity_mismatch',
+            error: '연결된 발로란트 닉과 입력한 닉이 다릅니다.',
+          },
+          { status: 409 }
+        );
+      }
       return respondCheckIn(env, seatByChannel, ready, {
         name,
         chzzkChannelId,
-        ...(tagKey ? { tagKey } : {}),
+        ...(tagKey || seatTag ? { tagKey: tagKey || seatTag } : {}),
       });
     }
   }
 
-  // 2) Riot → 보드 출석 (+ channelId 백필)
+  // 2) Riot → 보드 출석 (+ channelId 최초 바인딩만)
   if (hasRiot) {
     const seatByRiot = findSeatByTagKey(seats, tagKey);
     if (seatByRiot) {
+      const bound = seatChannelId(seatByRiot as { chzzkChannelId?: unknown });
+      if (chzzkChannelId && bound && bound !== chzzkChannelId) {
+        return json(
+          {
+            ok: false,
+            code: 'riot_bound_other',
+            error: '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+          },
+          { status: 409 }
+        );
+      }
       return respondCheckIn(env, seatByRiot, ready, {
         name,
         ...(chzzkChannelId ? { chzzkChannelId } : {}),
@@ -327,14 +412,17 @@ async function handleBridgeParticipate(request: Request, env: BridgeEnv): Promis
     }
   }
 
-  // 3) 닉 → 보드 (레거시)
-  const seatByName = findSeatByNameKey(seats, nameKey);
-  if (seatByName) {
-    return respondCheckIn(env, seatByName, ready, {
-      name,
-      ...(chzzkChannelId ? { chzzkChannelId } : {}),
-      ...(tagKey ? { tagKey } : {}),
-    });
+  // 3) 닉 → 보드 (레거시, channel 없을 때만)
+  if (!chzzkChannelId) {
+    const seatByName = findSeatByNameKey(seats, nameKey);
+    if (seatByName) {
+      return respondCheckIn(env, seatByName, ready, {
+        name,
+        ...(tagKey ? { tagKey } : {}),
+      });
+    }
+  } else {
+    // channel 있는데 보드/명단 미매칭이면 닉 폴백으로 타인 좌석 점유 금지
   }
 
   // 불참인데 보드에 없음

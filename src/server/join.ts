@@ -14,6 +14,24 @@ import {
   checkJoinIpRateLimit,
   markJoinIdentityCooldown,
 } from './joinGuards';
+import { checkChannelRiotBinding, mergeChannelBinding } from './chzzkBinding';
+
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+/** 웹 클라이언트 스푸핑 방지 — 브릿지 시크릿이 있을 때만 channelId 수용 */
+function acceptedBridgeChannelId(request: Request, env: Env, raw: unknown): string {
+  const channelId = typeof raw === 'string' ? raw.trim().slice(0, 100) : '';
+  if (!channelId) return '';
+  const secret = env.CHAT_BRIDGE_SECRET?.trim();
+  const provided = (request.headers.get('X-Valnce-Bridge') ?? '').trim();
+  if (!secret || !provided || !timingSafeEqual(provided, secret)) return '';
+  return channelId;
+}
 
 const JOIN_KEY = 'join-queue';
 const JOIN_STATUS_PREFIX = 'join-status:';
@@ -414,7 +432,7 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
   const riotName = (body.riotName ?? '').trim().replace(/^#+/, '');
   const riotTag = (body.riotTag ?? '').trim().replace(/^#+/, '');
   const canOrder = Boolean(body.canOrder);
-  const chzzkChannelId = (body.chzzkChannelId ?? '').trim().slice(0, 100);
+  const chzzkChannelId = acceptedBridgeChannelId(request, env, body.chzzkChannelId);
   if (!name) return json({ ok: false, error: '치지직 닉네임을 입력하세요.' }, { status: 400 });
   if (!riotName || !riotTag) {
     return json({ ok: false, error: '발로란트 닉네임과 태그를 입력하세요.' }, { status: 400 });
@@ -453,8 +471,16 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
             name?: unknown;
             riotName?: unknown;
             riotTag?: unknown;
+            chzzkChannelId?: unknown;
           };
           if (playerId && seat.id === playerId) return true;
+          if (
+            chzzkChannelId &&
+            typeof seat.chzzkChannelId === 'string' &&
+            seat.chzzkChannelId === chzzkChannelId
+          ) {
+            return true;
+          }
           if (
             typeof seat.riotName === 'string' &&
             typeof seat.riotTag === 'string' &&
@@ -470,9 +496,38 @@ export async function enqueueJoin(request: Request, env: Env): Promise<Response>
       const pendingSame = (playerId?: string) =>
         queue.items.some((item) => {
           if (playerId && item.playerId === playerId) return true;
+          if (
+            chzzkChannelId &&
+            typeof item.chzzkChannelId === 'string' &&
+            item.chzzkChannelId === chzzkChannelId
+          ) {
+            return true;
+          }
           if (riotKey(item.riotName, item.riotTag) === tagKey) return true;
           return item.name.normalize('NFC').toLowerCase() === nameKey;
         });
+
+      if (chzzkChannelId) {
+        const binding = checkChannelRiotBinding(
+          [...rosterPlayers, ...queue.items],
+          chzzkChannelId,
+          tagKey
+        );
+        if (!binding.ok) {
+          await markJoinIdentityCooldown(env, nameKey, tagKey);
+          return json(
+            {
+              ok: false,
+              code: binding.code,
+              error:
+                binding.code === 'channel_bound_other'
+                  ? '이 치지직 계정은 다른 발로란트 닉에 이미 연결되어 있습니다.'
+                  : '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+            },
+            { status: 409 }
+          );
+        }
+      }
 
       const existingByRiot = rosterPlayers.find(
         (item) =>
@@ -692,9 +747,51 @@ async function buildApprovedResponse(
             item.chzzkChannelId === application.chzzkChannelId
         )
       : undefined;
+  // Riot 매칭을 우선. channel만 다른 슬롯이면 병합하지 않음(탈취 방지)
+  if (
+    found &&
+    byChannel &&
+    typeof found.id === 'string' &&
+    typeof byChannel.id === 'string' &&
+    found.id !== byChannel.id
+  ) {
+    await requeueApplication(env, application);
+    return json(
+      {
+        ok: false,
+        code: 'identity_conflict',
+        error: '치지직 계정과 발로란트 닉 연결이 충돌합니다. 관리자에게 문의하세요.',
+      },
+      { status: 409 }
+    );
+  }
   const base = found ?? byChannel;
+  if (application.chzzkChannelId && found) {
+    const bind = checkChannelRiotBinding(players, application.chzzkChannelId, tagKey);
+    if (!bind.ok) {
+      await requeueApplication(env, application);
+      return json(
+        {
+          ok: false,
+          code: bind.code,
+          error:
+            bind.code === 'channel_bound_other'
+              ? '이 치지직 계정은 다른 발로란트 닉에 이미 연결되어 있습니다.'
+              : '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+        },
+        { status: 409 }
+      );
+    }
+  }
   const playerId =
     base && typeof base.id === 'string' ? base.id : crypto.randomUUID();
+  const mergedChannel =
+    application.chzzkChannelId &&
+    !(typeof base?.chzzkChannelId === 'string' && base.chzzkChannelId && base.chzzkChannelId !== application.chzzkChannelId)
+      ? application.chzzkChannelId
+      : typeof base?.chzzkChannelId === 'string'
+        ? base.chzzkChannelId
+        : undefined;
   const saved = {
     id: playerId,
     name: application.name,
@@ -702,11 +799,7 @@ async function buildApprovedResponse(
     maxTier: base?.maxTier ?? maxTier,
     riotName: application.riotName,
     riotTag: application.riotTag,
-    ...(application.chzzkChannelId
-      ? { chzzkChannelId: application.chzzkChannelId }
-      : typeof base?.chzzkChannelId === 'string'
-        ? { chzzkChannelId: base.chzzkChannelId }
-        : {}),
+    ...(mergedChannel ? { chzzkChannelId: mergedChannel } : {}),
     wins: typeof base?.wins === 'number' ? base.wins : 0,
     losses: typeof base?.losses === 'number' ? base.losses : 0,
     streak: typeof base?.streak === 'number' ? base.streak : 0,
@@ -909,12 +1002,23 @@ async function claimAutoJoin(env: Env, id: string): Promise<Response> {
         items: remaining,
       });
       if (!committed) continue;
-      const synced = {
-        ...saved,
-        name: application.name || saved.name,
-        ...(application.chzzkChannelId ? { chzzkChannelId: application.chzzkChannelId } : {}),
-      };
-      if (synced.name !== saved.name || synced.chzzkChannelId !== saved.chzzkChannelId) {
+      const merged = mergeChannelBinding(saved, {
+        channelId: application.chzzkChannelId,
+        name: application.name,
+      });
+      if (merged.refused) {
+        return json(
+          {
+            ok: false,
+            code: merged.refused,
+            error: '이 발로란트 닉은 다른 치지직 계정에 이미 연결되어 있습니다.',
+            items: remaining,
+          },
+          { status: 409 }
+        );
+      }
+      const synced = merged.next;
+      if (merged.changed) {
         const nextPlayers = [...players.filter((item) => item.id !== application.playerId), synced];
         await env.ROSTER.put(ROSTER_KEY, JSON.stringify({ updatedAt: Date.now(), players: nextPlayers }));
       }
